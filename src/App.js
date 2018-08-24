@@ -15,7 +15,7 @@ class App extends Component {
   indent = preventDefault(this.props.indent);
   undent = preventDefault(this.props.undent);
   render() {
-    const { path, up, down, addItem } = this.props;
+    const { path, addItem } = this.props;
     return (
       <Fragment>
         <HotKeys
