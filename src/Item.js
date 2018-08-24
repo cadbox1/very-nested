@@ -12,13 +12,16 @@ class Item extends Component {
     onSelect({ path });
   };
   render() {
-    const { content, path, globalPath, children } = this.props;
+    const { id, content, path, globalPath, children } = this.props;
     return (
       <div>
-        {globalPath.slice(-1)[0] === path.slice(-1)[0] ? (
+        {globalPath.slice(-1)[0] === id ? (
           <input value={content} onChange={this.handleChange} autoFocus />
         ) : (
-          <span onClick={this.handleClick}>{content}</span>
+          <div>
+            <span onClick={this.handleClick}>{content}</span>
+            <span> - {id}</span>
+          </div>
         )}
         {children && (
           <div style={{ marginLeft: "1rem" }}>
@@ -33,7 +36,7 @@ class Item extends Component {
 }
 function mapStateToProps(state, props) {
   const id = props.path.slice(-1)[0];
-  return { ...state.item[id], globalPath: state.path };
+  return { ...state.item[id], id, globalPath: state.path };
 }
 
 const ConnectedItem = connect(

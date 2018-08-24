@@ -15,8 +15,11 @@ const initialState = () => {
   return {
     path: [rootId, firstChildId],
     item: {
-      [rootId]: { content: "Notes", children: [firstChildId] },
-      [firstChildId]: { content: "firstNote", children: [] }
+      [rootId]: {
+        content: "The root of data driven notes",
+        children: [firstChildId]
+      },
+      [firstChildId]: { content: "Instructions", children: [] }
     }
   };
 };
@@ -41,7 +44,23 @@ export default (state = initialState(), action) =>
       case EDIT: {
         const { content } = action.payload;
         const id = draft.path.slice(-1)[0];
-        draft.item[id].content = content;
+
+        if (Object.keys(draft.item).includes(content)) {
+          // content is an id
+
+          const newId = content;
+          Object.keys(draft.item).forEach(itemId => {
+            const item = draft.item[itemId];
+            if (item.children.includes(id)) {
+              item.children = item.children.map(
+                childId => (childId === id ? newId : childId)
+              );
+            }
+          });
+          delete draft.item[id];
+        } else {
+          draft.item[id].content = content;
+        }
 
         break;
       }
@@ -127,12 +146,12 @@ export const editItem = ({ content }) => ({
   payload: { content }
 });
 
-export const select = ({ id, path }) => ({
-  type: SELECT,
-  payload: { id, path }
-});
-
 export const up = () => ({ type: UP });
 export const down = () => ({ type: DOWN });
 export const indent = () => ({ type: INDENT });
 export const undent = () => ({ type: UNDENT });
+
+export const select = ({ id, path }) => ({
+  type: SELECT,
+  payload: { id, path }
+});
