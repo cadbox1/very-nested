@@ -10,6 +10,8 @@ const preventDefault = func => evt => {
 };
 
 class App extends Component {
+  up = preventDefault(this.props.up);
+  down = preventDefault(this.props.down);
   indent = preventDefault(this.props.indent);
   undent = preventDefault(this.props.undent);
   render() {
@@ -27,14 +29,14 @@ class App extends Component {
         >
           <HotKeys
             handlers={{
-              up,
-              down,
+              up: this.up,
+              down: this.down,
               indent: this.indent,
               undent: this.undent,
               enter: addItem
             }}
           >
-            <Item id={path[0]} />
+            <Item path={[path[0]]} />
           </HotKeys>
         </HotKeys>
       </Fragment>

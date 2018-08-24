@@ -1,11 +1,13 @@
+import produce from "immer";
 import uuidv4 from "uuid/v4";
 
-export const ADD_ITEM = "ADD_ITEM";
-export const EDIT_ITEM = "EDIT_ITEM";
-export const UP = "UP";
-export const DOWN = "DOWN";
+export const ADD = "ADD";
+export const EDIT = "EDIT";
 export const INDENT = "INDENT";
 export const UNDENT = "UNDENT";
+export const UP = "UP";
+export const DOWN = "DOWN";
+export const SELECT = "SELECT";
 
 const initialState = () => {
   const rootId = uuidv4();
@@ -14,69 +16,120 @@ const initialState = () => {
     path: [rootId, firstChildId],
     item: {
       [rootId]: { content: "Notes", children: [firstChildId] },
-      [firstChildId]: { content: "firstNote" }
+      [firstChildId]: { content: "firstNote", children: [] }
     }
   };
 };
 
-const itemReducer = (state, action, globalState) => {
-  switch (action.type) {
-    case ADD_ITEM: {
-      const { afterId, parentId } = action.payload;
-      const parent = state[parentId];
-      const children = parent.children;
-      const insertIndex = children.findIndex(child => child === afterId) + 1;
-      const newId = uuidv4();
-      return {
-        ...state,
-        ...{
-          [parentId]: {
-            ...parent,
-            children: children
-              .slice(0, insertIndex)
-              .concat([newId], children.slice(insertIndex))
-          }
-        },
-        ...{ [newId]: { content: "" } }
-      };
-    }
-    case EDIT_ITEM: {
-      const { id, content } = action.payload;
-      return { ...state, [id]: { content } };
-    }
-    default:
-      return state;
-  }
-};
+export default (state = initialState(), action) =>
+  produce(state, draft => {
+    switch (action.type) {
+      case ADD: {
+        const [afterId, parentId] = [...draft.path].reverse();
+        const parent = draft.item[parentId];
+        const children = parent.children;
+        const newId = uuidv4();
+        const insertIndex = children.findIndex(value => value === afterId) + 1;
 
-const pathReducer = (state, action, globalState) => {
-  switch (action.type) {
-    case UP: {
-      return state;
-    }
-    case DOWN: {
-      return state;
-    }
-    default:
-      return state;
-  }
-};
+        children.splice(insertIndex, 0, newId);
+        draft.item[newId] = { content: "", children: [] };
 
-// effectively a custom combineReducer to pass in global state as well
-// https://github.com/reduxjs/redux/pull/2795
-export default (state = initialState(), action) => ({
-  item: itemReducer(state.item, action, state),
-  path: pathReducer(state.path, action, state)
+        draft.path.splice(-1, 1, newId);
+
+        break;
+      }
+      case EDIT: {
+        const { content } = action.payload;
+        const id = draft.path.slice(-1)[0];
+        draft.item[id].content = content;
+
+        break;
+      }
+      case INDENT: {
+        const [targetId, currentParentId] = [...draft.path].reverse();
+        const currentParent = draft.item[currentParentId];
+        const targetIndex = currentParent.children.findIndex(
+          value => value === targetId
+        );
+        const newParentId = currentParent.children[targetIndex - 1];
+        const newParent = draft.item[newParentId];
+        const target = draft.item[targetId];
+
+        currentParent.children.splice(targetIndex, 1);
+        newParent.children.push(targetId, ...target.children);
+        target.children = [];
+
+        draft.path.splice(-1, 1);
+        draft.path.push(newParentId, targetId);
+
+        break;
+      }
+      case UNDENT: {
+        const [targetId, currentParentId, newParentId] = [
+          ...draft.path
+        ].reverse();
+        const currentParent = draft.item[currentParentId];
+        const targetIndex = currentParent.children.findIndex(
+          value => value === targetId
+        );
+
+        const newParent = draft.item[newParentId];
+        const currentParentIndex = newParent.children.findIndex(
+          value => value === currentParentId
+        );
+
+        currentParent.children.splice(targetIndex, 1);
+        newParent.children.splice(currentParentIndex + 1, 0, targetId);
+
+        const target = draft.item[targetId];
+        target.children = currentParent.children.splice(targetIndex);
+
+        draft.path.splice(-2, 1);
+
+        break;
+      }
+      case UP: {
+        const [beforeId, parentId] = [...draft.path].reverse();
+        const parent = draft.item[parentId];
+        const targetIndex =
+          parent.children.findIndex(value => value === beforeId) - 1;
+        const targetId = parent.children[targetIndex];
+
+        draft.path.splice(-1, 1, targetId);
+
+        break;
+      }
+      case DOWN: {
+        const [afterId, parentId] = [...draft.path].reverse();
+        const parent = draft.item[parentId];
+        const targetIndex =
+          parent.children.findIndex(value => value === afterId) + 1;
+        const targetId = parent.children[targetIndex];
+
+        draft.path.splice(-1, 1, targetId);
+
+        break;
+      }
+      case SELECT: {
+        const { path } = action.payload;
+        draft.path = path;
+
+        break;
+      }
+      default:
+    }
+  });
+
+export const addItem = () => ({ type: ADD });
+
+export const editItem = ({ content }) => ({
+  type: EDIT,
+  payload: { content }
 });
 
-export const addItem = ({ parentId, afterId, content }) => ({
-  type: ADD_ITEM,
-  payload: { parentId, afterId, content }
-});
-
-export const editItem = ({ id, content }) => ({
-  type: EDIT_ITEM,
-  payload: { id, content }
+export const select = ({ id, path }) => ({
+  type: SELECT,
+  payload: { id, path }
 });
 
 export const up = () => ({ type: UP });
