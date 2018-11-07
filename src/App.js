@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { HotKeys } from "react-hotkeys";
 import Item from "./Item";
-import { up, down, indent, undent, addItem } from "./duck";
+import { up, down, indent, undent, addItem, backspace } from "./duck";
 
 const preventDefault = func => evt => {
   evt.preventDefault();
@@ -14,8 +14,10 @@ class App extends Component {
   down = preventDefault(this.props.down);
   indent = preventDefault(this.props.indent);
   undent = preventDefault(this.props.undent);
+  enter = preventDefault(this.props.addItem);
+
   render() {
-    const { path, addItem } = this.props;
+    const { path } = this.props;
     return (
       <Fragment>
         <HotKeys
@@ -24,7 +26,8 @@ class App extends Component {
             down: "down",
             indent: "tab",
             undent: "shift+tab",
-            enter: "enter"
+            enter: "enter",
+            backspace: "backspace"
           }}
         >
           <HotKeys
@@ -33,10 +36,13 @@ class App extends Component {
               down: this.down,
               indent: this.indent,
               undent: this.undent,
-              enter: addItem
+              enter: this.enter,
+              backspace: this.props.backspace,
             }}
           >
+            <ul>
             <Item path={[path[0]]} />
+            </ul>
           </HotKeys>
         </HotKeys>
       </Fragment>
@@ -50,5 +56,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { up, down, indent, undent, addItem }
+  { up, down, indent, undent, addItem, backspace }
 )(App);
