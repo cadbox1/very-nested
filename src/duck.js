@@ -3,148 +3,242 @@ import uuidv4 from "uuid/v4";
 
 export const ADD = "ADD";
 export const EDIT = "EDIT";
+export const BACKSPACE = "BACKSPACE";
 export const INDENT = "INDENT";
 export const UNDENT = "UNDENT";
 export const UP = "UP";
 export const DOWN = "DOWN";
 export const SELECT = "SELECT";
 
+const getItemById = (id, state) => {
+	return state.item[id];
+};
+const getAncestorIds = (id, state) => {
+	const reversedPath = [...state.path].reverse();
+	const indexOfId = reversedPath.indexOf(id);
+	// return everything in the path after the id
+	return reversedPath.slice(indexOfId + 1);
+};
+
+const getCurrentId = state => {
+	return [...state.path].reverse()[0];
+};
+const getCurrentItem = state => {
+	return getItemById(getCurrentId(state), state);
+};
+const getParentId = (id, state) => {
+	return getAncestorIds(id, state)[0];
+};
+const getParent = (id, state) => {
+	return getItemById(getParentId(id, state), state);
+};
+const getAboveItemIds = (id, state) => {
+	const parent = getParent(id, state);
+	const currentIndex = parent.children.indexOf(id);
+	return parent.children.slice(0, currentIndex).reverse();
+};
+const getAboveItem = (id, state) => {
+	const aboveItemId = getAboveItemIds(id, state)[0];
+	return aboveItemId ? getItemById(aboveItemId, state) : null;
+};
+const getBelowItemIds = (id, state) => {
+	const parent = getParent(id, state);
+	const currentIndex = parent.children.indexOf(id);
+	return [...parent.children].slice(currentIndex + 1);
+};
+const getBelowItem = (id, state) => {
+	const belowItemId = getBelowItemIds(id, state)[0];
+	return belowItemId ? getItemById(belowItemId, state) : null;
+};
+
+const getAllItemsWithIdInChildren = (id, state, callback) => {
+	Object.keys(state.item).forEach(itemId => {
+		const item = state.item[itemId];
+		if (item.children.includes(id)) {
+			callback(item);
+		}
+	});
+};
+
+const replaceAllReferencesToId = (oldId, newId, state) => {
+	getAllItemsWithIdInChildren(oldId, state, item => {
+		item.children = item.children.map(
+			childId => (childId === oldId ? newId : childId)
+		);
+	});
+};
+
+const removeAllReferencesToId = (id, state) => {
+	getAllItemsWithIdInChildren(id, state, item => {
+		item.children = item.children.filter(childId => childId !== id);
+	});
+};
+
+const deleteItem = (id, state) => {
+	delete state.item[id];
+};
+
 const initialState = () => {
-  const rootId = uuidv4();
-  const firstChildId = uuidv4();
-  return {
-    path: [rootId, firstChildId],
-    item: {
-      [rootId]: {
-        content: "The root of data driven notes",
-        children: [firstChildId]
-      },
-      [firstChildId]: { content: "Instructions", children: [] }
-    }
-  };
+	const rootId = uuidv4();
+	const firstChildId = uuidv4();
+	return {
+		path: [rootId, firstChildId],
+		item: {
+			[rootId]: {
+				id: rootId,
+				content: "Root",
+				children: [firstChildId],
+			},
+			[firstChildId]: { id: firstChildId, content: "", children: [] },
+		},
+	};
 };
 
 export default (state = initialState(), action) =>
-  produce(state, draft => {
-    switch (action.type) {
-      case ADD: {
-        const [afterId, parentId] = [...draft.path].reverse();
-        const parent = draft.item[parentId];
-        const children = parent.children;
-        const newId = uuidv4();
-        const insertIndex = children.findIndex(value => value === afterId) + 1;
+	produce(state, draft => {
+		switch (action.type) {
+			case ADD: {
+				// create item
+				const newId = uuidv4();
+				draft.item[newId] = { id: newId, content: "", children: [] };
 
-        children.splice(insertIndex, 0, newId);
-        draft.item[newId] = { content: "", children: [] };
+				// insert into collection
+				const currentId = getCurrentId(draft);
+				const children = getParent(currentId, draft).children;
+				const insertIndex = children.indexOf(currentId) + 1;
+				children.splice(insertIndex, 0, newId);
 
-        draft.path.splice(-1, 1, newId);
+				// select new item
+				draft.path.pop();
+				draft.path.push(newId);
+				break;
+			}
+			case EDIT: {
+				const { content } = action.payload;
+				const id = getCurrentId(draft);
 
-        break;
-      }
-      case EDIT: {
-        const { content } = action.payload;
-        const id = draft.path.slice(-1)[0];
+				if (Object.keys(draft.item).includes(content)) {
+					// content is an id
+					const newId = content;
+					replaceAllReferencesToId(id, newId, draft);
+					deleteItem(id, draft);
+				} else {
+					getCurrentItem(draft).content = content;
+				}
 
-        if (Object.keys(draft.item).includes(content)) {
-          // content is an id
+				break;
+			}
+			case BACKSPACE: {
+				const currentItem = getCurrentItem(draft);
+				if (currentItem.content === "") {
+					// delete the item
 
-          const newId = content;
-          Object.keys(draft.item).forEach(itemId => {
-            const item = draft.item[itemId];
-            if (item.children.includes(id)) {
-              item.children = item.children.map(
-                childId => (childId === id ? newId : childId)
-              );
-            }
-          });
-          delete draft.item[id];
-        } else {
-          draft.item[id].content = content;
-        }
+					// select previous line item
+					const previousLineItem =
+						getAboveItem(currentItem.id, state) ||
+						getParent(currentItem.id, state);
+					draft.path.pop();
+					draft.path.push(previousLineItem.id);
 
-        break;
-      }
-      case INDENT: {
-        const [targetId, currentParentId] = [...draft.path].reverse();
-        const currentParent = draft.item[currentParentId];
-        const targetIndex = currentParent.children.findIndex(
-          value => value === targetId
-        );
-        const newParentId = currentParent.children[targetIndex - 1];
-        const newParent = draft.item[newParentId];
-        const target = draft.item[targetId];
+					// it would be cool if this was automatic somehow
+					removeAllReferencesToId(currentItem.id, draft);
 
-        currentParent.children.splice(targetIndex, 1);
-        newParent.children.push(targetId, ...target.children);
-        target.children = [];
+					deleteItem(currentItem.id, draft);
+				}
+				break;
+			}
+			case INDENT: {
+				const target = getCurrentItem(draft);
+				const currentParent = getParent(target.id, draft);
+				const newParent = getAboveItem(target.id, draft);
 
-        draft.path.splice(-1, 1);
-        draft.path.push(newParentId, targetId);
+				// remove target from parent
+				const targetIndex = currentParent.children.indexOf(target.id);
+				currentParent.children.splice(targetIndex, 1);
 
-        break;
-      }
-      case UNDENT: {
-        const [targetId, currentParentId, newParentId] = [
-          ...draft.path
-        ].reverse();
-        const currentParent = draft.item[currentParentId];
-        const targetIndex = currentParent.children.findIndex(
-          value => value === targetId
-        );
+				// add to new parent
+				newParent.children.push(target.id);
 
-        const newParent = draft.item[newParentId];
-        const currentParentIndex = newParent.children.findIndex(
-          value => value === currentParentId
-        );
+				// select new path
+				draft.path.pop();
+				draft.path.push(newParent.id, target.id);
 
-        currentParent.children.splice(targetIndex, 1);
-        newParent.children.splice(currentParentIndex + 1, 0, targetId);
+				break;
+			}
+			case UNDENT: {
+				const target = getCurrentItem(draft);
+				const currentParent = getParent(target.id, draft);
+				const newParent = getParent(currentParent.id, draft);
 
-        const target = draft.item[targetId];
-        target.children = currentParent.children.splice(targetIndex);
+				// remove target from current parent
+				const targetIndex = currentParent.children.indexOf(target.id);
+				currentParent.children.splice(targetIndex, 1);
 
-        draft.path.splice(-2, 1);
+				// add to the new parent
+				const currentParentIndex = newParent.children.indexOf(currentParent.id);
+				newParent.children.splice(currentParentIndex + 1, 0, target.id);
 
-        break;
-      }
-      case UP: {
-        const [beforeId, parentId] = [...draft.path].reverse();
-        const parent = draft.item[parentId];
-        const targetIndex =
-          parent.children.findIndex(value => value === beforeId) - 1;
-        const targetId = parent.children[targetIndex];
+				// select the new path
+				draft.path.splice(-2, 1);
 
-        draft.path.splice(-1, 1, targetId);
+				break;
+			}
+			case UP: {
+				const currentId = getCurrentId(draft);
+				const aboveItem = getAboveItem(currentId, draft);
+				draft.path.pop();
 
-        break;
-      }
-      case DOWN: {
-        const [afterId, parentId] = [...draft.path].reverse();
-        const parent = draft.item[parentId];
-        const targetIndex =
-          parent.children.findIndex(value => value === afterId) + 1;
-        const targetId = parent.children[targetIndex];
+				if (aboveItem != null) {
+					draft.path.push(aboveItem.id);
 
-        draft.path.splice(-1, 1, targetId);
+					let children = aboveItem.children;
+					while (children.length > 0) {
+						const lastChildId = children.slice(-1)[0];
+						draft.path.push(lastChildId);
 
-        break;
-      }
-      case SELECT: {
-        const { path } = action.payload;
-        draft.path = path;
+						const lastChild = getItemById(lastChildId, draft);
+						children = lastChild.children;
+					}
+				}
 
-        break;
-      }
-      default:
-    }
-  });
+				break;
+			}
+			case DOWN: {
+				const currentItem = getCurrentItem(draft);
+
+				if (currentItem.children.length > 0) {
+					draft.path.push(currentItem.children[0]);
+				} else {
+					let belowItem = getBelowItem(currentItem.id, draft);
+					while (belowItem == null) {
+						const parent = getParent(currentItem.id, draft);
+						belowItem = getBelowItem(parent.id, draft);
+						draft.path.pop();
+					}
+
+					draft.path.push(belowItem.id);
+				}
+
+				break;
+			}
+			case SELECT: {
+				const { path } = action.payload;
+				draft.path = path;
+
+				break;
+			}
+			default:
+		}
+	});
 
 export const addItem = () => ({ type: ADD });
 
 export const editItem = ({ content }) => ({
-  type: EDIT,
-  payload: { content }
+	type: EDIT,
+	payload: { content },
 });
+
+export const backspace = () => ({ type: BACKSPACE });
 
 export const up = () => ({ type: UP });
 export const down = () => ({ type: DOWN });
@@ -152,6 +246,6 @@ export const indent = () => ({ type: INDENT });
 export const undent = () => ({ type: UNDENT });
 
 export const select = ({ id, path }) => ({
-  type: SELECT,
-  payload: { id, path }
+	type: SELECT,
+	payload: { id, path },
 });

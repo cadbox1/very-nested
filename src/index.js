@@ -4,6 +4,8 @@ import { applyMiddleware, compose, createStore } from "redux";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 
+import 'bootstrap/dist/css/bootstrap-reboot.css'
+
 import App from "./App";
 import reducer from "./duck";
 import registerServiceWorker from "./registerServiceWorker";

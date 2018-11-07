@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { editItem, select } from "./duck";
 
@@ -14,23 +14,20 @@ class Item extends Component {
   render() {
     const { id, content, path, globalPath, children } = this.props;
     return (
-      <div>
+      <li>
         {globalPath.slice(-1)[0] === id ? (
-          <input value={content} onChange={this.handleChange} autoFocus />
+          <Fragment><input value={content} onChange={this.handleChange} autoFocus /><span> - {id}</span></Fragment>
         ) : (
-          <div>
             <span onClick={this.handleClick}>{content}</span>
-            <span> - {id}</span>
-          </div>
         )}
         {children && (
-          <div style={{ marginLeft: "1rem" }}>
+          <ul>
             {children.map(id => (
               <ConnectedItem key={id} path={[...path, id]} />
             ))}
-          </div>
+          </ul>
         )}
-      </div>
+      </li>
     );
   }
 }
