@@ -3,6 +3,7 @@ import uuidv4 from "uuid/v4";
 
 export const ADD = "ADD";
 export const EDIT = "EDIT";
+export const CALCULATION = "CALCULATION";
 export const BACKSPACE = "BACKSPACE";
 export const INDENT = "INDENT";
 export const UNDENT = "UNDENT";
@@ -62,8 +63,8 @@ const getAllItemsWithIdInChildren = (id, state, callback) => {
 
 const replaceAllReferencesToId = (oldId, newId, state) => {
 	getAllItemsWithIdInChildren(oldId, state, item => {
-		item.children = item.children.map(
-			childId => (childId === oldId ? newId : childId)
+		item.children = item.children.map(childId =>
+			childId === oldId ? newId : childId
 		);
 	});
 };
@@ -87,9 +88,15 @@ const initialState = () => {
 			[rootId]: {
 				id: rootId,
 				content: "Root",
+				properties: {},
 				children: [firstChildId],
 			},
-			[firstChildId]: { id: firstChildId, content: "", children: [] },
+			[firstChildId]: {
+				id: firstChildId,
+				content: "",
+				properties: {},
+				children: [],
+			},
 		},
 	};
 };
@@ -100,7 +107,12 @@ export default (state = initialState(), action) =>
 			case ADD: {
 				// create item
 				const newId = uuidv4();
-				draft.item[newId] = { id: newId, content: "", children: [] };
+				draft.item[newId] = {
+					id: newId,
+					content: "",
+					properties: {},
+					children: [],
+				};
 
 				// insert into collection
 				const currentId = getCurrentId(draft);
@@ -123,9 +135,36 @@ export default (state = initialState(), action) =>
 					replaceAllReferencesToId(id, newId, draft);
 					deleteItem(id, draft);
 				} else {
-					getCurrentItem(draft).content = content;
+					const item = getCurrentItem(draft);
+					if (content.substring(0, content.indexOf(" ")).includes(":")) {
+						// is a property
+						const key = content.substring(0, content.indexOf(":"));
+						const value = content.substring(content.indexOf(":") + 2);
+
+						const parent = getParent(item.id, draft);
+						parent.properties[key] = value;
+					}
+					// TODO: handle removing properties
+					item.content = content;
 				}
 
+				break;
+			}
+			case CALCULATION: {
+				const { calculation } = action.payload;
+				const item = getCurrentItem(draft);
+				const parent = getParent(item.id, draft);
+				try {
+					// (items, parent) => // [filteredItems]
+					// filteredItem = {(id), (content)}
+					const items = Object.keys(draft.item).map(key => draft.item[key]);
+					const resultsFunction = eval(calculation);
+					const results = resultsFunction(items, parent);
+					item.children = results.map(result => result.id);
+					// (items, parent) => items.filter(item => item.properties.type == "task")
+				} catch (e) {
+					item.error = e.message;
+				}
 				break;
 			}
 			case BACKSPACE: {
@@ -147,6 +186,7 @@ export default (state = initialState(), action) =>
 				}
 				break;
 			}
+
 			case INDENT: {
 				const target = getCurrentItem(draft);
 				const currentParent = getParent(target.id, draft);
@@ -233,10 +273,18 @@ export default (state = initialState(), action) =>
 
 export const addItem = () => ({ type: ADD });
 
-export const editItem = ({ content }) => ({
-	type: EDIT,
-	payload: { content },
-});
+export const editItem = ({ content }) => (dispatch, getState) => {
+	if (content.startsWith("calculation: ")) {
+		dispatch({
+			type: CALCULATION,
+			payload: { calculation: content.replace("calculation: ", "") },
+		});
+	}
+	dispatch({
+		type: EDIT,
+		payload: { content },
+	});
+};
 
 export const backspace = () => ({ type: BACKSPACE });
 
