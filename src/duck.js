@@ -158,6 +158,7 @@ export default (state = initialState(), action) =>
 					// (items, parent) => // [filteredItems]
 					// filteredItem = {(id), (content)}
 					const items = Object.keys(draft.item).map(key => draft.item[key]);
+					// eslint-disable-next-line
 					const resultsFunction = eval(calculation);
 					const results = resultsFunction(items, parent);
 					item.children = results.map(result => result.id);
