@@ -1,9 +1,11 @@
 # Todo
 
+- timeline view
 - Handle unhappy cases
 - Remove properties as they're removed
 - Expand and Collapse functionality - state in redux I think
-- Threads grouped by topic and time
+- snippets
+- search
 
 # Done
 
