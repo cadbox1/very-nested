@@ -87,7 +87,7 @@ const initialState = () => {
 		item: {
 			[rootId]: {
 				id: rootId,
-				content: "Root",
+				content: "Notes",
 				properties: {},
 				children: [firstChildId],
 			},
