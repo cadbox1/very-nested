@@ -15,7 +15,7 @@ class Item extends Component {
 		const { id, content, error, path, globalPath, children } = this.props;
 		return (
 			<li>
-				{globalPath.slice(-1)[0] === id ? (
+				{globalPath.join() === path.join() ? (
 					<Fragment>
 						<input value={content} onChange={this.handleChange} autoFocus />
 						<span> - {error || id}</span>
