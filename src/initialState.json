@@ -65,7 +65,7 @@
 		},
 		"42bb4d6f-5a08-431d-9e9d-d9bc9d903618": {
 			"id": "42bb4d6f-5a08-431d-9e9d-d9bc9d903618",
-			"content": "I like DRY notes (don't repeat yourself",
+			"content": "I like DRY notes (don't repeat yourself)",
 			"properties": {},
 			"children": []
 		},
@@ -123,126 +123,5 @@
 			"error": "Invalid or unexpected token"
 		}
 	},
-	"activity": [
-		{
-			"name": "content update",
-			"content": "Root",
-			"affectedId": "a8651768-16fc-48b6-8a86-4a68f3d588a2",
-			"date": "2019-12-12T08:29:25.038Z"
-		},
-		{
-			"name": "content update",
-			"content": "notes",
-			"affectedId": "9defb443-0277-4144-9fa7-36bfd5b3ee30",
-			"date": "2019-12-12T08:29:33.072Z"
-		},
-		{
-			"name": "content update",
-			"content": "this looks like a very basic notes app",
-			"affectedId": "216889af-4ee0-4efa-a8e2-1fb2f39f209b",
-			"date": "2019-12-12T08:29:49.321Z"
-		},
-		{
-			"name": "content update",
-			"content": "I wonder why Cadell thinks this is cool?",
-			"affectedId": "4cd0044c-9da7-43ae-b450-46edfe8295e2",
-			"date": "2019-12-12T08:30:00.370Z"
-		},
-		{
-			"name": "content update",
-			"content": "look at tasks.backlog",
-			"affectedId": "fe99a49c-4e81-4462-80a0-6313d9019923",
-			"date": "2019-12-12T08:30:20.172Z"
-		},
-		{
-			"name": "content update",
-			"content": "type: task",
-			"affectedId": "f035e245-30c1-4cd7-b634-c45d2061e139",
-			"date": "2019-12-12T08:30:24.731Z"
-		},
-		{
-			"name": "content update",
-			"content": "this task is also in the backlog because it matched the backlog function",
-			"affectedId": "757059d7-5b70-4c65-be4a-0bf151bdfb02",
-			"date": "2019-12-12T08:30:55.301Z"
-		},
-		{
-			"name": "content update",
-			"content": "the notes you write here are also in the backlog because we use references underneath",
-			"affectedId": "78081e0f-a6a1-4df7-b7ab-a986ab3ec0ad",
-			"date": "2019-12-12T08:31:55.108Z"
-		},
-		{
-			"name": "content update",
-			"content": "I like DRY notes (don't repeat yourself)",
-			"affectedId": "42bb4d6f-5a08-431d-9e9d-d9bc9d903618",
-			"date": "2019-12-12T08:32:11.629Z"
-		},
-		{
-			"name": "content update",
-			"content": "you can mark the task as done by writing \"status: done\" on the next line",
-			"affectedId": "c3b9065f-5670-46bb-923e-5da8a7074636",
-			"date": "2019-12-12T08:32:49.801Z"
-		},
-		{
-			"name": "content update",
-			"content": "tasks",
-			"affectedId": "2ee582b0-f760-4546-ad28-cec9a068c1ca",
-			"date": "2019-12-12T08:33:11.635Z"
-		},
-		{
-			"name": "content update",
-			"content": "backlog",
-			"affectedId": "2c8a2cfc-b608-40e6-a9d6-ccb045f748ad",
-			"date": "2019-12-12T08:33:16.403Z"
-		},
-		{
-			"name": "content update",
-			"content": "calculation: items => items.filter(item => item.children.some(child => child.content == \"type: task\") && !item.children.some(child => child.content == \"status: done\"))",
-			"affectedId": "5edc3499-640f-409c-bcdb-b9fc3c75cc86",
-			"date": "2019-12-12T08:54:02.970Z"
-		},
-		{
-			"name": "content update",
-			"content": "done",
-			"affectedId": "c8f8959a-7b8a-48ba-ae67-e044f459a398",
-			"date": "2019-12-12T08:54:19.169Z"
-		},
-		{
-			"name": "content update",
-			"content": "calculation: items => items.filter(item => item.children.some(child => child.content == \"type: task\") && item.children.some(child => child.content == \"status: done\"))",
-			"affectedId": "b68a7905-81e2-4ee5-afe6-3b0d365e26e2",
-			"date": "2019-12-12T08:54:24.708Z"
-		},
-		{
-			"name": "content update",
-			"content": "search",
-			"affectedId": "b6bede60-661a-4fea-bcb9-04fc662e64a7",
-			"date": "2019-12-12T08:54:31.885Z"
-		},
-		{
-			"name": "content update",
-			"content": "calculation: items => items.filter(item => item.content.includes(\"special\") && !item.content.includes(\"calculation\"))",
-			"affectedId": "48a19e61-f479-426d-8b8a-9d8cf4281ce3",
-			"date": "2019-12-12T08:55:10.887Z"
-		},
-		{
-			"name": "content update",
-			"content": "calculation: items => items.filter(item => item.children.some(child => child.content == \"type: task\") && item.children.some(child => child.content == \"status: done\")",
-			"affectedId": "b68a7905-81e2-4ee5-afe6-3b0d365e26e2",
-			"date": "2019-12-12T22:42:33.521Z"
-		},
-		{
-			"name": "content update",
-			"content": "calculation: items => items.filter(item => item.children.some(child => child.content == \"type: task\") && !item.children.some(child => child.content == \"status: done\"))",
-			"affectedId": "5edc3499-640f-409c-bcdb-b9fc3c75cc86",
-			"date": "2019-12-12T22:59:19.485Z"
-		},
-		{
-			"name": "content update",
-			"content": "I like DRY notes (don't repeat yourself",
-			"affectedId": "42bb4d6f-5a08-431d-9e9d-d9bc9d903618",
-			"date": "2019-12-12T23:00:22.266Z"
-		}
-	]
+	"activity": []
 }
