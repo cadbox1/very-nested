@@ -1,5 +1,8 @@
 import produce from "immer";
 import uuidv4 from "uuid/v4";
+import { debounce } from "debounce";
+
+import initialState from "./initialState.json";
 
 export const ADD = "ADD";
 export const EDIT = "EDIT";
@@ -21,9 +24,10 @@ export const select = ({ id, path }) => ({
 	type: SELECT,
 	payload: { id, path },
 });
+
 export const addItem = () => ({ type: ADD });
 
-export const editItem = ({ content }) => (dispatch, getState) => {
+export const editItem = ({ id, content }) => (dispatch, getState) => {
 	dispatch({
 		type: EDIT,
 		payload: { content },
@@ -31,35 +35,29 @@ export const editItem = ({ content }) => (dispatch, getState) => {
 	if (content.startsWith("calculation: ")) {
 		dispatch({
 			type: CALCULATION,
-			payload: { calculation: content.replace("calculation: ", "") },
+			payload: { id },
 		});
 	}
 };
 
-const initialState = () => {
-	const rootId = uuidv4();
-	const firstChildId = uuidv4();
-	return {
-		path: [rootId, firstChildId],
-		item: {
-			[rootId]: {
-				id: rootId,
-				content: "Notes",
-				properties: {},
-				children: [firstChildId],
-			},
-			[firstChildId]: {
-				id: firstChildId,
-				content: "",
-				properties: {},
-				children: [],
-			},
-		},
-		activity: []
-	};
+const debouncedProcessState = debounce((dispatch, getState) => {
+	const state = getState();
+	Object.keys(state.item)
+		.map(id => state.item[id])
+		.filter(item => item.content.startsWith("calculation: "))
+		.forEach(item =>
+			dispatch({
+				type: CALCULATION,
+				payload: { id: item.id },
+			})
+		);
+}, 500);
+
+export const processState = () => (dispatch, getState) => {
+	debouncedProcessState(dispatch, getState);
 };
 
-export default (state = initialState(), action) =>
+export default (state = initialState, action) =>
 	produce(state, draft => {
 		const translator = new Translator(draft);
 		switch (action.type) {
@@ -104,14 +102,14 @@ export default (state = initialState(), action) =>
 						content: item.content,
 						affectedId: item.id,
 						date: new Date(),
-					}
+					};
 
 					const latestActivity = draft.activity[draft.activity.length - 1];
 					if (latestActivity && latestActivity.affectedId === item.id) {
 						latestActivity.date = activityLog.date;
 						latestActivity.content = activityLog.content;
 					} else {
-						draft.activity.push(activityLog)
+						draft.activity.push(activityLog);
 					}
 				}
 
@@ -218,13 +216,19 @@ export default (state = initialState(), action) =>
 				break;
 			}
 			case CALCULATION: {
-				const { calculation } = action.payload;
-				const item = translator.getCurrentItem();
+				const { id } = action.payload;
+				const item = translator._getItemById(id);
 				const parent = translator.getParent(item.id);
+
+				const calculation = item.content.replace("calculation: ", "");
+
 				try {
 					// (items, parent) => // [filteredItems]
 					// filteredItem = {(id), (content)}
-					const items = Object.keys(draft.item).map(key => draft.item[key]);
+					const items = Object.keys(draft.item).map(
+						itemId => new Item(itemId, draft.item)
+					);
+
 					// eslint-disable-next-line
 					const resultsFunction = eval(calculation);
 					const results = resultsFunction(items, parent);
@@ -238,6 +242,25 @@ export default (state = initialState(), action) =>
 			default:
 		}
 	});
+
+class Item {
+	constructor(id, itemStore) {
+		this.id = id;
+		this.itemStore = itemStore;
+
+		this.item = itemStore[id];
+	}
+
+	get content() {
+		return this.item.content;
+	}
+
+	get children() {
+		return this.item.children
+			.filter(childId => !!childId)
+			.map(childId => new Item(childId, this.itemStore));
+	}
+}
 
 // These are the happy methods
 class Translator {
