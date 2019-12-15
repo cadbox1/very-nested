@@ -1,15 +1,21 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { editItem, select } from "./duck";
+import { editItem, select, processState } from "./duck";
 
 class Item extends Component {
 	handleChange = evt => {
-		const { onEditItem } = this.props;
-		onEditItem({ content: evt.target.value });
+		const { id, onEditItem } = this.props;
+		onEditItem({ id, content: evt.target.value });
 	};
 	handleClick = evt => {
 		const { path, onSelect } = this.props;
 		onSelect({ path });
+	};
+	handleBlur = () => {
+		this.props.processState();
+	};
+	handleFocus = () => {
+		this.props.processState();
 	};
 	render() {
 		const { id, content, error, path, globalPath, children } = this.props;
@@ -17,13 +23,24 @@ class Item extends Component {
 			<li>
 				{globalPath.join() === path.join() ? (
 					<Fragment>
-						<input value={content} onChange={this.handleChange} autoFocus />
+						<input
+							value={content}
+							onChange={this.handleChange}
+							onBlur={this.handleBlur}
+							onFocus={this.handleFocus} // not entirely sure why we need this
+							autoFocus
+						/>
 						<span> - {error || id}</span>
 					</Fragment>
 				) : (
-					<span onClick={this.handleClick}>{content}</span>
+					<span
+						onClick={this.handleClick}
+						style={{ color: content.startsWith("calculation: ") && "green" }}
+					>
+						{content}
+					</span>
 				)}
-				{children && (
+				{children && path.filter(pathId => pathId === id).length < 2 && (
 					<ul>
 						{children.map(id => (
 							<ConnectedItem key={id} path={[...path, id]} />
@@ -39,9 +56,10 @@ function mapStateToProps(state, props) {
 	return { ...state.item[id], id, globalPath: state.path };
 }
 
-const ConnectedItem = connect(
-	mapStateToProps,
-	{ onEditItem: editItem, onSelect: select }
-)(Item);
+const ConnectedItem = connect(mapStateToProps, {
+	onEditItem: editItem,
+	onSelect: select,
+	processState,
+})(Item);
 
 export default ConnectedItem;
