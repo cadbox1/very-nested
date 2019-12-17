@@ -11,7 +11,7 @@ import "bootstrap/dist/css/bootstrap-reboot.css";
 
 import App from "./App";
 import reducer from "./duck";
-import registerServiceWorker from "./registerServiceWorker";
+import * as serviceWorker from "./serviceWorker";
 
 // dirty hack https://github.com/rt2zz/redux-persist/issues/747#issuecomment-425126732
 import { setAutoFreeze } from "immer";
@@ -46,4 +46,8 @@ ReactDOM.render(
 	</Provider>,
 	document.getElementById("root")
 );
-registerServiceWorker();
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.register();
