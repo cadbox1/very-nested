@@ -94,7 +94,7 @@
 			"id": "5edc3499-640f-409c-bcdb-b9fc3c75cc86",
 			"content": "calculation: items => items.filter(item => item.children.some(child => child.content == \"type: task\") && !item.children.some(child => child.content == \"status: done\"))",
 			"properties": {},
-			"children": []
+			"children": ["fe99a49c-4e81-4462-80a0-6313d9019923"]
 		},
 		"c8f8959a-7b8a-48ba-ae67-e044f459a398": {
 			"id": "c8f8959a-7b8a-48ba-ae67-e044f459a398",

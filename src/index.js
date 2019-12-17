@@ -28,13 +28,11 @@ const persistedReducer = persistReducer(
 let persistor;
 
 function configureStore() {
+	const composeEnhancers =
+		window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 	const store = createStore(
 		persistedReducer,
-		compose(
-			applyMiddleware(thunk),
-			window.__REDUX_DEVTOOLS_EXTENSION__ &&
-				window.__REDUX_DEVTOOLS_EXTENSION__()
-		)
+		composeEnhancers(applyMiddleware(thunk))
 	);
 	persistor = persistStore(store);
 	return store;
