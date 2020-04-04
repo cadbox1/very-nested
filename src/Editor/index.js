@@ -9,7 +9,7 @@ const preventDefault = func => evt => {
   func();
 };
 
-class App extends Component {
+class Editor extends Component {
   up = preventDefault(this.props.up);
   down = preventDefault(this.props.down);
   indent = preventDefault(this.props.indent);
@@ -57,4 +57,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps,
   { up, down, indent, undent, addItem, backspace }
-)(App);
+)(Editor);
