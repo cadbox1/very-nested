@@ -5,7 +5,14 @@ import { usePromise } from "frontend/common/usePromise";
 const octokit = new Octokit();
 
 export const Manager = () => {
-	const { pending, value, call } = usePromise<any>({
+	const helloWorldRequest = usePromise<any>({
+		promiseFunction: async () =>
+			fetch("/.netlify/functions/hello-world").then((response) =>
+				response.json()
+			),
+	});
+
+	const githubRepoRequest = usePromise<any>({
 		promiseFunction: async () =>
 			octokit.repos.listForOrg({
 				org: "octokit",
@@ -14,16 +21,20 @@ export const Manager = () => {
 	});
 
 	useEffect(() => {
-		call();
+		helloWorldRequest.call();
+		githubRepoRequest.call();
 	}, []);
 
-	console.log(value);
+	console.log(helloWorldRequest.value);
 
 	return (
 		<div>
 			<h1>Manager</h1>
-			{pending && <p>pending</p>}
-			{value?.data?.map((repo: any) => (
+			{helloWorldRequest.fulfilled && (
+				<h2>Message: {helloWorldRequest.value?.message}</h2>
+			)}
+			{githubRepoRequest.pending && <p>pending</p>}
+			{githubRepoRequest.value?.data?.map((repo: any) => (
 				<div>{repo.name}</div>
 			))}
 		</div>
