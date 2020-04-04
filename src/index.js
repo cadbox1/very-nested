@@ -9,8 +9,8 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import "bootstrap/dist/css/bootstrap-reboot.css";
 
-import App from "./App";
-import reducer from "./Editor/duck";
+import App from "./frontend/App";
+import reducer from "./frontend/Editor/duck";
 import * as serviceWorker from "./serviceWorker";
 
 // dirty hack https://github.com/rt2zz/redux-persist/issues/747#issuecomment-425126732
