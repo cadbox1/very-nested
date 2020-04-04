@@ -1,37 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Octokit } from "@octokit/rest";
 import { usePromise } from "frontend/common/usePromise";
 
-const octokit = new Octokit();
+let octokit: Octokit;
 
 export const Manager = () => {
-	const helloWorldRequest = usePromise<any>({
-		promiseFunction: async () =>
-			fetch("/.netlify/functions/hello-world").then((response) =>
-				response.json()
-			),
-	});
+	const [accessToken, setAccessToken] = useState(
+		localStorage.getItem("accessToken")
+	);
 
 	const githubRepoRequest = usePromise<any>({
-		promiseFunction: async () =>
-			octokit.repos.listForOrg({
-				org: "octokit",
-				type: "public",
-			}),
+		promiseFunction: async () => octokit.repos.listForAuthenticatedUser(),
 	});
 
 	useEffect(() => {
-		helloWorldRequest.call();
-		githubRepoRequest.call();
-	}, []);
+		if (accessToken) {
+			localStorage.setItem("accessToken", accessToken);
+			octokit = new Octokit({
+				auth: accessToken,
+			});
+			githubRepoRequest.call();
+		}
+	}, [accessToken]);
 
-	console.log(helloWorldRequest.value);
+	const githubAuthRequest = usePromise<any>({
+		promiseFunction: async () =>
+			fetch("/.netlify/functions/auth").then((response) => response.json()),
+	});
+
+	useEffect(() => {
+		if (!accessToken) {
+			githubAuthRequest.call();
+		}
+
+		// @ts-ignore
+		window.handleToken = (accessToken) => setAccessToken(accessToken);
+	}, []);
 
 	return (
 		<div>
 			<h1>Manager</h1>
-			{helloWorldRequest.fulfilled && (
-				<h2>Message: {helloWorldRequest.value?.message}</h2>
+			{githubAuthRequest.fulfilled && (
+				<a href={githubAuthRequest.value.url} target="_blank">
+					Login with GitHub
+				</a>
 			)}
 			{githubRepoRequest.pending && <p>pending</p>}
 			{githubRepoRequest.value?.data?.map((repo: any) => (
