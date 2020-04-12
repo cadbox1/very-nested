@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Octokit } from "@octokit/rest";
+import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { usePromise } from "frontend/common/usePromise";
 import { generateAuthorizeUrl } from "frontend/common/oauth";
+import { Add } from "./Add";
+import { View } from "./View";
 
-let octokit: Octokit;
+export let octokit: Octokit;
 
 const scope = "public_repo";
 
@@ -24,8 +27,11 @@ export const Manager = () => {
 		});
 	};
 
-	const githubRepoRequest = usePromise<any>({
+	const repos = usePromise<any>({
 		promiseFunction: async () => octokit.repos.listForAuthenticatedUser(),
+	});
+	const currentUser = usePromise<any>({
+		promiseFunction: async () => octokit.users.getAuthenticated(),
 	});
 
 	useEffect(() => {
@@ -33,7 +39,8 @@ export const Manager = () => {
 		setupOktokit(accessToken || "");
 
 		if (accessToken) {
-			githubRepoRequest.call();
+			repos.call();
+			currentUser.call();
 		}
 	}, [accessToken]);
 
@@ -43,17 +50,34 @@ export const Manager = () => {
 	}, []);
 
 	return (
-		<div>
-			<h1>Manager</h1>
-			{!accessToken && (
-				<a href={generateAuthorizeUrl({ scope })} target="_blank">
-					Login with GitHub
-				</a>
-			)}
-			{githubRepoRequest.pending && <p>pending</p>}
-			{githubRepoRequest.value?.data?.map((repo: any) => (
-				<div key={repo.name}>{repo.name}</div>
-			))}
-		</div>
+		<Router>
+			<div>
+				<h1>Manager</h1>
+				{!accessToken && (
+					<a href={generateAuthorizeUrl({ scope })} target="_blank">
+						Login with GitHub
+					</a>
+				)}
+				{octokit && (
+					<Switch>
+						<Route path="/add">
+							<Add currentUser={currentUser.value?.login} />
+						</Route>
+						<Route path="/repo/:user/:name">
+							<View />
+						</Route>
+						<Route path="/">
+							<Link to="/add">Add</Link>
+							{repos.pending && <p>pending</p>}
+							{repos.value?.data?.map((repo: any) => (
+								<div key={repo.name}>
+									<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
+								</div>
+							))}
+						</Route>
+					</Switch>
+				)}
+			</div>
+		</Router>
 	);
 };

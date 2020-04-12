@@ -4,6 +4,7 @@ import { debounce } from "debounce";
 
 import initialState from "./initialState.json";
 
+export const LOAD = "";
 export const ADD = "ADD";
 export const EDIT = "EDIT";
 export const BACKSPACE = "BACKSPACE";
@@ -15,6 +16,7 @@ export const SELECT = "SELECT";
 export const RECORD_CHANGE = "RECORD_CHANGE";
 export const CALCULATION = "CALCULATION";
 
+export const load = ({ data }) => ({ type: LOAD, payload: data });
 export const backspace = () => ({ type: BACKSPACE });
 export const up = () => ({ type: UP });
 export const down = () => ({ type: DOWN });
@@ -43,9 +45,9 @@ export const editItem = ({ id, content }) => (dispatch, getState) => {
 const debouncedProcessState = debounce((dispatch, getState) => {
 	const state = getState();
 	Object.keys(state.item)
-		.map(id => state.item[id])
-		.filter(item => item.content.startsWith("calculation: "))
-		.forEach(item =>
+		.map((id) => state.item[id])
+		.filter((item) => item.content.startsWith("calculation: "))
+		.forEach((item) =>
 			dispatch({
 				type: CALCULATION,
 				payload: { id: item.id },
@@ -57,10 +59,13 @@ export const processState = () => (dispatch, getState) => {
 	debouncedProcessState(dispatch, getState);
 };
 
-export default (state = initialState, action) =>
-	produce(state, draft => {
+export default (state = {}, action) =>
+	produce(state, (draft) => {
 		const translator = new Translator(draft);
 		switch (action.type) {
+			case LOAD: {
+				return action.payload;
+			}
 			case ADD: {
 				// create item
 				const newId = uuidv4();
@@ -226,13 +231,13 @@ export default (state = initialState, action) =>
 					// (items, parent) => // [filteredItems]
 					// filteredItem = {(id), (content)}
 					const items = Object.keys(draft.item).map(
-						itemId => new Item(itemId, draft.item)
+						(itemId) => new Item(itemId, draft.item)
 					);
 
 					// eslint-disable-next-line
 					const resultsFunction = eval(calculation);
 					const results = resultsFunction(items, parent);
-					item.children = results.map(result => result.id);
+					item.children = results.map((result) => result.id);
 					// (items, parent) => items.filter(item => item.properties.type == "task")
 				} catch (e) {
 					item.error = e.message;
@@ -257,8 +262,8 @@ class Item {
 
 	get children() {
 		return this.item.children
-			.filter(childId => !!childId)
-			.map(childId => new Item(childId, this.itemStore));
+			.filter((childId) => !!childId)
+			.map((childId) => new Item(childId, this.itemStore));
 	}
 }
 
@@ -273,21 +278,21 @@ class Translator {
 		return this._getItemById(currentId);
 	};
 
-	getParent = id => {
+	getParent = (id) => {
 		const parentId = this._getParentId(id);
 		return this._getItemById(parentId);
 	};
 
-	getAboveItem = id => {
+	getAboveItem = (id) => {
 		return this._getAboveItems(id)[0];
 	};
 
-	getBelowItem = id => {
+	getBelowItem = (id) => {
 		return this._getBelowItems(id)[0];
 	};
 
 	// these are the lower-level, private methods
-	_getItemById = id => {
+	_getItemById = (id) => {
 		return this.state.item[id];
 	};
 
@@ -295,42 +300,42 @@ class Translator {
 		return [...this.state.path].reverse()[0];
 	};
 
-	_getAncestorIds = id => {
+	_getAncestorIds = (id) => {
 		const reversedPath = [...this.state.path].reverse();
 		const indexOfId = reversedPath.indexOf(id);
 		// return everything in the path after the id
 		return reversedPath.slice(indexOfId + 1);
 	};
 
-	_getParentId = id => {
+	_getParentId = (id) => {
 		return this._getAncestorIds(id)[0];
 	};
 
-	_getAboveItems = id => {
+	_getAboveItems = (id) => {
 		const parent = this.getParent(id);
 		const currentIndex = parent.children.indexOf(id);
 		const getAboveItemIds = parent.children.slice(0, currentIndex).reverse();
-		return getAboveItemIds.map(id => this._getItemById(id));
+		return getAboveItemIds.map((id) => this._getItemById(id));
 	};
 
-	_getBelowItems = id => {
+	_getBelowItems = (id) => {
 		const parent = this.getParent(id);
 		const currentIndex = parent.children.indexOf(id);
 		const getBelowItemIds = [...parent.children].slice(currentIndex + 1);
-		return getBelowItemIds.map(id => this._getItemById(id));
+		return getBelowItemIds.map((id) => this._getItemById(id));
 	};
 }
 
 const replaceAllReferencesToId = (oldId, newId, state) => {
-	getAllItemsWithIdInChildren(oldId, state, item => {
-		item.children = item.children.map(childId =>
+	getAllItemsWithIdInChildren(oldId, state, (item) => {
+		item.children = item.children.map((childId) =>
 			childId === oldId ? newId : childId
 		);
 	});
 };
 
 const getAllItemsWithIdInChildren = (id, state, callback) => {
-	Object.keys(state.item).forEach(itemId => {
+	Object.keys(state.item).forEach((itemId) => {
 		const item = state.item[itemId];
 		if (item.children.includes(id)) {
 			callback(item);
@@ -339,8 +344,8 @@ const getAllItemsWithIdInChildren = (id, state, callback) => {
 };
 
 const removeAllReferencesToId = (id, state) => {
-	getAllItemsWithIdInChildren(id, state, item => {
-		item.children = item.children.filter(childId => childId !== id);
+	getAllItemsWithIdInChildren(id, state, (item) => {
+		item.children = item.children.filter((childId) => childId !== id);
 	});
 };
 
