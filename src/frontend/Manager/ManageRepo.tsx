@@ -18,7 +18,7 @@ export const ManageRepo = () => {
 		promiseFunction: async () => {
 			const response: any = await octokit.repos.getContents({
 				repo,
-				owner: owner,
+				owner,
 				path: veryNestedDataFile,
 			});
 
@@ -33,7 +33,7 @@ export const ManageRepo = () => {
 
 	useEffect(() => {
 		getRequest.call();
-	}, []);
+	}, [repo, owner]);
 
 	// @ts-ignore
 	const itemState = useSelector((state) => state.item);
@@ -75,7 +75,7 @@ export const ManageRepo = () => {
 				onClick={handleRevert}
 				disabled={getRequest.pending}
 			>
-				{getRequest.pending ? "Reverting..." : "Revert local changes"}
+				Revert local changes
 			</button>
 			{getRequest.pending && <p>Loading...</p>}
 			{getRequest.rejected && (

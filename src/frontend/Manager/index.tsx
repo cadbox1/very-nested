@@ -59,7 +59,7 @@ export const Manager = () => {
 			{octokit && (
 				<Switch>
 					<Route path="/add">
-						<Add currentUser={currentUser.value?.login} />
+						<Add currentUser={currentUser.value?.data?.login} />
 					</Route>
 					<Route path="/repo/:owner/:repo">
 						<ManageRepo />
