@@ -1,10 +1,10 @@
 import produce from "immer";
-import uuidv4 from "uuid/v4";
+import shortid from "shortid";
 import { debounce } from "debounce";
 
 import initialState from "./initialState.json";
 
-export const LOAD = "";
+export const LOAD = "LOAD";
 export const ADD = "ADD";
 export const EDIT = "EDIT";
 export const BACKSPACE = "BACKSPACE";
@@ -59,20 +59,21 @@ export const processState = () => (dispatch, getState) => {
 	debouncedProcessState(dispatch, getState);
 };
 
-export default (state = {}, action) =>
+export default (state = initialState, action) =>
 	produce(state, (draft) => {
 		const translator = new Translator(draft);
 		switch (action.type) {
 			case LOAD: {
-				return action.payload;
+				draft.path = [];
+				draft.item = action.payload;
+				break;
 			}
 			case ADD: {
 				// create item
-				const newId = uuidv4();
+				const newId = shortid.generate();
 				draft.item[newId] = {
 					id: newId,
 					content: "",
-					properties: {},
 					children: [],
 				};
 
@@ -100,22 +101,6 @@ export default (state = {}, action) =>
 				} else {
 					const item = translator.getCurrentItem(draft);
 					item.content = content;
-
-					// handle activity
-					const activityLog = {
-						name: "content update",
-						content: item.content,
-						affectedId: item.id,
-						date: new Date(),
-					};
-
-					const latestActivity = draft.activity[draft.activity.length - 1];
-					if (latestActivity && latestActivity.affectedId === item.id) {
-						latestActivity.date = activityLog.date;
-						latestActivity.content = activityLog.content;
-					} else {
-						draft.activity.push(activityLog);
-					}
 				}
 
 				break;
@@ -238,7 +223,6 @@ export default (state = {}, action) =>
 					const resultsFunction = eval(calculation);
 					const results = resultsFunction(items, parent);
 					item.children = results.map((result) => result.id);
-					// (items, parent) => items.filter(item => item.properties.type == "task")
 				} catch (e) {
 					item.error = e.message;
 				}

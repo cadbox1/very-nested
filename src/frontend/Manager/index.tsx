@@ -4,7 +4,7 @@ import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { usePromise } from "frontend/common/usePromise";
 import { generateAuthorizeUrl } from "frontend/common/oauth";
 import { Add } from "./Add";
-import { View } from "./View";
+import { ManageRepo } from "./ManageRepo";
 
 export let octokit: Octokit;
 
@@ -51,33 +51,30 @@ export const Manager = () => {
 
 	return (
 		<Router>
-			<div>
-				<h1>Manager</h1>
-				{!accessToken && (
-					<a href={generateAuthorizeUrl({ scope })} target="_blank">
-						Login with GitHub
-					</a>
-				)}
-				{octokit && (
-					<Switch>
-						<Route path="/add">
-							<Add currentUser={currentUser.value?.login} />
-						</Route>
-						<Route path="/repo/:user/:name">
-							<View />
-						</Route>
-						<Route path="/">
-							<Link to="/add">Add</Link>
-							{repos.pending && <p>pending</p>}
-							{repos.value?.data?.map((repo: any) => (
-								<div key={repo.name}>
-									<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
-								</div>
-							))}
-						</Route>
-					</Switch>
-				)}
-			</div>
+			{!accessToken && (
+				<a href={generateAuthorizeUrl({ scope })} target="_blank">
+					Login with GitHub
+				</a>
+			)}
+			{octokit && (
+				<Switch>
+					<Route path="/add">
+						<Add currentUser={currentUser.value?.login} />
+					</Route>
+					<Route path="/repo/:owner/:repo">
+						<ManageRepo />
+					</Route>
+					<Route path="/">
+						<Link to="/add">Add</Link>
+						{repos.pending && <p>pending</p>}
+						{repos.value?.data?.map((repo: any) => (
+							<div key={repo.name}>
+								<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
+							</div>
+						))}
+					</Route>
+				</Switch>
+			)}
 		</Router>
 	);
 };

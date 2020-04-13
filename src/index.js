@@ -25,7 +25,7 @@ const persistedReducer = persistReducer(
 	reducer
 );
 
-let persistor;
+export let persistor;
 
 function configureStore() {
 	const composeEnhancers =
