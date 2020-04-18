@@ -2,7 +2,7 @@ import produce from "immer";
 import shortid from "shortid";
 import { debounce } from "debounce";
 
-import initialState from "./initialState.json";
+import emptyState from "./emptyState.json";
 
 export const LOAD = "LOAD";
 export const ADD = "ADD";
@@ -59,7 +59,7 @@ export const processState = () => (dispatch, getState) => {
 	debouncedProcessState(dispatch, getState);
 };
 
-export const reducer = (state = initialState, action) =>
+export const reducer = (state = emptyState, action) =>
 	produce(state, draft => {
 		const translator = new Translator(draft);
 		switch (action.type) {
