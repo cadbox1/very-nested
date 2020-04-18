@@ -1,5 +1,6 @@
-import React, { Fragment, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { Fragment } from "react";
+import { useDispatch } from "react-redux";
 import { HotKeys } from "react-hotkeys";
 import Item from "./Item";
 import { up, down, indent, undent, addItem, backspace } from "./duck";

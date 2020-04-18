@@ -33,7 +33,7 @@ exports.handler = (event, context, callback) => {
 			client_id: backendSimpleConfig.client.id,
 			client_secret: backendSimpleConfig.client.secret,
 		})
-		.then((result) => {
+		.then(result => {
 			const accessToken = oauth2.accessToken.create(result);
 			return callback(null, {
 				statusCode: 200,
@@ -47,7 +47,7 @@ exports.handler = (event, context, callback) => {
 					</html>`,
 			});
 		})
-		.catch((error) => {
+		.catch(error => {
 			console.log("Access Token Error", error.message);
 			console.log(error);
 			return callback(null, {

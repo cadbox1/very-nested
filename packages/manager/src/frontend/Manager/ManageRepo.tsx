@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { octokit } from ".";
 import { usePromise } from "frontend/common/usePromise";
 import { useParams } from "react-router-dom";
-import { Viewer } from "frontend/Viewer";
 import { useSelector, useDispatch } from "react-redux";
 import { persistor } from "index";
-import { load } from "frontend/Viewer/duck";
+
+// @ts-ignore
+import { load, Viewer } from "very-nested-viewer";
 
 const veryNestedDataFile = "very-nested-data.json";
 
@@ -36,7 +37,7 @@ export const ManageRepo = () => {
 	}, [repo, owner]);
 
 	// @ts-ignore
-	const itemState = useSelector((state) => state.item);
+	const itemState = useSelector(state => state.item);
 
 	const saveRequest = usePromise<any>({
 		promiseFunction: async () => {
