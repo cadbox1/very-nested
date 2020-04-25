@@ -16,20 +16,26 @@ export const SELECT = "SELECT";
 export const RECORD_CHANGE = "RECORD_CHANGE";
 export const CALCULATION = "CALCULATION";
 
-export const load = ({ data }) => ({ type: LOAD, payload: data });
+export const load = ({ data }: { data: any }) => ({
+	type: LOAD,
+	payload: data,
+});
 export const backspace = () => ({ type: BACKSPACE });
 export const up = () => ({ type: UP });
 export const down = () => ({ type: DOWN });
 export const indent = () => ({ type: INDENT });
 export const undent = () => ({ type: UNDENT });
-export const select = ({ id, path }) => ({
+export const select = ({ id, path }: { id: string; path: string[] }) => ({
 	type: SELECT,
 	payload: { id, path },
 });
 
 export const addItem = () => ({ type: ADD });
 
-export const editItem = ({ id, content }) => (dispatch, getState) => {
+export const editItem = ({ id, content }: { id: string; content: string }) => (
+	dispatch: (action: any) => void,
+	getState: any
+) => {
 	dispatch({
 		type: EDIT,
 		payload: { content },
@@ -42,6 +48,7 @@ export const editItem = ({ id, content }) => (dispatch, getState) => {
 	}
 };
 
+// @ts-ignore
 const debouncedProcessState = debounce((dispatch, getState) => {
 	const state = getState();
 	Object.keys(state.item)
@@ -55,12 +62,29 @@ const debouncedProcessState = debounce((dispatch, getState) => {
 		);
 }, 500);
 
+// @ts-ignore
 export const processState = () => (dispatch, getState) => {
 	debouncedProcessState(dispatch, getState);
 };
 
-export const reducer = (state = emptyState, action) =>
-	produce(state, draft => {
+export type ItemState = {
+	id: string;
+	content: string;
+	error?: string;
+	children: string[];
+};
+
+export type ItemStore = {
+	[key: string]: ItemState;
+};
+
+export type State = {
+	path: string[];
+	item: ItemStore;
+};
+
+export const reducer = (state: State = emptyState, action: any) =>
+	produce(state, (draft: State) => {
 		const translator = new Translator(draft);
 		switch (action.type) {
 			case LOAD: {
@@ -99,7 +123,7 @@ export const reducer = (state = emptyState, action) =>
 					replaceAllReferencesToId(currentItem.id, newId, draft);
 					deleteItem(currentItem.id, draft);
 				} else {
-					const item = translator.getCurrentItem(draft);
+					const item = translator.getCurrentItem();
 					item.content = content;
 				}
 
@@ -216,13 +240,13 @@ export const reducer = (state = emptyState, action) =>
 					// (items, parent) => // [filteredItems]
 					// filteredItem = {(id), (content)}
 					const items = Object.keys(draft.item).map(
-						itemId => new Item(itemId, draft.item)
+						itemId => new EnhancedItem(itemId, draft.item)
 					);
 
 					// eslint-disable-next-line
 					const resultsFunction = eval(calculation);
 					const results = resultsFunction(items, parent);
-					item.children = results.map(result => result.id);
+					item.children = results.map((result: EnhancedItem) => result.id);
 				} catch (e) {
 					item.error = e.message;
 				}
@@ -232,28 +256,34 @@ export const reducer = (state = emptyState, action) =>
 		}
 	});
 
-class Item {
-	constructor(id, itemStore) {
+class EnhancedItem {
+	id: string;
+	itemStore: ItemStore;
+	itemState: ItemState;
+
+	constructor(id: string, itemStore: ItemStore) {
 		this.id = id;
 		this.itemStore = itemStore;
 
-		this.item = itemStore[id];
+		this.itemState = itemStore[id];
 	}
 
 	get content() {
-		return this.item.content;
+		return this.itemState.content;
 	}
 
 	get children() {
-		return this.item.children
+		return this.itemState.children
 			.filter(childId => !!childId)
-			.map(childId => new Item(childId, this.itemStore));
+			.map(childId => new EnhancedItem(childId, this.itemStore));
 	}
 }
 
 // These are the happy methods
 class Translator {
-	constructor(draft) {
+	state: State;
+
+	constructor(draft: State) {
 		this.state = draft;
 	}
 
@@ -262,21 +292,21 @@ class Translator {
 		return this._getItemById(currentId);
 	};
 
-	getParent = id => {
+	getParent = (id: string) => {
 		const parentId = this._getParentId(id);
 		return this._getItemById(parentId);
 	};
 
-	getAboveItem = id => {
+	getAboveItem = (id: string) => {
 		return this._getAboveItems(id)[0];
 	};
 
-	getBelowItem = id => {
+	getBelowItem = (id: string) => {
 		return this._getBelowItems(id)[0];
 	};
 
 	// these are the lower-level, private methods
-	_getItemById = id => {
+	_getItemById = (id: string) => {
 		return this.state.item[id];
 	};
 
@@ -284,25 +314,25 @@ class Translator {
 		return [...this.state.path].reverse()[0];
 	};
 
-	_getAncestorIds = id => {
+	_getAncestorIds = (id: string) => {
 		const reversedPath = [...this.state.path].reverse();
 		const indexOfId = reversedPath.indexOf(id);
 		// return everything in the path after the id
 		return reversedPath.slice(indexOfId + 1);
 	};
 
-	_getParentId = id => {
+	_getParentId = (id: string) => {
 		return this._getAncestorIds(id)[0];
 	};
 
-	_getAboveItems = id => {
+	_getAboveItems = (id: string) => {
 		const parent = this.getParent(id);
 		const currentIndex = parent.children.indexOf(id);
 		const getAboveItemIds = parent.children.slice(0, currentIndex).reverse();
 		return getAboveItemIds.map(id => this._getItemById(id));
 	};
 
-	_getBelowItems = id => {
+	_getBelowItems = (id: string) => {
 		const parent = this.getParent(id);
 		const currentIndex = parent.children.indexOf(id);
 		const getBelowItemIds = [...parent.children].slice(currentIndex + 1);
@@ -310,7 +340,11 @@ class Translator {
 	};
 }
 
-const replaceAllReferencesToId = (oldId, newId, state) => {
+const replaceAllReferencesToId = (
+	oldId: string,
+	newId: string,
+	state: State
+) => {
 	getAllItemsWithIdInChildren(oldId, state, item => {
 		item.children = item.children.map(childId =>
 			childId === oldId ? newId : childId
@@ -318,7 +352,11 @@ const replaceAllReferencesToId = (oldId, newId, state) => {
 	});
 };
 
-const getAllItemsWithIdInChildren = (id, state, callback) => {
+const getAllItemsWithIdInChildren = (
+	id: string,
+	state: State,
+	callback: (item: ItemState) => void
+) => {
 	Object.keys(state.item).forEach(itemId => {
 		const item = state.item[itemId];
 		if (item.children.includes(id)) {
@@ -327,12 +365,12 @@ const getAllItemsWithIdInChildren = (id, state, callback) => {
 	});
 };
 
-const removeAllReferencesToId = (id, state) => {
+const removeAllReferencesToId = (id: string, state: State) => {
 	getAllItemsWithIdInChildren(id, state, item => {
 		item.children = item.children.filter(childId => childId !== id);
 	});
 };
 
-const deleteItem = (id, state) => {
+const deleteItem = (id: string, state: State) => {
 	delete state.item[id];
 };
