@@ -48,7 +48,7 @@ const Item = ({ path }: ItemProps) => {
 				</span>
 			)}
 			{item.children && path.filter(pathId => pathId === id).length < 2 && (
-				<ul>
+				<ul style={{ paddingLeft: "1.5rem" }}>
 					{item.children.map((id: string) => (
 						<Item key={id} path={[...path, id]} />
 					))}

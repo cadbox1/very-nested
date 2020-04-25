@@ -10,8 +10,8 @@
   "peerDependencies": {
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "redux": "^4.0.5",
-    "react-redux": "^7.2.0"
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
   },
   "scripts": {
     "prepare": "yarn build",
@@ -28,6 +28,7 @@
     "debounce": "^1.2.0",
     "immer": "^5.0.1",
     "react-hotkeys": "^1.1.4",
+    "react-icons": "^3.10.0",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15"
   },
