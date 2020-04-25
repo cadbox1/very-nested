@@ -11,7 +11,16 @@ import {
 	IoIosArrowDown,
 } from "react-icons/io";
 import Item from "./Item";
-import { up, down, indent, undent, addItem, backspace } from "./duck";
+import {
+	up,
+	down,
+	indent,
+	undent,
+	addItem,
+	backspace,
+	moveUp,
+	moveDown,
+} from "./duck";
 import { ToolbarButton } from "./ToolbarButton";
 
 const preventDefault = (func: (...args: any[]) => void) => (
@@ -30,6 +39,8 @@ export const Viewer = () => {
 	const handleDown = preventDefault(() => dispatch(down()));
 	const handleIndent = preventDefault(() => dispatch(indent()));
 	const handleUndent = preventDefault(() => dispatch(undent()));
+	const handleMoveUp = preventDefault(() => dispatch(moveUp()));
+	const handleMoveDown = preventDefault(() => dispatch(moveDown()));
 	const handleEnter = preventDefault(() => dispatch(addItem()));
 	const handleBackspace = () => dispatch(backspace());
 
@@ -41,6 +52,8 @@ export const Viewer = () => {
 					down: "down",
 					indent: "tab",
 					undent: "shift+tab",
+					moveUp: "alt+up",
+					moveDown: "alt+down",
 					enter: "enter",
 					backspace: "backspace",
 				}}
@@ -51,6 +64,8 @@ export const Viewer = () => {
 						down: handleDown,
 						indent: handleIndent,
 						undent: handleUndent,
+						moveUp: handleMoveUp,
+						moveDown: handleMoveDown,
 						enter: handleEnter,
 						backspace: handleBackspace,
 					}}
@@ -68,15 +83,21 @@ export const Viewer = () => {
 							</ToolbarButton>
 							<ToolbarButton
 								onClick={() => dispatch(indent())}
-								title="undent (shift+tab)"
+								title="undent (shift + tab)"
 							>
 								<IoIosArrowRoundForward />
 							</ToolbarButton>
 							<ToolbarButton>
-								<IoIosArrowRoundUp />
+								<IoIosArrowRoundUp
+									onClick={() => dispatch(moveUp())}
+									title="move up (alt + upkey)"
+								/>
 							</ToolbarButton>
 							<ToolbarButton>
-								<IoIosArrowRoundDown />
+								<IoIosArrowRoundDown
+									onClick={() => dispatch(moveDown())}
+									title="move down (alt + downkey)"
+								/>
 							</ToolbarButton>
 							<ToolbarButton
 								onClick={() => dispatch(up())}

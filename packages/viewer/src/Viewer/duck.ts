@@ -10,6 +10,8 @@ export const EDIT = "EDIT";
 export const BACKSPACE = "BACKSPACE";
 export const INDENT = "INDENT";
 export const UNDENT = "UNDENT";
+export const MOVE_UP = "MOVE_UP";
+export const MOVE_DOWN = "MOVE_DOWN";
 export const UP = "UP";
 export const DOWN = "DOWN";
 export const SELECT = "SELECT";
@@ -25,6 +27,8 @@ export const up = () => ({ type: UP });
 export const down = () => ({ type: DOWN });
 export const indent = () => ({ type: INDENT });
 export const undent = () => ({ type: UNDENT });
+export const moveUp = () => ({ type: MOVE_UP });
+export const moveDown = () => ({ type: MOVE_DOWN });
 export const select = ({ id, path }: { id: string; path: string[] }) => ({
 	type: SELECT,
 	payload: { id, path },
@@ -182,6 +186,42 @@ export const reducer = (state: State = emptyState, action: any) =>
 
 				// select the new path
 				draft.path.splice(-2, 1);
+
+				break;
+			}
+			case MOVE_UP: {
+				const target = translator.getCurrentItem();
+				const parent = translator.getParent(target.id);
+
+				const currentIndex = parent.children.indexOf(target.id);
+
+				if (currentIndex === 0) {
+					break;
+				}
+
+				const aboveIndex = currentIndex - 1;
+				const aboveItemId = parent.children[aboveIndex];
+
+				parent.children[currentIndex] = aboveItemId;
+				parent.children[aboveIndex] = target.id;
+
+				break;
+			}
+			case MOVE_DOWN: {
+				const target = translator.getCurrentItem();
+				const parent = translator.getParent(target.id);
+
+				const currentIndex = parent.children.indexOf(target.id);
+
+				if (currentIndex === parent.children.length - 1) {
+					break;
+				}
+
+				const belowIndex = currentIndex + 1;
+				const belowItemId = parent.children[belowIndex];
+
+				parent.children[currentIndex] = belowItemId;
+				parent.children[belowIndex] = target.id;
 
 				break;
 			}
