@@ -2,7 +2,7 @@
   "name": "very-nested-viewer",
   "version": "1.0.0",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.module.js",
@@ -54,6 +54,6 @@
     "react-scripts": "^3.4.1",
     "redux": "^4.0.5",
     "rimraf": "^3.0.2",
-    "typescript": "~3.7.2"
+    "typescript": "^3.7.2"
   }
 }
