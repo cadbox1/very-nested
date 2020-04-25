@@ -12,7 +12,7 @@ const Item = ({ path }: ItemProps) => {
 	const dispatch = useDispatch();
 
 	const item = useSelector((state: any) => state.item[id]);
-	const globalPath = useSelector((state: any) => state.globalPath);
+	const globalPath = useSelector((state: any) => state.path);
 
 	const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		dispatch(editItem({ id, content: evt.target.value }));

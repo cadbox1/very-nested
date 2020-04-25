@@ -1,21 +1,24 @@
 {
   "name": "very-nested-viewer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "private": false,
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.module.js",
-  "unpkg": "dist/index.umd.js",
+  "unpkg": "dist/bundle.js",
   "peerDependencies": {
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "react-redux": "^7.2.0"
   },
   "scripts": {
     "prepare": "yarn build",
-    "build": "microbundle --jsx React.createElement",
-    "build-watch": "microbundle watch --jsx React.createElement",
+    "build": "yarn build-rollup && yarn build-webpack",
+    "build-webpack": "webpack-cli",
+    "build-rollup": "microbundle --jsx React.createElement --format modern,es,cjs",
+    "build-watch": "microbundle watch --jsx React.createElement --format modern,es,cjs",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "react-scripts test",
@@ -25,7 +28,6 @@
     "debounce": "^1.2.0",
     "immer": "^5.0.1",
     "react-hotkeys": "^1.1.4",
-    "react-redux": "^7.2.0",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15"
   },
@@ -54,6 +56,9 @@
     "react-scripts": "^3.4.1",
     "redux": "^4.0.5",
     "rimraf": "^3.0.2",
-    "typescript": "^3.7.2"
+    "ts-loader": "^7.0.1",
+    "typescript": "^3.7.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }
