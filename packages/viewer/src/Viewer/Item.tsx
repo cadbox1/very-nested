@@ -36,6 +36,7 @@ const Item = ({ path }: ItemProps) => {
 						onBlur={handleBlur}
 						onFocus={handleFocus} // not entirely sure why we need this
 						autoFocus
+						style={{ fontSize: "1rem" }}
 					/>
 					<span> - {item.error || id}</span>
 				</Fragment>
