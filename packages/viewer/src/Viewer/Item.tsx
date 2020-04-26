@@ -1,24 +1,30 @@
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editItem, select, processState } from "./duck";
+import { editItem, processState, selectItem } from "./duck";
+import { last } from "./array-util";
 
 export interface ItemProps {
 	path: Array<string>;
 }
 
 const Item = ({ path }: ItemProps) => {
-	const id = path.slice(-1)[0];
+	const id = last(path);
 
 	const dispatch = useDispatch();
-
 	const item = useSelector((state: any) => state.item[id]);
-	const globalPath = useSelector((state: any) => state.path);
+	const selectedPath = useSelector((state: any) => state.path);
+
+	if (!item) {
+		throw new Error(
+			`No item with id: "${id}" found in state, path: ${JSON.stringify(path)}.`
+		);
+	}
 
 	const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		dispatch(editItem({ id, content: evt.target.value }));
 	};
 	const handleClick = () => {
-		dispatch(select({ id, path }));
+		dispatch(selectItem({ path }));
 	};
 	const handleBlur = () => {
 		dispatch(processState());
@@ -28,7 +34,7 @@ const Item = ({ path }: ItemProps) => {
 	};
 	return (
 		<li>
-			{globalPath.join() === path.join() ? (
+			{selectedPath.join() === path.join() ? (
 				<Fragment>
 					<input
 						value={item.content}
@@ -43,7 +49,11 @@ const Item = ({ path }: ItemProps) => {
 			) : (
 				<span
 					onClick={handleClick}
-					style={{ color: item.content.startsWith("calculation: ") && "green" }}
+					style={{
+						display: "block",
+						minHeight: "1rem",
+						color: item.content.startsWith("calculation: ") && "green",
+					}}
 				>
 					{item.content}
 				</span>

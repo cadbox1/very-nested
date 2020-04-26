@@ -1,6 +1,6 @@
 import React from "react";
 import { Fragment } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { HotKeys } from "react-hotkeys";
 import {
 	IoIosArrowRoundBack,
@@ -9,6 +9,7 @@ import {
 	IoIosArrowRoundDown,
 	IoIosArrowUp,
 	IoIosArrowDown,
+	IoIosTrash,
 } from "react-icons/io";
 import Item from "./Item";
 import {
@@ -17,32 +18,63 @@ import {
 	indent,
 	undent,
 	addItem,
-	backspace,
+	removeItem,
 	moveUp,
 	moveDown,
 } from "./duck";
 import { ToolbarButton } from "./ToolbarButton";
+import { last } from "./array-util";
 
-const preventDefault = (func: (...args: any[]) => void) => (
-	evt: KeyboardEvent | undefined
-) => {
-	if (evt) {
-		evt.preventDefault();
-	}
-	func();
-};
+function objectMap<T = any>(
+	obj: {},
+	fn: ({ key, value, index }: { key: {}; value: any; index: number }) => T
+) {
+	return Object.fromEntries(
+		Object.entries(obj).map(([key, value], index) => [
+			key,
+			fn({ key, value, index }),
+		])
+	);
+}
 
 export const Viewer = () => {
 	const dispatch = useDispatch();
+	const selectedPath = useSelector((state: any) => state.path);
+	const id = last(selectedPath);
+	const selectedItem = useSelector((state: any) => state.item[id]);
 
-	const handleUp = preventDefault(() => dispatch(up()));
-	const handleDown = preventDefault(() => dispatch(down()));
-	const handleIndent = preventDefault(() => dispatch(indent()));
-	const handleUndent = preventDefault(() => dispatch(undent()));
-	const handleMoveUp = preventDefault(() => dispatch(moveUp()));
-	const handleMoveDown = preventDefault(() => dispatch(moveDown()));
-	const handleEnter = preventDefault(() => dispatch(addItem()));
-	const handleBackspace = () => dispatch(backspace());
+	const actions = {
+		up,
+		down,
+		indent,
+		undent,
+		moveUp,
+		moveDown,
+		enter: () => addItem({ afterPath: selectedPath }),
+	};
+
+	const preparedHandlers = objectMap<(evt?: KeyboardEvent) => void>(
+		actions,
+		({ value: handler }) => (evt?: KeyboardEvent) => {
+			if (evt) {
+				evt.preventDefault();
+			}
+			dispatch(handler());
+		}
+	);
+
+	const handleRemove = () => {
+		dispatch(removeItem({ path: selectedPath }));
+	};
+
+	const handlers = {
+		...preparedHandlers,
+		backspace: () => {
+			if (selectedItem.content === "") {
+				handleRemove();
+			}
+		},
+	};
 
 	return (
 		<Fragment>
@@ -58,58 +90,50 @@ export const Viewer = () => {
 					backspace: "backspace",
 				}}
 			>
-				<HotKeys
-					handlers={{
-						up: handleUp,
-						down: handleDown,
-						indent: handleIndent,
-						undent: handleUndent,
-						moveUp: handleMoveUp,
-						moveDown: handleMoveDown,
-						enter: handleEnter,
-						backspace: handleBackspace,
-					}}
-				>
+				<HotKeys handlers={handlers}>
 					<ul>
 						<Item path={["vLlFS3csq"]} />
 					</ul>
 					<div style={{ position: "fixed", bottom: 0 }}>
 						<div style={{ display: "flex" }}>
 							<ToolbarButton
-								onClick={() => dispatch(undent())}
-								title="indent (tab)"
+								onClick={preparedHandlers.undent}
+								title="undent (shift + tab)"
 							>
 								<IoIosArrowRoundBack />
 							</ToolbarButton>
 							<ToolbarButton
-								onClick={() => dispatch(indent())}
-								title="undent (shift + tab)"
+								onClick={preparedHandlers.indent}
+								title="indent (tab)"
 							>
 								<IoIosArrowRoundForward />
 							</ToolbarButton>
-							<ToolbarButton>
-								<IoIosArrowRoundUp
-									onClick={() => dispatch(moveUp())}
-									title="move up (alt + upkey)"
-								/>
-							</ToolbarButton>
-							<ToolbarButton>
-								<IoIosArrowRoundDown
-									onClick={() => dispatch(moveDown())}
-									title="move down (alt + downkey)"
-								/>
+							<ToolbarButton
+								onClick={preparedHandlers.moveUp}
+								title="move up (alt + upkey)"
+							>
+								<IoIosArrowRoundUp />
 							</ToolbarButton>
 							<ToolbarButton
-								onClick={() => dispatch(up())}
+								onClick={preparedHandlers.moveDown}
+								title="move down (alt + downkey)"
+							>
+								<IoIosArrowRoundDown />
+							</ToolbarButton>
+							<ToolbarButton
+								onClick={preparedHandlers.up}
 								title="previous item (upkey)"
 							>
 								<IoIosArrowUp />
 							</ToolbarButton>
 							<ToolbarButton
-								onClick={() => dispatch(down())}
+								onClick={preparedHandlers.down}
 								title="next item (downkey)"
 							>
 								<IoIosArrowDown />
+							</ToolbarButton>
+							<ToolbarButton onClick={handleRemove} title="remove item">
+								<IoIosTrash />
 							</ToolbarButton>
 						</div>
 					</div>

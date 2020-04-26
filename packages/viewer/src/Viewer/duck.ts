@@ -3,18 +3,16 @@ import shortid from "shortid";
 import { debounce } from "debounce";
 
 import emptyState from "./emptyState.json";
+import { createAction, createReducer } from "@reduxjs/toolkit";
+import { getIndex, insertAfter, getIndexFromItem } from "./array-util";
 
 export const LOAD = "LOAD";
-export const ADD = "ADD";
-export const EDIT = "EDIT";
-export const BACKSPACE = "BACKSPACE";
 export const INDENT = "INDENT";
 export const UNDENT = "UNDENT";
 export const MOVE_UP = "MOVE_UP";
 export const MOVE_DOWN = "MOVE_DOWN";
 export const UP = "UP";
 export const DOWN = "DOWN";
-export const SELECT = "SELECT";
 export const RECORD_CHANGE = "RECORD_CHANGE";
 export const CALCULATION = "CALCULATION";
 
@@ -22,35 +20,43 @@ export const load = ({ data }: { data: any }) => ({
 	type: LOAD,
 	payload: data,
 });
-export const backspace = () => ({ type: BACKSPACE });
 export const up = () => ({ type: UP });
 export const down = () => ({ type: DOWN });
 export const indent = () => ({ type: INDENT });
 export const undent = () => ({ type: UNDENT });
 export const moveUp = () => ({ type: MOVE_UP });
 export const moveDown = () => ({ type: MOVE_DOWN });
-export const select = ({ id, path }: { id: string; path: string[] }) => ({
-	type: SELECT,
-	payload: { id, path },
-});
 
-export const addItem = () => ({ type: ADD });
-
-export const editItem = ({ id, content }: { id: string; content: string }) => (
-	dispatch: (action: any) => void,
-	getState: any
-) => {
-	dispatch({
-		type: EDIT,
-		payload: { content },
-	});
-	if (content.startsWith("calculation: ")) {
-		dispatch({
-			type: CALCULATION,
-			payload: { id },
-		});
-	}
+type SelectItemArguments = {
+	path: string[];
 };
+export const selectItem = createAction<SelectItemArguments>("SELECT_ITEM");
+
+type EditItemArguments = {
+	id: string;
+	content: string;
+};
+export const editItem = createAction<EditItemArguments>("EDIT_ITEM");
+
+type AddItemArguments = {
+	afterPath: string[];
+};
+export const addItem = createAction(
+	"ADD",
+	({ afterPath }: AddItemArguments) => ({
+		payload: {
+			id: shortid.generate(),
+			afterPath,
+			content: "",
+			children: [],
+		},
+	})
+);
+
+type RemoveItemArguments = {
+	path: string[];
+};
+export const removeItem = createAction<RemoveItemArguments>("REMOVE_ITEM");
 
 // @ts-ignore
 const debouncedProcessState = debounce((dispatch, getState) => {
@@ -87,69 +93,69 @@ export type State = {
 	item: ItemStore;
 };
 
-export const reducer = (state: State = emptyState, action: any) =>
+export const reducer = createReducer(emptyState, {
+	[selectItem.type]: (state: State, action) => {
+		state.path = action.payload.path;
+	},
+	[editItem.type]: (state: State, action) => {
+		const { id, content } = action.payload;
+
+		if (Object.keys(state.item).includes(content)) {
+			// content is an id, replace it with a reference to the existing item.
+			const referencedItemId = content;
+			replaceAllReferencesToId(id, referencedItemId, state);
+			deleteItem(id, state);
+		} else {
+			const item = state.item[id];
+			item.content = content;
+		}
+	},
+	[addItem.type]: (state: State, action) => {
+		const { id, afterPath, content, children } = action.payload;
+
+		state.item[id] = {
+			id,
+			content,
+			children,
+		};
+
+		const afterId = getIndex(afterPath, -1);
+		const parentId = getIndex(afterPath, -2);
+		const collection = state.item[parentId].children;
+
+		insertAfter(collection, afterId, id);
+
+		// select new item
+		state.path.pop();
+		state.path.push(id);
+	},
+	[removeItem.type]: (state: State, action) => {
+		const { path } = action.payload;
+
+		const id = getIndex(path, -1);
+		const parentId = getIndex(path, -2);
+		const collection = state.item[parentId].children;
+
+		const aboveItemId = getIndexFromItem(collection, id, -1);
+
+		removeAllReferencesToId(id, state);
+		deleteItem(id, state);
+
+		// select new item
+		state.path.pop();
+		if (aboveItemId) {
+			state.path.push(aboveItemId);
+		}
+	},
+});
+
+const oldReducer = (state: State = emptyState, action: any) =>
 	produce(state, (draft: State) => {
 		const translator = new Translator(draft);
 		switch (action.type) {
 			case LOAD: {
 				draft.path = [];
 				draft.item = action.payload;
-				break;
-			}
-			case ADD: {
-				// create item
-				const newId = shortid.generate();
-				draft.item[newId] = {
-					id: newId,
-					content: "",
-					children: [],
-				};
-
-				// insert new item into children below current item
-				const currentItem = translator.getCurrentItem();
-				const children = translator.getParent(currentItem.id).children;
-				const insertIndex = children.indexOf(currentItem.id) + 1;
-				children.splice(insertIndex, 0, newId);
-
-				// select new item
-				draft.path.pop();
-				draft.path.push(newId);
-				break;
-			}
-			case EDIT: {
-				const { content } = action.payload;
-				const currentItem = translator.getCurrentItem();
-
-				// check if the content is an id
-				if (Object.keys(draft.item).includes(content)) {
-					// content is an id - replace the current item with a link to the id
-					const newId = content;
-					replaceAllReferencesToId(currentItem.id, newId, draft);
-					deleteItem(currentItem.id, draft);
-				} else {
-					const item = translator.getCurrentItem();
-					item.content = content;
-				}
-
-				break;
-			}
-			case BACKSPACE: {
-				const currentItem = translator.getCurrentItem();
-				if (currentItem.content === "") {
-					// delete the item
-
-					// select previous line item
-					const previousLineItem =
-						translator.getAboveItem(currentItem.id) ||
-						translator.getParent(currentItem.id);
-					draft.path.pop();
-					draft.path.push(previousLineItem.id);
-
-					// it would be cool if this was automatic somehow
-					removeAllReferencesToId(currentItem.id, draft);
-
-					deleteItem(currentItem.id, draft);
-				}
 				break;
 			}
 
@@ -263,12 +269,7 @@ export const reducer = (state: State = emptyState, action: any) =>
 
 				break;
 			}
-			case SELECT: {
-				const { path } = action.payload;
-				draft.path = path;
 
-				break;
-			}
 			case CALCULATION: {
 				const { id } = action.payload;
 				const item = translator._getItemById(id);
