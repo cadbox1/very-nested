@@ -25,7 +25,6 @@
     "clean": "rimraf node_modules dist .rts2*"
   },
   "dependencies": {
-    "immer": "^5.0.1",
     "react-hotkeys": "^1.1.4",
     "react-icons": "^3.10.0",
     "redux-thunk": "^2.3.0",

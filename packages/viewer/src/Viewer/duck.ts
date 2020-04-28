@@ -1,4 +1,3 @@
-import produce from "immer";
 import shortid from "shortid";
 
 import emptyState from "./emptyState.json";
