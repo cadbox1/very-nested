@@ -94,50 +94,52 @@ export const Viewer = () => {
 				}}
 			>
 				<HotKeys handlers={handlers}>
-					<ul>
-						<Item path={["vLlFS3csq"]} />
-					</ul>
-					<div style={{ position: "fixed", bottom: 0 }}>
-						<div style={{ display: "flex" }}>
-							<ToolbarButton
-								onClick={preparedHandlers.undent}
-								title="undent (shift + tab)"
-							>
-								<IoIosArrowRoundBack />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.indent}
-								title="indent (tab)"
-							>
-								<IoIosArrowRoundForward />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.moveUp}
-								title="move up (alt + upkey)"
-							>
-								<IoIosArrowRoundUp />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.moveDown}
-								title="move down (alt + downkey)"
-							>
-								<IoIosArrowRoundDown />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.up}
-								title="previous item (upkey)"
-							>
-								<IoIosArrowUp />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.down}
-								title="next item (downkey)"
-							>
-								<IoIosArrowDown />
-							</ToolbarButton>
-							<ToolbarButton onClick={handleRemove} title="remove item">
-								<IoIosTrash />
-							</ToolbarButton>
+					<div style={{ height: "100vh" }}>
+						<ul>
+							<Item path={["vLlFS3csq"]} />
+						</ul>
+						<div style={{ position: "absolute", bottom: 0 }}>
+							<div style={{ display: "flex" }}>
+								<ToolbarButton
+									onClick={preparedHandlers.undent}
+									title="undent (shift + tab)"
+								>
+									<IoIosArrowRoundBack />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.indent}
+									title="indent (tab)"
+								>
+									<IoIosArrowRoundForward />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.moveUp}
+									title="move up (alt + upkey)"
+								>
+									<IoIosArrowRoundUp />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.moveDown}
+									title="move down (alt + downkey)"
+								>
+									<IoIosArrowRoundDown />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.up}
+									title="previous item (upkey)"
+								>
+									<IoIosArrowUp />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.down}
+									title="next item (downkey)"
+								>
+									<IoIosArrowDown />
+								</ToolbarButton>
+								<ToolbarButton onClick={handleRemove} title="remove item">
+									<IoIosTrash />
+								</ToolbarButton>
+							</div>
 						</div>
 					</div>
 				</HotKeys>
