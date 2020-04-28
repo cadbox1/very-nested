@@ -15,8 +15,8 @@ import Item from "./Item";
 import {
 	up,
 	down,
-	indent,
-	undent,
+	indentItem,
+	undentItem,
 	addItem,
 	removeItem,
 	moveUp,
@@ -46,8 +46,8 @@ export const Viewer = () => {
 	const actions = {
 		up,
 		down,
-		indent,
-		undent,
+		indent: indentItem,
+		undent: undentItem,
 		moveUp,
 		moveDown,
 		enter: () => addItem({ afterPath: selectedPath }),
@@ -69,8 +69,11 @@ export const Viewer = () => {
 
 	const handlers = {
 		...preparedHandlers,
-		backspace: () => {
+		backspace: (evt?: KeyboardEvent) => {
 			if (selectedItem.content === "") {
+				if (evt) {
+					evt.preventDefault();
+				}
 				handleRemove();
 			}
 		},

@@ -3,10 +3,14 @@ import shortid from "shortid";
 import { debounce } from "debounce";
 
 import emptyState from "./emptyState.json";
-import { createAction, createReducer } from "@reduxjs/toolkit";
-import { getIndex, insertAfter, getIndexFromItem } from "./array-util";
+import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
+import {
+	getIndex,
+	insertAfter,
+	getIndexFromItem,
+	removeItemFromArray,
+} from "./array-util";
 
-export const LOAD = "LOAD";
 export const INDENT = "INDENT";
 export const UNDENT = "UNDENT";
 export const MOVE_UP = "MOVE_UP";
@@ -16,16 +20,16 @@ export const DOWN = "DOWN";
 export const RECORD_CHANGE = "RECORD_CHANGE";
 export const CALCULATION = "CALCULATION";
 
-export const load = ({ data }: { data: any }) => ({
-	type: LOAD,
-	payload: data,
-});
 export const up = () => ({ type: UP });
 export const down = () => ({ type: DOWN });
-export const indent = () => ({ type: INDENT });
-export const undent = () => ({ type: UNDENT });
+
 export const moveUp = () => ({ type: MOVE_UP });
 export const moveDown = () => ({ type: MOVE_DOWN });
+
+type LoadArguments = {
+	data: ItemStore;
+};
+export const load = createAction<LoadArguments>("LOAD");
 
 type SelectItemArguments = {
 	path: string[];
@@ -58,24 +62,15 @@ type RemoveItemArguments = {
 };
 export const removeItem = createAction<RemoveItemArguments>("REMOVE_ITEM");
 
-// @ts-ignore
-const debouncedProcessState = debounce((dispatch, getState) => {
-	const state = getState();
-	Object.keys(state.item)
-		.map(id => state.item[id])
-		.filter(item => item.content.startsWith("calculation: "))
-		.forEach(item =>
-			dispatch({
-				type: CALCULATION,
-				payload: { id: item.id },
-			})
-		);
-}, 500);
-
-// @ts-ignore
-export const processState = () => (dispatch, getState) => {
-	debouncedProcessState(dispatch, getState);
+type IndentItemArguments = {
+	path: string[];
 };
+export const indentItem = createAction<IndentItemArguments>("INDENT_ITEM");
+
+type UndentItemArguments = {
+	path: string[];
+};
+export const undentItem = createAction<UndentItemArguments>("UNDENT_ITEM");
 
 export type ItemState = {
 	id: string;
@@ -94,10 +89,14 @@ export type State = {
 };
 
 export const reducer = createReducer(emptyState, {
-	[selectItem.type]: (state: State, action) => {
+	[load.type]: (state: State, action: PayloadAction<LoadArguments>) => {
+		state.path = [];
+		state.item = action.payload.data;
+	},
+	[selectItem.type]: (state: State, action: any) => {
 		state.path = action.payload.path;
 	},
-	[editItem.type]: (state: State, action) => {
+	[editItem.type]: (state: State, action: any) => {
 		const { id, content } = action.payload;
 
 		if (Object.keys(state.item).includes(content)) {
@@ -110,7 +109,7 @@ export const reducer = createReducer(emptyState, {
 			item.content = content;
 		}
 	},
-	[addItem.type]: (state: State, action) => {
+	[addItem.type]: (state: State, action: any) => {
 		const { id, afterPath, content, children } = action.payload;
 
 		state.item[id] = {
@@ -119,9 +118,7 @@ export const reducer = createReducer(emptyState, {
 			children,
 		};
 
-		const afterId = getIndex(afterPath, -1);
-		const parentId = getIndex(afterPath, -2);
-		const collection = state.item[parentId].children;
+		const { id: afterId, collection } = getItemFromPath(state.item, afterPath);
 
 		insertAfter(collection, afterId, id);
 
@@ -129,7 +126,7 @@ export const reducer = createReducer(emptyState, {
 		state.path.pop();
 		state.path.push(id);
 	},
-	[removeItem.type]: (state: State, action) => {
+	[removeItem.type]: (state: State, action: any) => {
 		const { path } = action.payload;
 
 		const id = getIndex(path, -1);
@@ -147,54 +144,50 @@ export const reducer = createReducer(emptyState, {
 			state.path.push(aboveItemId);
 		}
 	},
+	[indentItem.type]: (state: State, action: IndentItemArguments) => {
+		const { id, parentId, collection } = getItemFromPath(
+			state.item,
+			state.path
+		);
+
+		const newParentId = getIndexFromItem(collection, id, -1);
+		if (!newParentId) {
+			return;
+		}
+
+		const newParent = state.item[newParentId];
+		newParent.children.push(id);
+
+		state.path.pop();
+		state.path.push(newParentId, id);
+
+		removeItemFromArray(collection, id);
+	},
+
+	[undentItem.type]: (state: State, action: UndentItemArguments) => {
+		const { id, parentId, parentsParentId, collection } = getItemFromPath(
+			state.item,
+			state.path
+		);
+
+		if (!parentId || !parentsParentId) {
+			return;
+		}
+
+		const parentsCollection = getCollection(state.item, parentsParentId);
+		insertAfter(parentsCollection, parentId, id);
+
+		state.path.splice(-2);
+		state.path.push(id);
+
+		removeItemFromArray(collection, id);
+	},
 });
 
 const oldReducer = (state: State = emptyState, action: any) =>
 	produce(state, (draft: State) => {
 		const translator = new Translator(draft);
 		switch (action.type) {
-			case LOAD: {
-				draft.path = [];
-				draft.item = action.payload;
-				break;
-			}
-
-			case INDENT: {
-				const target = translator.getCurrentItem();
-				const currentParent = translator.getParent(target.id);
-				const newParent = translator.getAboveItem(target.id);
-
-				// remove target from parent
-				const targetIndex = currentParent.children.indexOf(target.id);
-				currentParent.children.splice(targetIndex, 1);
-
-				// add to new parent
-				newParent.children.push(target.id);
-
-				// select new path
-				draft.path.pop();
-				draft.path.push(newParent.id, target.id);
-
-				break;
-			}
-			case UNDENT: {
-				const target = translator.getCurrentItem();
-				const currentParent = translator.getParent(target.id);
-				const newParent = translator.getParent(currentParent.id);
-
-				// remove target from current parent
-				const targetIndex = currentParent.children.indexOf(target.id);
-				currentParent.children.splice(targetIndex, 1);
-
-				// add to the new parent
-				const currentParentIndex = newParent.children.indexOf(currentParent.id);
-				newParent.children.splice(currentParentIndex + 1, 0, target.id);
-
-				// select the new path
-				draft.path.splice(-2, 1);
-
-				break;
-			}
 			case MOVE_UP: {
 				const target = translator.getCurrentItem();
 				const parent = translator.getParent(target.id);
@@ -379,6 +372,28 @@ class Translator {
 		const getBelowItemIds = [...parent.children].slice(currentIndex + 1);
 		return getBelowItemIds.map(id => this._getItemById(id));
 	};
+}
+
+function getItemFromPath(
+	itemStore: ItemStore,
+	path: string[]
+): {
+	id: string;
+	parentId: string;
+	parentsParentId: string;
+	collection: string[];
+} {
+	const id = getIndex(path, -1);
+	const parentId = getIndex(path, -2);
+	const parentsParentId = getIndex(path, -3);
+
+	const collection = getCollection(itemStore, parentId);
+
+	return { id, parentId, parentsParentId, collection };
+}
+
+function getCollection(itemStore: ItemStore, parentId: string): string[] {
+	return itemStore[parentId].children;
 }
 
 const replaceAllReferencesToId = (

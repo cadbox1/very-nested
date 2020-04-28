@@ -28,3 +28,8 @@ export function insertAfter<T = any>(input: T[], afterItem: T, item: T) {
 export function last<T = any>(input: T[]): T {
 	return getIndex(input, -1);
 }
+
+export function removeItemFromArray<T = any>(input: T[], item: T) {
+	const targetIndex = input.indexOf(item);
+	input.splice(targetIndex, 1);
+}

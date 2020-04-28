@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editItem, processState, selectItem } from "./duck";
+import { editItem, selectItem } from "./duck";
 import { last } from "./array-util";
 
 export interface ItemProps {
@@ -26,12 +26,6 @@ const Item = ({ path }: ItemProps) => {
 	const handleClick = () => {
 		dispatch(selectItem({ path }));
 	};
-	const handleBlur = () => {
-		dispatch(processState());
-	};
-	const handleFocus = () => {
-		dispatch(processState());
-	};
 	return (
 		<li>
 			{selectedPath.join() === path.join() ? (
@@ -39,8 +33,6 @@ const Item = ({ path }: ItemProps) => {
 					<input
 						value={item.content}
 						onChange={handleChange}
-						onBlur={handleBlur}
-						onFocus={handleFocus} // not entirely sure why we need this
 						autoFocus
 						style={{ fontSize: "1rem" }}
 					/>
