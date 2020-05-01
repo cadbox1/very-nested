@@ -15,7 +15,7 @@ export const ToolbarButton = ({
 	<button
 		onClick={onClick}
 		title={title}
-		style={{ padding: "0.4rem 0.6rem", background: "transparent" }}
+		style={{ padding: "0.6rem 0.8rem", background: "transparent" }}
 		{...props}
 	>
 		{children}
