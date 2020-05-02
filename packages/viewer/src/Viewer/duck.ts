@@ -253,7 +253,12 @@ export const reducer = createReducer(emptyState, {
 		let item = state.item[aboveItemId];
 		let iteration = 1;
 
-		while (item && item.children.length > 0 && iteration < maxIterations) {
+		while (
+			item &&
+			item.children.length > 0 &&
+			state.expanded.includes(getPathId(state.path)) &&
+			iteration < maxIterations
+		) {
 			const lastChildId = getIndex(item.children, -1);
 			state.path.push(lastChildId);
 			item = state.item[lastChildId];
@@ -269,7 +274,10 @@ export const reducer = createReducer(emptyState, {
 		let item = getItemFromPath(state.item, state.path);
 
 		// check children
-		if (item.children.length > 0) {
+		if (
+			item.children.length > 0 &&
+			state.expanded.includes(getPathId(state.path))
+		) {
 			state.path.push(item.children[0]);
 			return;
 		}
@@ -289,16 +297,16 @@ export const reducer = createReducer(emptyState, {
 	},
 
 	[expand.type]: (state: State, action: PayloadAction<ExpandArguments>) => {
-		const id = action.payload.path.join(",");
+		const pathId = getPathId(action.payload.path);
 		const expandedSet = new Set(state.expanded);
-		expandedSet.add(id);
+		expandedSet.add(pathId);
 		state.expanded = Array.from(expandedSet);
 	},
 
 	[collapse.type]: (state: State, action: PayloadAction<CollapseArguments>) => {
-		const id = action.payload.path.join(",");
+		const pathId = getPathId(action.payload.path);
 		const expandedSet = new Set(state.expanded);
-		expandedSet.delete(id);
+		expandedSet.delete(pathId);
 		state.expanded = Array.from(expandedSet);
 	},
 });
@@ -364,3 +372,7 @@ const removeAllReferencesToId = (id: string, state: State) => {
 const deleteItem = (id: string, state: State) => {
 	delete state.item[id];
 };
+
+export function getPathId(path: string[]): string {
+	return path.join(",");
+}

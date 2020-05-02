@@ -1,6 +1,13 @@
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editItem, selectItem, State, collapse, expand } from "./duck";
+import {
+	editItem,
+	selectItem,
+	State,
+	collapse,
+	expand,
+	getPathId,
+} from "./duck";
 import { last } from "./array-util";
 import { FaCircle } from "react-icons/fa";
 import { IoIosRemove } from "react-icons/io";
@@ -16,7 +23,7 @@ const Item = ({ path }: ItemProps) => {
 	const item = useSelector((state: State) => state.item[id]);
 	const selectedPath = useSelector((state: State) => state.path);
 	const expanded = useSelector((state: State) =>
-		state.expanded.includes(path.join(","))
+		state.expanded.includes(getPathId(path))
 	);
 
 	if (!item) {
