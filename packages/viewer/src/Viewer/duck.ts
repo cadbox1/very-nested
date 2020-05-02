@@ -27,6 +27,9 @@ export const editItem = createAction<EditItemArguments>("EDIT_ITEM");
 
 type AddItemArguments = {
 	afterPath: string[];
+	id: string;
+	content: string;
+	children: string[];
 };
 export const addItem = createAction(
 	"ADD",
@@ -75,6 +78,16 @@ type DownArguments = {
 };
 export const down = createAction<MoveDownArguments>("DOWN");
 
+type ExpandArguments = {
+	path: string[];
+};
+export const expand = createAction<ExpandArguments>("EXPAND");
+
+type CollapseArguments = {
+	path: string[];
+};
+export const collapse = createAction<CollapseArguments>("COLLAPSE");
+
 export type ItemState = {
 	id: string;
 	content: string;
@@ -89,6 +102,7 @@ export type ItemStore = {
 export type State = {
 	path: string[];
 	item: ItemStore;
+	expanded: string[];
 };
 
 export const reducer = createReducer(emptyState, {
@@ -97,11 +111,14 @@ export const reducer = createReducer(emptyState, {
 		state.item = action.payload.data;
 	},
 
-	[selectItem.type]: (state: State, action: any) => {
+	[selectItem.type]: (
+		state: State,
+		action: PayloadAction<SelectItemArguments>
+	) => {
 		state.path = action.payload.path;
 	},
 
-	[editItem.type]: (state: State, action: any) => {
+	[editItem.type]: (state: State, action: PayloadAction<EditItemArguments>) => {
 		const { id, content } = action.payload;
 
 		if (Object.keys(state.item).includes(content)) {
@@ -115,7 +132,7 @@ export const reducer = createReducer(emptyState, {
 		}
 	},
 
-	[addItem.type]: (state: State, action: any) => {
+	[addItem.type]: (state: State, action: PayloadAction<AddItemArguments>) => {
 		const { id, afterPath, content, children } = action.payload;
 
 		state.item[id] = {
@@ -266,6 +283,20 @@ export const reducer = createReducer(emptyState, {
 
 		state.path.pop();
 		state.path.push(belowItemId);
+	},
+
+	[expand.type]: (state: State, action: PayloadAction<ExpandArguments>) => {
+		const id = action.payload.path.join(",");
+		const expandedSet = new Set(state.expanded);
+		expandedSet.add(id);
+		state.expanded = Array.from(expandedSet);
+	},
+
+	[collapse.type]: (state: State, action: PayloadAction<CollapseArguments>) => {
+		const id = action.payload.path.join(",");
+		const expandedSet = new Set(state.expanded);
+		expandedSet.delete(id);
+		state.expanded = Array.from(expandedSet);
 	},
 });
 
