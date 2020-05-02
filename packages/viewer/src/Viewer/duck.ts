@@ -27,6 +27,9 @@ export const editItem = createAction<EditItemArguments>("EDIT_ITEM");
 
 type AddItemArguments = {
 	afterPath: string[];
+};
+type AddItemAction = {
+	afterPath: string[];
 	id: string;
 	content: string;
 	children: string[];
@@ -132,7 +135,7 @@ export const reducer = createReducer(emptyState, {
 		}
 	},
 
-	[addItem.type]: (state: State, action: PayloadAction<AddItemArguments>) => {
+	[addItem.type]: (state: State, action: PayloadAction<AddItemAction>) => {
 		const { id, afterPath, content, children } = action.payload;
 
 		state.item[id] = {
