@@ -48,7 +48,7 @@ const Item = ({ path }: ItemProps) => {
 	};
 	return (
 		<li style={{ listStyleType: "none" }}>
-			<span style={{ padding: "0.1rem 0", fontSize: "18px" }}>
+			<span style={{ fontSize: "18px" }}>
 				<button onClick={handleExpandCollpase} style={{ border: "none" }}>
 					{item.children.length ? (expanded ? "-" : "+") : "•"}
 				</button>
@@ -67,6 +67,7 @@ const Item = ({ path }: ItemProps) => {
 						onClick={handleClick}
 						style={{
 							display: "inline-block",
+							padding: "0.1rem 0",
 							minHeight: "1rem",
 						}}
 					>
