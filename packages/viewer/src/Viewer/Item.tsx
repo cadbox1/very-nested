@@ -9,8 +9,6 @@ import {
 	getPathId,
 } from "./duck";
 import { last } from "./array-util";
-import { FaCircle } from "react-icons/fa";
-import { IoIosRemove } from "react-icons/io";
 
 export interface ItemProps {
 	path: Array<string>;
@@ -50,7 +48,7 @@ const Item = ({ path }: ItemProps) => {
 	};
 	return (
 		<li style={{ listStyleType: "none" }}>
-			<span>
+			<span style={{ padding: "0.1rem 0", fontSize: "18px" }}>
 				<button onClick={handleExpandCollpase} style={{ border: "none" }}>
 					{item.children.length ? (expanded ? "-" : "+") : "•"}
 				</button>

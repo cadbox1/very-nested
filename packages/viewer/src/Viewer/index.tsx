@@ -83,6 +83,7 @@ export const Viewer = () => {
 	return (
 		<Fragment>
 			<HotKeys
+				tabIndex={undefined}
 				keyMap={{
 					up: "up",
 					down: "down",
@@ -94,8 +95,8 @@ export const Viewer = () => {
 					backspace: "backspace",
 				}}
 			>
-				<HotKeys handlers={handlers}>
-					<ul style={{ paddingBottom: "3rem" }}>
+				<HotKeys tabIndex={undefined} handlers={handlers}>
+					<ul style={{ paddingLeft: 0, paddingBottom: "3rem" }}>
 						<Item path={["vLlFS3csq"]} />
 					</ul>
 					<FixedToolbar>
