@@ -187,6 +187,12 @@ export const reducer = createReducer(emptyState, {
 		state.path.pop();
 		state.path.push(newParentId, id);
 
+		const parentPath = state.path.slice(0, -1);
+		const pathId = getPathId(parentPath);
+		const expandedSet = new Set(state.expanded);
+		expandedSet.add(pathId);
+		state.expanded = Array.from(expandedSet);
+
 		removeItemFromArray(collection, id);
 	},
 
