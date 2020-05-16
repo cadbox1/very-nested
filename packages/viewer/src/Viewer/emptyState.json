@@ -1,0 +1,16 @@
+{
+	"path": [],
+	"item": {
+		"vLlFS3csq": {
+			"id": "vLlFS3csq",
+			"content": "Home",
+			"children": ["r2_QCE3iV"]
+		},
+		"r2_QCE3iV": {
+			"id": "vLlFS3csq",
+			"content": "first note",
+			"children": []
+		}
+	},
+	"expanded": ["vLlFS3csq"]
+}
