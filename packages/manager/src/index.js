@@ -6,12 +6,12 @@ import thunk from "redux-thunk";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
+import { reducer } from "very-nested-viewer";
+
+import App from "./frontend/App";
+import * as serviceWorker from "./serviceWorker";
 
 import "bootstrap/dist/css/bootstrap-reboot.css";
-
-import App from "./App";
-import reducer from "./duck";
-import * as serviceWorker from "./serviceWorker";
 
 // dirty hack https://github.com/rt2zz/redux-persist/issues/747#issuecomment-425126732
 import { setAutoFreeze } from "immer";
@@ -25,7 +25,7 @@ const persistedReducer = persistReducer(
 	reducer
 );
 
-let persistor;
+export let persistor;
 
 function configureStore() {
 	const composeEnhancers =
