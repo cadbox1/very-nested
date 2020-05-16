@@ -26,6 +26,10 @@ export default ({ data }) => {
 					lists.
 				</Styled.p>
 				<Styled.p sx={{ fontSize: 2, mt: 4 }}>
+					You can edit the example below but you won't be able to save your
+					changes.
+				</Styled.p>
+				<Styled.p sx={{ fontSize: 2, mt: 4 }}>
 					I've also published this on my own domain using GitHub pages at{" "}
 					<Styled.a href="https://cooking.cadell.dev">
 						cooking.cadell.dev
