@@ -52,7 +52,7 @@ const Item = ({ path }: ItemProps) => {
 				<button onClick={handleExpandCollpase} style={{ border: "none" }}>
 					{item.children.length ? (expanded ? "-" : "+") : "•"}
 				</button>
-				{selectedPath.join() === path.join() ? (
+				{getPathId(selectedPath) === getPathId(path) ? (
 					<Fragment>
 						<input
 							value={item.content}
