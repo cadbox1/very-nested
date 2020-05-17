@@ -12,3 +12,7 @@ Link with Netlify
 
 Link with Netlify
 `netlify dev`
+
+## Todo
+
+Setup an oauth app for local development with a local redirect uri.

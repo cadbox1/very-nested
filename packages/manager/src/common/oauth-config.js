@@ -1,5 +1,12 @@
 const oauthApi = "https://github.com/login/oauth";
-const siteUrl = process.env.REACT_APP_URL || "http://localhost:8888";
+const siteUrl =
+	process.env.NODE_ENV === "production"
+		? process.env.REACT_APP_URL
+		: "http://localhost:8888";
+
+if (!siteUrl) {
+	throw new Error("MISSING REQUIRED ENV VARS. Please set REACT_APP_URL");
+}
 
 export const commonConfig = {
 	clientId: process.env.REACT_APP_CLIENT_ID,
