@@ -46,7 +46,7 @@ export const Manager = () => {
 
 	useEffect(() => {
 		// @ts-ignore
-		window.handleToken = (accessToken) => setAccessToken(accessToken);
+		window.handleToken = accessToken => setAccessToken(accessToken);
 	}, []);
 
 	return (
@@ -65,13 +65,17 @@ export const Manager = () => {
 						<ManageRepo />
 					</Route>
 					<Route path="/">
-						<Link to="/add">Add</Link>
-						{repos.pending && <p>pending</p>}
-						{repos.value?.data?.map((repo: any) => (
-							<div key={repo.name}>
-								<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
-							</div>
-						))}
+						<Link to="/add" style={{ marginTop: "2rem" }}>
+							Add
+						</Link>
+						<div style={{ marginTop: "1rem" }}>
+							{repos.pending && <p>pending</p>}
+							{repos.value?.data?.map((repo: any) => (
+								<div key={repo.name}>
+									<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
+								</div>
+							))}
+						</div>
 					</Route>
 				</Switch>
 			)}

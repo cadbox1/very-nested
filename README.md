@@ -1,10 +1,6 @@
-# Dry Notes
+# Very Nested
 
-Data driven notes.
-
-[Live Demo](https://notes.cadell.dev)
-
-![Tasks Demo](./tasks-demo.gif)
+Infinitely nested lists published on GitHub.
 
 ## 💻 Running Locally
 
@@ -62,3 +58,4 @@ yarn build-watch
 - Gatsby transpiles workspace packages whereas CRA doesn't
   - Gatsby tries to transpile and lint the built module which fails because it's a production build.
   - The workaround here is to increment the version on the very-nested-viewer locally so yarn pulls the npm version and Gatsby doesn't transpile it.
+- I only want to use the published version of viewer for the website and manager apps but there's no way to tell yarn workspaces to do that so I just leave the viewer checked in at one version ahead so they don't get linked and yarn uses the published version
