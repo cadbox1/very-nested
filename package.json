@@ -11,7 +11,8 @@
     ]
   },
   "scripts": {
-    "prepare": "lerna run prepare"
+    "prepare": "lerna run prepare",
+    "clean": "yarn workspaces run clean"
   },
   "devDependencies": {
     "lerna": "^3.20.2"

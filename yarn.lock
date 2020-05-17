@@ -22627,6 +22627,16 @@ very-nested-viewer@1.0.7:
     redux-thunk "^2.3.0"
     shortid "^2.2.15"
 
+very-nested-viewer@1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/very-nested-viewer/-/very-nested-viewer-1.0.8.tgz#22bd3cabf1959f141e697c5ff98323f6a423be87"
+  integrity sha512-pTryROiUnPW5WnhHQlGEmzE2hcSP4XlRTZhZCogq+20oOZFo+YfX9rUdo2gOzbgYN9MOq5vxI7R1ZkrhqYswTA==
+  dependencies:
+    react-hotkeys "^1.1.4"
+    react-icons "^3.10.0"
+    redux-thunk "^2.3.0"
+    shortid "^2.2.15"
+
 vfile-location@^2.0.0:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/vfile-location/-/vfile-location-2.0.6.tgz#8a274f39411b8719ea5728802e10d9e0dff1519e"
