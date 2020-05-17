@@ -48,7 +48,7 @@ export const Header = ({ title }) => {
 				>
 					Get Started
 				</Link>
-				<a href="somewhere" sx={navItemStyles}>
+				<a href="https://very-nested-app.netlify.app/" sx={navItemStyles}>
 					Sign In
 				</a>
 			</div>
