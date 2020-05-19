@@ -52,7 +52,7 @@ export const Manager = () => {
 	return (
 		<Router>
 			{!accessToken && (
-				<a href={generateAuthorizeUrl({ scope })} target="_blank">
+				<a href={generateAuthorizeUrl({ scope })} target="_blank" rel="opener">
 					Login with GitHub
 				</a>
 			)}
