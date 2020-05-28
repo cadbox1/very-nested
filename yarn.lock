@@ -22005,6 +22005,11 @@ typescript@^3.5.3, typescript@^3.7.2, typescript@^3.8.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.8.3.tgz#409eb8544ea0335711205869ec458ab109ee1061"
   integrity sha512-MYlEfn5VrLNsgudQTVJeNaQFUAI7DkhnOjdpAp4T+ku1TfQClewlbSuTVHiA+8skNBgaf02TL/kLOvig4y3G8w==
 
+typescript@^3.9.3:
+  version "3.9.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.3.tgz#d3ac8883a97c26139e42df5e93eeece33d610b8a"
+  integrity sha512-D/wqnB2xzNFIcoBG9FG8cXRDjiqSTbG2wd8DMZeQyJlP1vfTkIxH4GKveWaEBYySKIg+USu+E+EDIR47SqnaMQ==
+
 uglify-js@^2.6.1:
   version "2.8.29"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
@@ -22616,16 +22621,6 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
-
-very-nested-viewer@1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/very-nested-viewer/-/very-nested-viewer-1.0.7.tgz#4d8dca779a44a85a979fe15e35f343f704f7ca2b"
-  integrity sha512-ilpfcB39C1Inutx+ZWBrfsXLpQYcL5xyQBwt0B3azODp2vwnEYKA6uqpLjNKnWoBsX6SkzZrP2G/VDzzdJfmUw==
-  dependencies:
-    react-hotkeys "^1.1.4"
-    react-icons "^3.10.0"
-    redux-thunk "^2.3.0"
-    shortid "^2.2.15"
 
 very-nested-viewer@1.0.8:
   version "1.0.8"

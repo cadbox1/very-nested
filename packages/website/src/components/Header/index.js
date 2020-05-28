@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { jsx, useColorMode } from "theme-ui";
 import { Link } from "gatsby";
+import { Login } from "very-nested-login";
 
 const navItemMX = 2;
 
@@ -48,9 +49,13 @@ export const Header = ({ title }) => {
 				>
 					Get Started
 				</Link>
-				<a href="https://verynestedapp.cadell.dev" sx={navItemStyles}>
+				<Login
+					onAccessToken={() => {
+						debugger;
+					}}
+				>
 					Sign In
-				</a>
+				</Login>
 			</div>
 
 			<div sx={{ ml: "auto" }}>

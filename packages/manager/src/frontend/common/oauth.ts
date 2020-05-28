@@ -3,7 +3,7 @@ import { commonConfig } from "common/oauth-config";
 
 const generateGetParams = (params: object) =>
 	Object.entries(params)
-		.map((kv) => kv.map(encodeURIComponent).join("="))
+		.map(kv => kv.map(encodeURIComponent).join("="))
 		.join("&");
 
 export const generateAuthorizeUrl = ({ scope }: { scope: string }) => {
