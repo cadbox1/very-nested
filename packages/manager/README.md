@@ -2,15 +2,18 @@
 
 ## Setting Up
 
+Install Netlify dev
+`npm install -g netlify-cli@2.52.0`
+
 Login with Netlify
-`yarn netlify login`
+`netlify login`
 
 Link with Netlify
-`yarn netlify link`
+`netlify link`
 
 ## Running Locally
 
-`yarn netlify-dev`
+`netlify dev`
 
 ## Todo
 

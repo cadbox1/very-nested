@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import queryString from "query-string";
 
 const clientId = "c7381fe587f3cdaf4e30";

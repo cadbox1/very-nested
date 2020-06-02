@@ -3,7 +3,8 @@ import { Octokit } from "@octokit/rest";
 import { Switch, Route, Link, useLocation, useHistory } from "react-router-dom";
 import queryString from "query-string";
 import { usePromise } from "frontend/common/usePromise";
-import { generateAuthorizeUrl } from "frontend/common/oauth";
+// @ts-ignore
+import { generateAuthorizeUrl } from "very-nested-login";
 import { Add } from "./Add";
 import { ManageRepo } from "./ManageRepo";
 
@@ -19,7 +20,7 @@ export const Manager = () => {
 	const history = useHistory();
 	const { search } = useLocation();
 	useEffect(() => {
-		const { accessTokenFromUrl } = queryString.parse(search);
+		const { accessToken: accessTokenFromUrl } = queryString.parse(search);
 		if (accessTokenFromUrl && accessTokenFromUrl != accessToken) {
 			// @ts-ignore
 			setAccessToken(accessTokenFromUrl);

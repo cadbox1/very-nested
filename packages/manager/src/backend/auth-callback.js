@@ -37,11 +37,11 @@ exports.handler = (event, context, callback) => {
 			const accessToken = oauth2.accessToken.create(result);
 			console.log(accessToken.token);
 			return callback(null, {
-				statusCode: 200,
-				// headers: {
-				// 	Location: "/#accessToken=" + accessToken.token.access_token,
-				// },
-				body: "hey",
+				statusCode: 301,
+				headers: {
+					Location: "/#?accessToken=" + accessToken.token.access_token,
+				},
+				body: "",
 			});
 		})
 		.catch(error => {
