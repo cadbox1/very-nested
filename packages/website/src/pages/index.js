@@ -17,7 +17,7 @@ export default ({ data }) => {
 				}}
 			>
 				<Styled.h1 sx={{ fontSize: 6, mt: 8 }}>
-					Infinitely nested lists published on GitHub
+					Nested lists published on GitHub
 				</Styled.h1>
 				<Styled.p sx={{ fontSize: 3, mt: 4 }}>
 					Very Nested is a unique, open source approach to lists with a focus on
