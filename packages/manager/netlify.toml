@@ -2,3 +2,4 @@
     command = "yarn build"
     publish = "build"
     functions = "built-lambda"
+    base = "./"

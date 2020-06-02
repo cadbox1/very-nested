@@ -3,15 +3,14 @@
 ## Setting Up
 
 Login with Netlify
-`netlify login`
+`yarn netlify login`
 
 Link with Netlify
-`netlify link`
+`yarn netlify link`
 
 ## Running Locally
 
-Link with Netlify
-`netlify dev`
+`yarn netlify-dev`
 
 ## Todo
 
