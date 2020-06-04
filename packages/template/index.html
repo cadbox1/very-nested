@@ -50,7 +50,10 @@
 					loadData();
 				}, []);
 
-				return React.createElement(VeryNestedViewer.Viewer, { readonly: true });
+				return React.createElement(VeryNestedViewer.Viewer, {
+					readonly: true,
+					showBanner: true,
+				});
 			};
 
 			const store = RTK.configureStore({
