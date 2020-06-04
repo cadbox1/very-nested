@@ -18,6 +18,7 @@ const Item = ({ path }: ItemProps) => {
 	const id = last(path);
 
 	const dispatch = useDispatch();
+	const readonly = useSelector((state: State) => state.readonly);
 	const item = useSelector((state: State) => state.item[id]);
 	const selectedPath = useSelector((state: State) => state.path);
 	const expanded = useSelector((state: State) =>
@@ -34,7 +35,9 @@ const Item = ({ path }: ItemProps) => {
 		dispatch(editItem({ id, content: evt.target.value }));
 	};
 	const handleClick = () => {
-		dispatch(selectItem({ path }));
+		if (!readonly) {
+			dispatch(selectItem({ path }));
+		}
 	};
 	const handleExpandCollpase = () => {
 		if (!item.children.length) {
@@ -48,8 +51,11 @@ const Item = ({ path }: ItemProps) => {
 	};
 	return (
 		<li style={{ listStyleType: "none" }}>
-			<span style={{ fontSize: "18px" }}>
-				<button onClick={handleExpandCollpase} style={{ border: "none" }}>
+			<span style={{ fontSize: "18px", paddingRight: "1rem" }}>
+				<button
+					onClick={handleExpandCollpase}
+					style={{ border: "none", background: "none" }}
+				>
 					{item.children.length ? (expanded ? "-" : "+") : "•"}
 				</button>
 				{getPathId(selectedPath) === getPathId(path) ? (

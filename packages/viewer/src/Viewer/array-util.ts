@@ -33,3 +33,15 @@ export function removeItemFromArray<T = any>(input: T[], item: T) {
 	const targetIndex = input.indexOf(item);
 	input.splice(targetIndex, 1);
 }
+
+export function objectMap<T = any>(
+	obj: {},
+	fn: ({ key, value, index }: { key: {}; value: any; index: number }) => T
+) {
+	return Object.fromEntries(
+		Object.entries(obj).map(([key, value], index) => [
+			key,
+			fn({ key, value, index }),
+		])
+	);
+}

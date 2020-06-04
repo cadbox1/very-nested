@@ -14,7 +14,7 @@ const InsideProvider = ({ data }) => {
 		dispatch(load({ data }));
 	}, []);
 
-	return <Viewer />;
+	return <Viewer readonly />;
 };
 
 export const ViewerContainer = ({ data }) => {

@@ -20,6 +20,6 @@
     "theme-ui": "^0.3.1",
     "typeface-source-sans-pro": "^0.0.75",
     "very-nested-login": "1.0.0",
-    "very-nested-viewer": "1.0.8"
+    "very-nested-viewer": "*"
   }
 }
