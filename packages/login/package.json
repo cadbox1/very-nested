@@ -2,7 +2,6 @@
   "name": "very-nested-login",
   "version": "1.0.0",
   "description": "",
-  "license": "MIT",
   "private": true,
   "module": "dist/index.js",
   "files": [

@@ -18,6 +18,7 @@ export const ToolbarButton = ({
 		style={{
 			padding: "0.6rem 0.8rem",
 			border: "none",
+			background: "none",
 		}}
 		{...props}
 	>

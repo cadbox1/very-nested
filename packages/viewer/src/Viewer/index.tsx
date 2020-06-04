@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { HotKeys } from "react-hotkeys";
@@ -21,28 +21,29 @@ import {
 	removeItem,
 	moveUp,
 	moveDown,
+	setReadOnly,
 } from "./duck";
 import { ToolbarButton } from "./ToolbarButton";
-import { last } from "./array-util";
+import { last, objectMap } from "./array-util";
 import { FixedToolbar } from "./FixedToolbar";
 
-function objectMap<T = any>(
-	obj: {},
-	fn: ({ key, value, index }: { key: {}; value: any; index: number }) => T
-) {
-	return Object.fromEntries(
-		Object.entries(obj).map(([key, value], index) => [
-			key,
-			fn({ key, value, index }),
-		])
-	);
+export interface ViewerProps {
+	readonly?: boolean;
+	showBanner?: boolean;
 }
 
-export const Viewer = () => {
+export const Viewer = ({
+	readonly = false,
+	showBanner = false,
+}: ViewerProps) => {
 	const dispatch = useDispatch();
 	const selectedPath = useSelector((state: any) => state.path);
 	const id = last(selectedPath);
 	const selectedItem = useSelector((state: any) => state.item[id]);
+
+	useEffect(() => {
+		dispatch(setReadOnly({ readonly }));
+	}, [dispatch, readonly]);
 
 	const actions = {
 		up,
@@ -82,6 +83,17 @@ export const Viewer = () => {
 
 	return (
 		<Fragment>
+			{showBanner && (
+				<div>
+					<a
+						href="https://verynested.cadell.dev"
+						target="_blank"
+						style={{ fontSize: "18px" }}
+					>
+						Made with Very Nested
+					</a>
+				</div>
+			)}
 			<HotKeys
 				tabIndex={undefined}
 				keyMap={{
@@ -96,52 +108,61 @@ export const Viewer = () => {
 				}}
 			>
 				<HotKeys tabIndex={undefined} handlers={handlers}>
-					<ul style={{ paddingLeft: 0, paddingBottom: "3rem" }}>
-						<Item path={["vLlFS3csq"]} />
-					</ul>
-					<FixedToolbar>
-						<div style={{ display: "flex", background: "white" }}>
-							<ToolbarButton
-								onClick={preparedHandlers.undent}
-								title="undent (shift + tab)"
-							>
-								<IoIosArrowRoundBack />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.indent}
-								title="indent (tab)"
-							>
-								<IoIosArrowRoundForward />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.moveUp}
-								title="move up (alt + upkey)"
-							>
-								<IoIosArrowRoundUp />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.moveDown}
-								title="move down (alt + downkey)"
-							>
-								<IoIosArrowRoundDown />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.up}
-								title="previous item (upkey)"
-							>
-								<IoIosArrowUp />
-							</ToolbarButton>
-							<ToolbarButton
-								onClick={preparedHandlers.down}
-								title="next item (downkey)"
-							>
-								<IoIosArrowDown />
-							</ToolbarButton>
-							<ToolbarButton onClick={handleRemove} title="remove item">
-								<IoIosTrash />
-							</ToolbarButton>
-						</div>
-					</FixedToolbar>
+					<div style={{ overflow: "auto", whiteSpace: "nowrap" }}>
+						<ul
+							style={{
+								paddingLeft: 0,
+								paddingBottom: "3rem",
+							}}
+						>
+							<Item path={["vLlFS3csq"]} />
+						</ul>
+					</div>
+					{selectedItem && (
+						<FixedToolbar>
+							<div style={{ display: "flex", background: "white" }}>
+								<ToolbarButton
+									onClick={preparedHandlers.undent}
+									title="undent (shift + tab)"
+								>
+									<IoIosArrowRoundBack />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.indent}
+									title="indent (tab)"
+								>
+									<IoIosArrowRoundForward />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.moveUp}
+									title="move up (alt + upkey)"
+								>
+									<IoIosArrowRoundUp />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.moveDown}
+									title="move down (alt + downkey)"
+								>
+									<IoIosArrowRoundDown />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.up}
+									title="previous item (upkey)"
+								>
+									<IoIosArrowUp />
+								</ToolbarButton>
+								<ToolbarButton
+									onClick={preparedHandlers.down}
+									title="next item (downkey)"
+								>
+									<IoIosArrowDown />
+								</ToolbarButton>
+								<ToolbarButton onClick={handleRemove} title="remove item">
+									<IoIosTrash />
+								</ToolbarButton>
+							</div>
+						</FixedToolbar>
+					)}
 				</HotKeys>
 			</HotKeys>
 		</Fragment>
