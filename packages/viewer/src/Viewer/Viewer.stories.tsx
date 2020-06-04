@@ -31,3 +31,23 @@ export const VeryNestedCooking = () => {
 
 	return <Viewer />;
 };
+
+export const VeryNestedCookingReadonly = () => {
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(load({ data: cookingExample }));
+	}, []);
+
+	return <Viewer readonly />;
+};
+
+export const VeryNestedCookingReadonlyWithBanner = () => {
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(load({ data: cookingExample }));
+	}, []);
+
+	return <Viewer readonly showBanner />;
+};

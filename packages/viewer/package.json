@@ -1,6 +1,6 @@
 {
   "name": "very-nested-viewer",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "license": "MIT",
   "private": false,
   "source": "src/index.ts",
