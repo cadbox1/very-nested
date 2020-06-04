@@ -57,5 +57,6 @@ yarn build-watch
     - I still kept microbundle around because it can create the modern and efficient module build for the manager app wheras webpack can't yet.
 - Gatsby transpiles workspace packages whereas CRA doesn't
   - Gatsby tries to transpile and lint the built module which fails because it's a production build.
-  - The workaround here is to increment the version on the very-nested-viewer locally so yarn pulls the npm version and Gatsby doesn't transpile it.
-- I only want to use the published version of viewer for the website and manager apps but there's no way to tell yarn workspaces to do that so I just leave the viewer checked in at one version ahead so they don't get linked and yarn uses the published version
+  - Originally I just made the versions mismatched but settled on adding an empty eslintrc to disable linting.
+- To get netlify to build all the packages in the monorepo, I had to change the build command to cd to the root then cd back down to build the package.
+  - There's still some weird stuff happening with regards to netlify dev on this one, see this ticket for more: https://github.com/netlify/cli/issues/859
