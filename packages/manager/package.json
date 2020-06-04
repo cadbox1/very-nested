@@ -19,7 +19,7 @@
 		"shortid": "^2.2.15",
 		"simple-oauth2": "^3.4.0",
 		"very-nested-login": "1.0.0",
-		"very-nested-viewer": "1.0.8"
+		"very-nested-viewer": "*"
 	},
 	"scripts": {
 		"start": "react-scripts start",
