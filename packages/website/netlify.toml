@@ -1,0 +1,3 @@
+[build]
+    command = "cd ../.. && yarn && cd packages/website && yarn build"
+    publish = "public"

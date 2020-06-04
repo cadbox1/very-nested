@@ -35,16 +35,13 @@ exports.handler = (event, context, callback) => {
 		})
 		.then(result => {
 			const accessToken = oauth2.accessToken.create(result);
+			console.log(accessToken.token);
 			return callback(null, {
-				statusCode: 200,
-				body: `<html>
-						<body>
-							<script>
-								window.opener.handleToken("${accessToken.token.access_token}");
-								window.close();
-							</script>
-						</body>
-					</html>`,
+				statusCode: 301,
+				headers: {
+					Location: "/#?accessToken=" + accessToken.token.access_token,
+				},
+				body: "",
 			});
 		})
 		.catch(error => {

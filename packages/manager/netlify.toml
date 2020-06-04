@@ -1,4 +1,4 @@
 [build]
-    command = "yarn build"
+    command = "cd ../.. && yarn && cd packages/manager && yarn build"
     publish = "build"
     functions = "built-lambda"
