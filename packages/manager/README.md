@@ -13,8 +13,16 @@ Link with Netlify
 
 ## Running Locally
 
+`Yarn start`
+
+To run the backend use:
+
 `netlify dev`
 
-## Todo
+Add the following to the `netlify.toml`.
 
-Setup an oauth app for local development with a local redirect uri.
+```
+base = "./"
+```
+
+Change the redirect_uri in github oauth app.
