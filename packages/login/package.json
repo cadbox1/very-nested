@@ -1,0 +1,22 @@
+{
+  "name": "very-nested-login",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "private": true,
+  "module": "dist/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "tsc -p .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.3"
+  },
+  "dependencies": {
+    "query-string": "^6.12.1"
+  }
+}

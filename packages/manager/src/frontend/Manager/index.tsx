@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Octokit } from "@octokit/rest";
-import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Switch, Route, Link, useLocation, useHistory } from "react-router-dom";
+import queryString from "query-string";
 import { usePromise } from "frontend/common/usePromise";
-import { generateAuthorizeUrl } from "frontend/common/oauth";
+// @ts-ignore
+import { generateAuthorizeUrl } from "very-nested-login";
 import { Add } from "./Add";
 import { ManageRepo } from "./ManageRepo";
 
@@ -14,6 +16,17 @@ export const Manager = () => {
 	const [accessToken, setAccessToken] = useState(
 		localStorage.getItem("accessToken")
 	);
+
+	const history = useHistory();
+	const { search } = useLocation();
+	useEffect(() => {
+		const { accessToken: accessTokenFromUrl } = queryString.parse(search);
+		if (accessTokenFromUrl && accessTokenFromUrl != accessToken) {
+			// @ts-ignore
+			setAccessToken(accessTokenFromUrl);
+			history.replace("/");
+		}
+	}, [search]);
 
 	const setupOktokit = (accessToken: string) => {
 		octokit = octokit = new Octokit({
@@ -44,17 +57,10 @@ export const Manager = () => {
 		}
 	}, [accessToken]);
 
-	useEffect(() => {
-		// @ts-ignore
-		window.handleToken = accessToken => setAccessToken(accessToken);
-	}, []);
-
 	return (
-		<Router>
+		<>
 			{!accessToken && (
-				<a href={generateAuthorizeUrl({ scope })} target="_blank" rel="opener">
-					Login with GitHub
-				</a>
+				<a href={generateAuthorizeUrl({ scope })}>Login with GitHub</a>
 			)}
 			{octokit && (
 				<Switch>
@@ -79,6 +85,6 @@ export const Manager = () => {
 					</Route>
 				</Switch>
 			)}
-		</Router>
+		</>
 	);
 };

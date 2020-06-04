@@ -1,6 +1,8 @@
 /** @jsx jsx */
 import { jsx, useColorMode } from "theme-ui";
 import { Link } from "gatsby";
+// @ts-ignore
+import { generateAuthorizeUrl } from "very-nested-login";
 
 const navItemMX = 2;
 
@@ -18,10 +20,14 @@ const navItemActiveStyles = {
 	cursor: "default",
 };
 
-export const Header = ({ title }) => {
+export interface HeaderProps {
+	title: string;
+}
+
+export const Header = ({ title }: HeaderProps) => {
 	const [colorMode, setColorMode] = useColorMode();
 	const isDark = colorMode === `dark`;
-	const toggleColorMode = e => {
+	const toggleColorMode = () => {
 		setColorMode(isDark ? `light` : `dark`);
 	};
 
@@ -48,7 +54,7 @@ export const Header = ({ title }) => {
 				>
 					Get Started
 				</Link>
-				<a href="https://verynestedapp.cadell.dev" sx={navItemStyles}>
+				<a href={generateAuthorizeUrl({})} sx={navItemStyles}>
 					Sign In
 				</a>
 			</div>

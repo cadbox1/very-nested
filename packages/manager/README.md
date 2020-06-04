@@ -2,6 +2,9 @@
 
 ## Setting Up
 
+Install Netlify dev
+`npm install -g netlify-cli@2.52.0`
+
 Login with Netlify
 `netlify login`
 
@@ -10,9 +13,16 @@ Link with Netlify
 
 ## Running Locally
 
-Link with Netlify
+`Yarn start`
+
+To run the backend use:
+
 `netlify dev`
 
-## Todo
+Add the following to the `netlify.toml`.
 
-Setup an oauth app for local development with a local redirect uri.
+```
+base = "./"
+```
+
+Change the redirect_uri in github oauth app.
