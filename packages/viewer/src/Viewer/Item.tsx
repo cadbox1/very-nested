@@ -73,7 +73,7 @@ const Item = ({ path }: ItemProps) => {
 						onClick={handleClick}
 						style={{
 							display: "inline-block",
-							padding: "0.1rem 0",
+							padding: "0.1rem 5rem 0 0",
 							minHeight: "1rem",
 						}}
 					>
