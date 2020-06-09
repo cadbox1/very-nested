@@ -3,6 +3,7 @@ import { octokit } from ".";
 import { usePromise } from "frontend/common/usePromise";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { Base64 } from "js-base64";
 import { persistor } from "index";
 
 // @ts-ignore
@@ -25,7 +26,7 @@ export const ManageRepo = () => {
 
 			const data = response.data;
 
-			const content = JSON.parse(atob(data.content));
+			const content = JSON.parse(Base64.decode(data.content));
 			dispatch(load({ data: content }));
 
 			return data;
@@ -42,7 +43,7 @@ export const ManageRepo = () => {
 	const saveRequest = usePromise<any>({
 		promiseFunction: async () => {
 			const jsonState = JSON.stringify(itemState, null, 1);
-			const base64JsonState = btoa(jsonState);
+			const base64JsonState = Base64.encode(jsonState);
 
 			await octokit.repos.createOrUpdateFile({
 				owner,
@@ -78,6 +79,7 @@ export const ManageRepo = () => {
 			>
 				Revert local changes
 			</button>
+			{saveRequest.rejected && <p>There was an issue saving your repo :(</p>}
 			{getRequest.pending && <p>Loading...</p>}
 			{getRequest.rejected && (
 				<p>
