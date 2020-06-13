@@ -22,9 +22,15 @@ export default ({ data }) => {
 					Nested lists published on GitHub.
 				</Styled.h1>
 				<Styled.p sx={{ fontSize: 3, mt: 4 }}>
-					Very Nested is a free and open source tool to create nested lists and
-					publish them GitHub. Each item can belong to multiple lists and that
-					has some cool results.
+					Very Nested is a free and{" "}
+					<Styled.a
+						href="https://github.com/cadbox1/very-nested"
+						target="_blank"
+					>
+						open source
+					</Styled.a>{" "}
+					tool to create nested lists and publish them GitHub. Each item can
+					belong to multiple lists and that has some cool results.
 				</Styled.p>
 
 				<div>
@@ -46,8 +52,15 @@ export default ({ data }) => {
 					</Styled.p>
 					<Styled.h3 sx={{ mt: 6 }}>No Lock-In</Styled.h3>
 					<Styled.p>
-						Very Nested is free, open source and publicly available. All your
-						data is saved in your own GitHub account, under your control.
+						Very Nested is free, open source and publicly available on{" "}
+						<Styled.a
+							href="https://github.com/cadbox1/very-nested"
+							target="_blank"
+						>
+							GitHub
+						</Styled.a>
+						. All your data is saved in your own GitHub account, under your
+						control.
 					</Styled.p>
 				</div>
 			</div>
