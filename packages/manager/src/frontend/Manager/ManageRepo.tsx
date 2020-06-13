@@ -25,11 +25,26 @@ export const ManageRepo = () => {
 		},
 	});
 
+	const getPagesRequest = usePromise<any>({
+		promiseFunction: async () => {
+			return octokit.repos.getPages({
+				owner,
+				repo,
+			});
+		},
+	});
+
+	useEffect(() => {
+		if (repoRequest.value && repoRequest.value.data.has_pages) {
+			getPagesRequest.call();
+		}
+	}, [repoRequest.value]);
+
 	const dispatch = useDispatch();
 
 	const getRequest = usePromise<any>({
 		promiseFunction: async () => {
-			const response: any = await octokit.repos.getContents({
+			const response: any = await octokit.repos.getContent({
 				repo,
 				owner,
 				path: veryNestedDataFile,
@@ -57,7 +72,7 @@ export const ManageRepo = () => {
 			const jsonState = JSON.stringify(itemState, null, 1);
 			const base64JsonState = Base64.encode(jsonState);
 
-			await octokit.repos.createOrUpdateFile({
+			await octokit.repos.createOrUpdateFileContents({
 				owner,
 				repo,
 				path: veryNestedDataFile,
@@ -84,19 +99,48 @@ export const ManageRepo = () => {
 				<Link to="/">{"< Home"}</Link>
 			</div>
 			<h2 sx={{ mt: 4 }}>{repo}</h2>
-			<p>
-				repo url:{" "}
-				{repoRequest.pending ? (
-					"loading..."
-				) : repoRequest.fulfilled ? (
-					<a href={repoRequest.value.data.html_url} target="_blank">
-						{repoRequest.value.data.html_url}
-					</a>
-				) : (
-					"error loading url"
-				)}
-			</p>
-			<div sx={{ mb: 6 }}>
+			<div>
+				<div>
+					repo url:{" "}
+					{repoRequest.pending
+						? "loading..."
+						: repoRequest.rejected
+						? "error loading url"
+						: repoRequest.value && (
+								<a
+									href={repoRequest.value.data.html_url}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{repoRequest.value.data.html_url}
+								</a>
+						  )}
+				</div>
+				<div>
+					published url:{" "}
+					{repoRequest.pending
+						? "loading..."
+						: repoRequest.rejected
+						? "error loading url"
+						: repoRequest.value &&
+						  (!repoRequest.value.data.has_pages
+								? "no pages url found"
+								: getPagesRequest.pending
+								? "loading..."
+								: getPagesRequest.rejected
+								? "error loading url"
+								: getPagesRequest.value && (
+										<a
+											href={getPagesRequest.value.data.html_url}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{getPagesRequest.value.data.html_url}
+										</a>
+								  ))}
+				</div>
+			</div>
+			<div sx={{ mt: 4 }}>
 				<button
 					type="button"
 					onClick={handleSave}
@@ -112,7 +156,7 @@ export const ManageRepo = () => {
 					Revert local changes
 				</button>
 			</div>
-			<div>
+			<div sx={{ mt: 6 }}>
 				{saveRequest.rejected && <p>There was an issue saving your repo :(</p>}
 				{getRequest.pending && <p>Loading...</p>}
 				{getRequest.rejected && (

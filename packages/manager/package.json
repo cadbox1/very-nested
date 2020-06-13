@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"dependencies": {
-		"@octokit/rest": "^17.1.4",
+		"@octokit/rest": "^18.0.0",
 		"bootstrap": "^4.4.1",
 		"debounce": "^1.2.0",
 		"immer": "^5.0.1",
@@ -20,7 +20,7 @@
 		"shortid": "^2.2.15",
 		"simple-oauth2": "^3.4.0",
 		"theme-ui": "^0.3.1",
-		"very-nested-login": "1.0.0",
+		"very-nested-login": "*",
 		"very-nested-viewer": "*"
 	},
 	"scripts": {
