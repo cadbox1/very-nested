@@ -3,7 +3,7 @@ import baseTheme from "gatsby-theme-ui-blog/src/gatsby-plugin-theme-ui";
 import "typeface-source-sans-pro";
 
 export default {
-	useColorSchemeMediaQuery: true,
+	// useColorSchemeMediaQuery: true,
 	fonts: {
 		body:
 			'"source sans pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial',
