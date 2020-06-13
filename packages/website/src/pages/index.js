@@ -4,7 +4,7 @@ import { graphql } from "gatsby";
 import Layout from "gatsby-theme-ui-blog/src/layout";
 import { Header } from "../components/Header";
 import { ViewerContainer } from "../components/ViewerContainer";
-import cookingExample from "./examples/cookingExample.json";
+import youtubeExample from "./examples/youtube.json";
 
 export default ({ data }) => {
 	return (
@@ -35,7 +35,7 @@ export default ({ data }) => {
 
 				<div>
 					<Styled.h2 sx={{ mt: 8 }}>Example</Styled.h2>
-					<ViewerContainer data={cookingExample} />
+					<ViewerContainer data={youtubeExample} />
 				</div>
 
 				<div>

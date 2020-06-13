@@ -88,6 +88,7 @@ export const Viewer = ({
 					<a
 						href="https://verynested.cadell.dev"
 						target="_blank"
+						rel="noopener noreferrer"
 						style={{ fontSize: "18px" }}
 					>
 						Made with Very Nested
