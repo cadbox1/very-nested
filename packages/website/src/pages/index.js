@@ -36,8 +36,8 @@ export default ({ data }) => {
 					<Styled.h2 sx={{ mt: 8 }}>Features</Styled.h2>
 					<Styled.h3 sx={{ mt: 6 }}>One Item, many Lists</Styled.h3>
 					<Styled.p>
-						Each item can belong to multiple lists so you can manage your lists
-						in creative ways that make sense for your content.
+						Each item can belong to multiple lists so you can organise your
+						content in fun and creative ways.
 					</Styled.p>
 					<Styled.h3 sx={{ mt: 6 }}>Custom Domains</Styled.h3>
 					<Styled.p>
@@ -47,7 +47,7 @@ export default ({ data }) => {
 					<Styled.h3 sx={{ mt: 6 }}>No Lock-In</Styled.h3>
 					<Styled.p>
 						Very Nested is free, open source and publicly available. All your
-						data on GitHub and under your control.
+						data is saved in your own GitHub account, under your control.
 					</Styled.p>
 				</div>
 			</div>
