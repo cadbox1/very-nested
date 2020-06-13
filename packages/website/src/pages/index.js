@@ -1,10 +1,10 @@
 /** @jsx jsx */
 import { jsx, Styled } from "theme-ui";
-import { graphql } from "gatsby";
+import { graphql, Link } from "gatsby";
 import Layout from "gatsby-theme-ui-blog/src/layout";
 import { Header } from "../components/Header";
 import { ViewerContainer } from "../components/ViewerContainer";
-import youtubeExample from "./examples/youtube.json";
+import youtubeExample from "./examples/data/youtube.json";
 
 export default ({ data }) => {
 	return (
@@ -35,6 +35,9 @@ export default ({ data }) => {
 
 				<div>
 					<Styled.h2 sx={{ mt: 8 }}>Example</Styled.h2>
+					<Styled.a as={Link} to="/examples/youtube" sx={{ fontSize: 1 }}>
+						Edit this example.
+					</Styled.a>
 					<ViewerContainer data={youtubeExample} />
 				</div>
 
