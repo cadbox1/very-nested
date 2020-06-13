@@ -1,4 +1,6 @@
+/** @jsx jsx */
 import React, { useEffect, useState } from "react";
+import { jsx, Styled } from "theme-ui";
 import { Octokit } from "@octokit/rest";
 import { Switch, Route, Link, useLocation, useHistory } from "react-router-dom";
 import queryString from "query-string";
@@ -58,7 +60,7 @@ export const Manager = () => {
 	}, [accessToken]);
 
 	return (
-		<>
+		<div>
 			{!accessToken && (
 				<a href={generateAuthorizeUrl({ scope })}>Login with GitHub</a>
 			)}
@@ -71,20 +73,40 @@ export const Manager = () => {
 						<ManageRepo />
 					</Route>
 					<Route path="/">
-						<Link to="/add" style={{ marginTop: "2rem" }}>
-							Add
-						</Link>
-						<div style={{ marginTop: "1rem" }}>
-							{repos.pending && <p>pending</p>}
-							{repos.value?.data?.map((repo: any) => (
-								<div key={repo.name}>
-									<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
-								</div>
-							))}
+						<Styled.h1 sx={{ fontSize: 3 }}>Very Nested Manager</Styled.h1>
+						<div sx={{ mt: 5 }}>
+							<Link to="/add">Add</Link>
+							<div sx={{ mt: 5 }}>
+								{repos.pending && <p>pending</p>}
+								{repos.value?.data?.some((repo: any) =>
+									repo.name.startsWith("very-nested")
+								) && (
+									<Styled.h2 sx={{ fontSize: 2 }}>Very Nested Repos</Styled.h2>
+								)}
+								{repos.value?.data
+									?.filter((repo: any) => repo.name.startsWith("very-nested"))
+									.map((repo: any) => (
+										<div key={repo.name}>
+											<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
+										</div>
+									))}
+								{repos.value?.data?.some(
+									(repo: any) => !repo.name.startsWith("very-nested")
+								) && (
+									<Styled.h2 sx={{ fontSize: 2, mt: 5 }}>Other Repos</Styled.h2>
+								)}
+								{repos.value?.data
+									?.filter((repo: any) => !repo.name.startsWith("very-nested"))
+									.map((repo: any) => (
+										<div key={repo.name}>
+											<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
+										</div>
+									))}
+							</div>
 						</div>
 					</Route>
 				</Switch>
 			)}
-		</>
+		</div>
 	);
 };

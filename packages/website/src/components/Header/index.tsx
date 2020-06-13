@@ -59,7 +59,7 @@ export const Header = ({ title }: HeaderProps) => {
 				</a>
 			</div>
 
-			<div sx={{ ml: "auto" }}>
+			{/* <div sx={{ ml: "auto" }}>
 				<button
 					onClick={toggleColorMode}
 					sx={{
@@ -75,7 +75,7 @@ export const Header = ({ title }: HeaderProps) => {
 				>
 					{isDark ? "Dark" : "Light"}
 				</button>
-			</div>
+			</div> */}
 		</nav>
 	);
 };

@@ -1,7 +1,9 @@
+/** @jsx jsx */
 import React, { useEffect } from "react";
+import { jsx } from "theme-ui";
 import { octokit } from ".";
 import { usePromise } from "frontend/common/usePromise";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Base64 } from "js-base64";
 import { persistor } from "index";
@@ -14,11 +16,35 @@ const veryNestedDataFile = "very-nested-data.json";
 export const ManageRepo = () => {
 	const { owner = "", repo = "" } = useParams();
 
+	const repoRequest = usePromise<any>({
+		promiseFunction: async () => {
+			return octokit.repos.get({
+				owner,
+				repo,
+			});
+		},
+	});
+
+	const getPagesRequest = usePromise<any>({
+		promiseFunction: async () => {
+			return octokit.repos.getPages({
+				owner,
+				repo,
+			});
+		},
+	});
+
+	useEffect(() => {
+		if (repoRequest.value && repoRequest.value.data.has_pages) {
+			getPagesRequest.call();
+		}
+	}, [repoRequest.value]);
+
 	const dispatch = useDispatch();
 
 	const getRequest = usePromise<any>({
 		promiseFunction: async () => {
-			const response: any = await octokit.repos.getContents({
+			const response: any = await octokit.repos.getContent({
 				repo,
 				owner,
 				path: veryNestedDataFile,
@@ -34,6 +60,7 @@ export const ManageRepo = () => {
 	});
 
 	useEffect(() => {
+		repoRequest.call();
 		getRequest.call();
 	}, [repo, owner]);
 
@@ -45,7 +72,7 @@ export const ManageRepo = () => {
 			const jsonState = JSON.stringify(itemState, null, 1);
 			const base64JsonState = Base64.encode(jsonState);
 
-			await octokit.repos.createOrUpdateFile({
+			await octokit.repos.createOrUpdateFileContents({
 				owner,
 				repo,
 				path: veryNestedDataFile,
@@ -68,26 +95,78 @@ export const ManageRepo = () => {
 
 	return (
 		<div>
-			<h2>{repo}</h2>
-			<button type="button" onClick={handleSave} disabled={saveRequest.pending}>
-				{saveRequest.pending ? "Saving..." : "Save"}
-			</button>
-			<button
-				type="button"
-				onClick={handleRevert}
-				disabled={getRequest.pending}
-			>
-				Revert local changes
-			</button>
-			{saveRequest.rejected && <p>There was an issue saving your repo :(</p>}
-			{getRequest.pending && <p>Loading...</p>}
-			{getRequest.rejected && (
-				<p>
-					We couldn't read this repository, are you sure it's a very nested
-					repo?
-				</p>
-			)}
-			{getRequest.fulfilled && <Viewer />}
+			<div>
+				<Link to="/">{"< Home"}</Link>
+			</div>
+			<h2 sx={{ mt: 4 }}>{repo}</h2>
+			<div>
+				<div>
+					repo url:{" "}
+					{repoRequest.pending
+						? "loading..."
+						: repoRequest.rejected
+						? "error loading url"
+						: repoRequest.value && (
+								<a
+									href={repoRequest.value.data.html_url}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{repoRequest.value.data.html_url}
+								</a>
+						  )}
+				</div>
+				<div>
+					published url:{" "}
+					{repoRequest.pending
+						? "loading..."
+						: repoRequest.rejected
+						? "error loading url"
+						: repoRequest.value &&
+						  (!repoRequest.value.data.has_pages
+								? "no pages url found"
+								: getPagesRequest.pending
+								? "loading..."
+								: getPagesRequest.rejected
+								? "error loading url"
+								: getPagesRequest.value && (
+										<a
+											href={getPagesRequest.value.data.html_url}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{getPagesRequest.value.data.html_url}
+										</a>
+								  ))}
+				</div>
+			</div>
+			<div sx={{ mt: 4 }}>
+				<button
+					type="button"
+					onClick={handleSave}
+					disabled={saveRequest.pending}
+				>
+					{saveRequest.pending ? "Saving..." : "Save"}
+				</button>
+				<button
+					type="button"
+					onClick={handleRevert}
+					disabled={getRequest.pending}
+				>
+					Revert local changes
+				</button>
+			</div>
+			<div sx={{ mt: 6 }}>
+				{saveRequest.rejected && <p>There was an issue saving your repo :(</p>}
+				{getRequest.pending && <p>Loading...</p>}
+				{getRequest.rejected && (
+					<p>
+						We couldn't read this repository, are you sure it's a very nested
+						repo?
+					</p>
+				)}
+				{getRequest.fulfilled && <Viewer />}
+			</div>
 		</div>
 	);
 };

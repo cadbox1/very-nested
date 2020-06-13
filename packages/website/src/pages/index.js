@@ -1,10 +1,10 @@
 /** @jsx jsx */
 import { jsx, Styled } from "theme-ui";
-import { graphql } from "gatsby";
+import { graphql, Link } from "gatsby";
 import Layout from "gatsby-theme-ui-blog/src/layout";
 import { Header } from "../components/Header";
 import { ViewerContainer } from "../components/ViewerContainer";
-import cookingExample from "./examples/cookingExample.json";
+import youtubeExample from "./examples/data/youtube.json";
 
 export default ({ data }) => {
 	return (
@@ -22,22 +22,31 @@ export default ({ data }) => {
 					Nested lists published on GitHub.
 				</Styled.h1>
 				<Styled.p sx={{ fontSize: 3, mt: 4 }}>
-					Very Nested is a free and open source tool to create nested lists and
-					publish them GitHub. Each item can belong to multiple lists and that
-					has some cool results.
+					Very Nested is a free and{" "}
+					<Styled.a
+						href="https://github.com/cadbox1/very-nested"
+						target="_blank"
+					>
+						open source
+					</Styled.a>{" "}
+					tool to create nested lists and publish them GitHub. Each item can
+					belong to multiple lists and that has some cool results.
 				</Styled.p>
 
 				<div>
 					<Styled.h2 sx={{ mt: 8 }}>Example</Styled.h2>
-					<ViewerContainer data={cookingExample} />
+					<Styled.a as={Link} to="/examples/youtube" sx={{ fontSize: 1 }}>
+						Edit this example.
+					</Styled.a>
+					<ViewerContainer data={youtubeExample} />
 				</div>
 
 				<div>
 					<Styled.h2 sx={{ mt: 8 }}>Features</Styled.h2>
 					<Styled.h3 sx={{ mt: 6 }}>One Item, many Lists</Styled.h3>
 					<Styled.p>
-						Each item can belong to multiple lists so you can manage your lists
-						in creative ways that make sense for your content.
+						Each item can belong to multiple lists so you can organise your
+						content in fun and creative ways.
 					</Styled.p>
 					<Styled.h3 sx={{ mt: 6 }}>Custom Domains</Styled.h3>
 					<Styled.p>
@@ -46,8 +55,15 @@ export default ({ data }) => {
 					</Styled.p>
 					<Styled.h3 sx={{ mt: 6 }}>No Lock-In</Styled.h3>
 					<Styled.p>
-						Very Nested is free, open source and publicly available. All your
-						data on GitHub and under your control.
+						Very Nested is free, open source and publicly available on{" "}
+						<Styled.a
+							href="https://github.com/cadbox1/very-nested"
+							target="_blank"
+						>
+							GitHub
+						</Styled.a>
+						. All your data is saved in your own GitHub account, under your
+						control.
 					</Styled.p>
 				</div>
 			</div>

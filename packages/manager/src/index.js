@@ -7,6 +7,8 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
 import { reducer } from "very-nested-viewer";
+import { ThemeProvider } from "theme-ui";
+import theme from "./theme";
 
 import App from "./frontend/App";
 import * as serviceWorker from "./serviceWorker";
@@ -28,6 +30,7 @@ const persistedReducer = persistReducer(
 export let persistor;
 
 function configureStore() {
+	// @ts-ignore
 	const composeEnhancers =
 		window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 	const store = createStore(
@@ -40,9 +43,11 @@ function configureStore() {
 
 ReactDOM.render(
 	<Provider store={configureStore()}>
-		<PersistGate loading={null} persistor={persistor}>
-			<App />
-		</PersistGate>
+		<ThemeProvider theme={theme}>
+			<PersistGate loading={null} persistor={persistor}>
+				<App />
+			</PersistGate>
+		</ThemeProvider>
 	</Provider>,
 	document.getElementById("root")
 );
