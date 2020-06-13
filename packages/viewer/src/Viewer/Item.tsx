@@ -9,6 +9,7 @@ import {
 	getPathId,
 } from "./duck";
 import { last } from "./array-util";
+import { isHref } from "./isHref";
 
 export interface ItemProps {
 	path: Array<string>;
@@ -77,7 +78,13 @@ const Item = ({ path }: ItemProps) => {
 							minHeight: "1rem",
 						}}
 					>
-						{item.content}
+						{isHref(item.content) ? (
+							<a href={item.content} target="_blank" rel="noopener noreferrer">
+								{item.content}
+							</a>
+						) : (
+							item.content
+						)}
 					</span>
 				)}
 			</span>

@@ -7,20 +7,32 @@ const store = configureStore({
 	reducer,
 });
 
-const InsideProvider = ({ data }) => {
+const InsideProvider = ({
+	data,
+	readonly,
+}: {
+	data: any;
+	readonly: boolean;
+}) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(load({ data }));
 	}, []);
 
-	return <Viewer readonly />;
+	return <Viewer readonly={readonly} />;
 };
 
-export const ViewerContainer = ({ data }) => {
+export const ViewerContainer = ({
+	data,
+	readonly = true,
+}: {
+	data: any;
+	readonly?: boolean;
+}) => {
 	return (
 		<Provider store={store}>
-			<InsideProvider data={data} />
+			<InsideProvider data={data} readonly={readonly} />
 		</Provider>
 	);
 };

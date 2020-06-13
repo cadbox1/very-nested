@@ -35,6 +35,10 @@ export default ({ data }) => {
 					Allow the Very Nested app to access your GitHub account so we can save
 					your lists.
 				</Styled.p>
+				<Styled.h2 sx={{ fontSize: 3, mt: 6 }}>3. Setup a new repo</Styled.h2>
+				<Styled.p sx={{ fontSize: 2, mt: 4 }}>
+					Setup a new GitHub repository for your list.
+				</Styled.p>
 				<Styled.h2 sx={{ fontSize: 3, mt: 6 }}>3. Create</Styled.h2>
 				<Styled.p sx={{ fontSize: 2, mt: 4 }}>
 					Create a list and click save.

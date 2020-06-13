@@ -1,16 +1,12 @@
-import baseTheme from "gatsby-theme-ui-blog/src/gatsby-plugin-theme-ui";
-
-import "typeface-source-sans-pro";
-
 export default {
 	// useColorSchemeMediaQuery: true,
-	fonts: {
-		body:
-			'"source sans pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial',
-		heading:
-			'"source sans pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial',
-		monospace: `Consolas, Menlo, Monaco, source-code-pro, Courier New, monospace`,
-	},
+	// fonts: {
+	// 	body:
+	// 		'"source sans pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial',
+	// 	heading:
+	// 		'"source sans pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial',
+	// 	monospace: `Consolas, Menlo, Monaco, source-code-pro, Courier New, monospace`,
+	// },
 	colors: {
 		text: "#000",
 		background: "#fff",
@@ -41,20 +37,16 @@ export default {
 		bold: 600,
 	},
 	styles: {
-		...baseTheme.styles,
 		a: {
-			...baseTheme.styles.a,
 			textDecoration: "none",
 			":active, :hover": {
 				textDecoration: "underline",
 			},
 		},
 		p: {
-			...baseTheme.styles.p,
 			fontSize: 2,
 		},
 		pre: {
-			...baseTheme.styles.pre,
 			fontSize: 0,
 		},
 	},
