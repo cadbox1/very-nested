@@ -43,7 +43,8 @@ export const Manager = () => {
 	};
 
 	const repos = usePromise<any>({
-		promiseFunction: async () => octokit.repos.listForAuthenticatedUser(),
+		promiseFunction: async () =>
+			octokit.repos.listForAuthenticatedUser({ per_page: 100 }),
 	});
 	const currentUser = usePromise<any>({
 		promiseFunction: async () => octokit.users.getAuthenticated(),

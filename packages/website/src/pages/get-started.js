@@ -22,9 +22,9 @@ export default ({ data }) => {
 				<Styled.h2 sx={{ fontSize: 3, mt: 6 }}>1. GitHub Account</Styled.h2>
 				<Styled.p sx={{ fontSize: 2, mt: 4 }}>
 					<Styled.a href={generateAuthorizeUrl({})} target="_blank">
-						Signin
+						Sign in
 					</Styled.a>{" "}
-					to GitHub, or{" "}
+					to GitHub or{" "}
 					<Styled.a href={generateAuthorizeUrl({})} target="_blank">
 						Signup
 					</Styled.a>{" "}
