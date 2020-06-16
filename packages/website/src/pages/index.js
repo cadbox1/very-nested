@@ -19,7 +19,7 @@ export default ({ data }) => {
 				}}
 			>
 				<Styled.h1 sx={{ fontSize: 6, mt: 8 }}>
-					Create interesting lists on the internet.
+					Create lists on the internet.
 				</Styled.h1>
 				<Styled.p sx={{ fontSize: 3, mt: 4 }}>
 					Very Nested is a free and{" "}
@@ -30,8 +30,7 @@ export default ({ data }) => {
 					>
 						open source
 					</Styled.a>{" "}
-					app to create interesting lists and publish them on the internet using
-					GitHub.
+					app to create unique lists on the internet using your GitHub account.
 				</Styled.p>
 				<Link
 					to="/get-started"
