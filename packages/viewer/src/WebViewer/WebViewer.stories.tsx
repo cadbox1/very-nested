@@ -6,6 +6,6 @@ export default {
 	component: WebViewer,
 };
 
-export const WebViewerCooking = () => {
-	return <WebViewer url="./cookingExample.json" />;
+export const WebViewerYoutube = () => {
+	return <WebViewer url="./youtube.json" />;
 };

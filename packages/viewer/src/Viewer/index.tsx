@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+/** @jsx jsx */
+import { jsx } from "theme-ui";
+import { useEffect } from "react";
 import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { HotKeys } from "react-hotkeys";
@@ -106,7 +108,15 @@ export const Viewer = ({ readonly = false }: ViewerProps) => {
 					</div>
 					{selectedItem && (
 						<FixedToolbar>
-							<div style={{ display: "flex", background: "white" }}>
+							<div
+								sx={{
+									display: "inline-block",
+									backgroundColor: "background",
+									borderStyle: "solid",
+									borderWidth: "1px",
+									borderColor: "muted",
+								}}
+							>
 								<ToolbarButton
 									onClick={preparedHandlers.undent}
 									title="undent (shift + tab)"

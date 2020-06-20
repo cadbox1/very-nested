@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+/** @jsx jsx */
+import { jsx } from "theme-ui";
+import { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Viewer } from "Viewer";
 import { load, reducer } from "Viewer/duck";
 import { usePromise } from "@cadbox1/use-promise";
+import { ThemeProvider, Container, Styled } from "theme-ui";
+import theme from "./theme";
 
 export interface WebViewerProps {
 	url: string;
@@ -31,16 +35,15 @@ const WebViewerInside = ({ url, showBanner }: WebViewerProps) => {
 	return (
 		<div>
 			{showBanner && (
-				<div style={{ marginBottom: "1rem" }}>
+				<div sx={{ fontSize: 1, marginBottom: 4 }}>
 					Made with{" "}
-					<a
+					<Styled.a
 						href="https://verynested.cadell.dev"
 						target="_blank"
 						rel="noopener noreferrer"
-						style={{ fontSize: "18px" }}
 					>
 						Very Nested
-					</a>
+					</Styled.a>
 				</div>
 			)}
 			{request.pending ? (
@@ -57,7 +60,11 @@ const WebViewerInside = ({ url, showBanner }: WebViewerProps) => {
 export const WebViewer = ({ url, showBanner = true }: WebViewerProps) => {
 	return (
 		<Provider store={store}>
-			<WebViewerInside url={url} showBanner={showBanner} />
+			<ThemeProvider theme={theme}>
+				<Container>
+					<WebViewerInside url={url} showBanner={showBanner} />
+				</Container>
+			</ThemeProvider>
 		</Provider>
 	);
 };

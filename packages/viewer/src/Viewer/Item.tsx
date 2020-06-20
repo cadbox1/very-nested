@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx, Styled } from "theme-ui";
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -36,7 +38,9 @@ const Item = ({ path }: ItemProps) => {
 		dispatch(editItem({ id, content: evt.target.value }));
 	};
 	const handleClick = () => {
-		if (!readonly) {
+		if (readonly) {
+			handleExpandCollpase();
+		} else {
 			dispatch(selectItem({ path }));
 		}
 	};
@@ -52,20 +56,21 @@ const Item = ({ path }: ItemProps) => {
 	};
 	return (
 		<li style={{ listStyleType: "none" }}>
-			<span style={{ fontSize: "18px", paddingRight: "1rem" }}>
+			<span sx={{ fontSize: 2, lineHeight: 1.5, paddingRight: 4 }}>
 				<button
 					onClick={handleExpandCollpase}
-					style={{ border: "none", background: "none" }}
+					sx={{ width: "1rem", mr: 1, border: "none", background: "none" }}
 				>
 					{item.children.length ? (expanded ? "-" : "+") : "•"}
 				</button>
 				{getPathId(selectedPath) === getPathId(path) ? (
 					<Fragment>
 						<input
+							key={getPathId(path)}
 							value={item.content}
 							onChange={handleChange}
-							autoFocus
-							style={{ fontSize: "1rem" }}
+							sx={{ fontSize: "1rem" }}
+							ref={input => input?.focus()}
 						/>
 						<span> {id}</span>
 					</Fragment>
@@ -74,14 +79,18 @@ const Item = ({ path }: ItemProps) => {
 						onClick={handleClick}
 						style={{
 							display: "inline-block",
-							padding: "0.1rem 5rem 0 0",
+							padding: "0 5rem 0 0",
 							minHeight: "1rem",
 						}}
 					>
 						{isHref(item.content) ? (
-							<a href={item.content} target="_blank" rel="noopener noreferrer">
+							<Styled.a
+								href={item.content}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
 								{item.content}
-							</a>
+							</Styled.a>
 						) : (
 							item.content
 						)}
