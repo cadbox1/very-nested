@@ -8,13 +8,14 @@ import { usePromise } from "@cadbox1/use-promise";
 
 export interface WebViewerProps {
 	url: string;
+	showBanner?: boolean;
 }
 
 const store = configureStore({
 	reducer,
 });
 
-const WebViewerInside = ({ url }: WebViewerProps) => {
+const WebViewerInside = ({ url, showBanner }: WebViewerProps) => {
 	const dispatch = useDispatch();
 	const request = usePromise({
 		promiseFunction: async () => {
@@ -29,21 +30,34 @@ const WebViewerInside = ({ url }: WebViewerProps) => {
 
 	return (
 		<div>
+			{showBanner && (
+				<div style={{ marginBottom: "1rem" }}>
+					Made with{" "}
+					<a
+						href="https://verynested.cadell.dev"
+						target="_blank"
+						rel="noopener noreferrer"
+						style={{ fontSize: "18px" }}
+					>
+						Very Nested
+					</a>
+				</div>
+			)}
 			{request.pending ? (
 				"Loading..."
 			) : request.rejected ? (
 				"There was an error loading this page. Please refresh to try again."
 			) : (
-				<Viewer readonly showBanner />
+				<Viewer readonly />
 			)}
 		</div>
 	);
 };
 
-export const WebViewer = ({ url }: WebViewerProps) => {
+export const WebViewer = ({ url, showBanner = true }: WebViewerProps) => {
 	return (
 		<Provider store={store}>
-			<WebViewerInside url={url} />
+			<WebViewerInside url={url} showBanner={showBanner} />
 		</Provider>
 	);
 };

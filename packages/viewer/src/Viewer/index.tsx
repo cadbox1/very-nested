@@ -29,13 +29,9 @@ import { FixedToolbar } from "./FixedToolbar";
 
 export interface ViewerProps {
 	readonly?: boolean;
-	showBanner?: boolean;
 }
 
-export const Viewer = ({
-	readonly = false,
-	showBanner = false,
-}: ViewerProps) => {
+export const Viewer = ({ readonly = false }: ViewerProps) => {
 	const dispatch = useDispatch();
 	const selectedPath = useSelector((state: any) => state.path);
 	const id = last(selectedPath);
@@ -83,18 +79,6 @@ export const Viewer = ({
 
 	return (
 		<Fragment>
-			{showBanner && (
-				<div>
-					<a
-						href="https://verynested.cadell.dev"
-						target="_blank"
-						rel="noopener noreferrer"
-						style={{ fontSize: "18px" }}
-					>
-						Made with Very Nested
-					</a>
-				</div>
-			)}
 			<HotKeys
 				tabIndex={undefined}
 				keyMap={{
@@ -114,6 +98,7 @@ export const Viewer = ({
 							style={{
 								paddingLeft: 0,
 								paddingBottom: "3rem",
+								margin: 0,
 							}}
 						>
 							<Item path={["vLlFS3csq"]} />
