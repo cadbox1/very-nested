@@ -1,6 +1,6 @@
 /** @jsx jsx */
+import { jsx, Button } from "theme-ui";
 import React, { useState } from "react";
-import { jsx } from "theme-ui";
 import { octokit } from "../Manager";
 import { usePromise } from "frontend/common/usePromise";
 import { Redirect, Link } from "react-router-dom";
@@ -50,10 +50,12 @@ export const Add = ({ currentUser }: AddProps) => {
 	return (
 		<div>
 			<div>
-				<Link to="/">{"< Home"}</Link>
+				<Link to="/" sx={{ fontSize: 1 }}>
+					{"< Home"}
+				</Link>
 			</div>
 			<form onSubmit={handleSubmit} sx={{ mt: 5 }}>
-				<div>
+				<div sx={{ fontSize: 1 }}>
 					{"Name: "}
 					<input
 						type="text"
@@ -64,13 +66,13 @@ export const Add = ({ currentUser }: AddProps) => {
 						placeholder="very-nested-"
 					/>
 				</div>
-				<p sx={{ mt: 2 }}>
+				<p sx={{ fontSize: 1, mt: 2 }}>
 					No spaces please - spaces are not allowed in GitHub repository names.
 				</p>
 				{rejected && <p>There was an issue creating this repository.</p>}
-				<button type="submit" disabled={pending}>
+				<Button type="submit" disabled={pending} sx={{ fontSize: 1 }}>
 					{pending ? "Creating..." : "Create"}
-				</button>
+				</Button>
 			</form>
 		</div>
 	);

@@ -20,6 +20,7 @@
 		"shortid": "^2.2.15",
 		"simple-oauth2": "^3.4.0",
 		"theme-ui": "^0.3.1",
+		"typeface-source-sans-pro": "^1.1.5",
 		"very-nested-login": "*",
 		"very-nested-viewer": "*"
 	},

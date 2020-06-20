@@ -56,10 +56,16 @@ const Item = ({ path }: ItemProps) => {
 	};
 	return (
 		<li style={{ listStyleType: "none" }}>
-			<span sx={{ fontSize: 2, lineHeight: 1.5, paddingRight: 4 }}>
+			<span sx={{ fontSize: 2, lineHeight: 1.6, paddingRight: 4 }}>
 				<button
 					onClick={handleExpandCollpase}
-					sx={{ width: "1rem", mr: 1, border: "none", background: "none" }}
+					sx={{
+						font: "inherit",
+						width: 5,
+						mr: 1,
+						border: "none",
+						background: "none",
+					}}
 				>
 					{item.children.length ? (expanded ? "-" : "+") : "•"}
 				</button>

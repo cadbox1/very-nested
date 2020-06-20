@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import React, { useEffect, useState } from "react";
 import { jsx, Styled } from "theme-ui";
+import { useEffect, useState } from "react";
 import { Octokit } from "@octokit/rest";
 import { Switch, Route, Link, useLocation, useHistory } from "react-router-dom";
 import queryString from "query-string";
@@ -63,7 +63,9 @@ export const Manager = () => {
 	return (
 		<div>
 			{!accessToken && (
-				<a href={generateAuthorizeUrl({ scope })}>Login with GitHub</a>
+				<Styled.a href={generateAuthorizeUrl({ scope })} sx={{ fontSize: 2 }}>
+					Login with GitHub
+				</Styled.a>
 			)}
 			{octokit && (
 				<Switch>
@@ -74,33 +76,39 @@ export const Manager = () => {
 						<ManageRepo />
 					</Route>
 					<Route path="/">
-						<Styled.h1 sx={{ fontSize: 3 }}>Very Nested Manager</Styled.h1>
+						<Styled.h1 sx={{ fontSize: 4 }}>Very Nested Manager</Styled.h1>
 						<div sx={{ mt: 5 }}>
-							<Link to="/add">Add</Link>
+							<Link to="/add" sx={{ fontSize: 1 }}>
+								Add
+							</Link>
 							<div sx={{ mt: 5 }}>
-								{repos.pending && <p>pending</p>}
+								{repos.pending && <p sx={{ fontSize: 2 }}>pending</p>}
 								{repos.value?.data?.some((repo: any) =>
 									repo.name.startsWith("very-nested")
 								) && (
-									<Styled.h2 sx={{ fontSize: 2 }}>Very Nested Repos</Styled.h2>
+									<Styled.h2 sx={{ fontSize: 3 }}>Very Nested Repos</Styled.h2>
 								)}
 								{repos.value?.data
 									?.filter((repo: any) => repo.name.startsWith("very-nested"))
 									.map((repo: any) => (
 										<div key={repo.name}>
-											<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
+											<Link to={`repo/${repo.full_name}`} sx={{ fontSize: 1 }}>
+												{repo.name}
+											</Link>
 										</div>
 									))}
 								{repos.value?.data?.some(
 									(repo: any) => !repo.name.startsWith("very-nested")
 								) && (
-									<Styled.h2 sx={{ fontSize: 2, mt: 5 }}>Other Repos</Styled.h2>
+									<Styled.h2 sx={{ fontSize: 3, mt: 5 }}>Other Repos</Styled.h2>
 								)}
 								{repos.value?.data
 									?.filter((repo: any) => !repo.name.startsWith("very-nested"))
 									.map((repo: any) => (
 										<div key={repo.name}>
-											<Link to={`repo/${repo.full_name}`}>{repo.name}</Link>
+											<Link to={`repo/${repo.full_name}`} sx={{ fontSize: 1 }}>
+												{repo.name}
+											</Link>
 										</div>
 									))}
 							</div>
