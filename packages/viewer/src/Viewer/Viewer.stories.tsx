@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
+import { ThemeProvider } from "theme-ui";
 import { configureStore } from "@reduxjs/toolkit";
 
-import cookingExample from "./cookingExample.json";
-import youtubeExample from "./youtube.json";
-
+import theme from "../WebViewer/theme";
 import { load, reducer } from "./duck";
 import { Viewer } from "../Viewer";
+
+import cookingExample from "./examples/cookingExample.json";
+import youtubeExample from "./examples/youtube.json";
 
 const store = configureStore({
 	reducer,
@@ -14,7 +16,9 @@ const store = configureStore({
 
 const providerDecorator = (StoryFn: any) => (
 	<Provider store={store}>
-		<StoryFn />
+		<ThemeProvider theme={theme}>
+			<StoryFn />
+		</ThemeProvider>
 	</Provider>
 );
 
@@ -42,16 +46,6 @@ export const VeryNestedCookingReadonly = () => {
 	}, []);
 
 	return <Viewer readonly />;
-};
-
-export const VeryNestedCookingReadonlyWithBanner = () => {
-	const dispatch = useDispatch();
-
-	useEffect(() => {
-		dispatch(load({ data: cookingExample }));
-	}, []);
-
-	return <Viewer readonly showBanner />;
 };
 
 export const VeryNestedYoutube = () => {

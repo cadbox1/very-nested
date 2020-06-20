@@ -20,12 +20,13 @@
 		"shortid": "^2.2.15",
 		"simple-oauth2": "^3.4.0",
 		"theme-ui": "^0.3.1",
+		"typeface-source-sans-pro": "^1.1.5",
 		"very-nested-login": "*",
 		"very-nested-viewer": "*"
 	},
 	"scripts": {
 		"start": "react-scripts start",
-		"build:app": "react-scripts build",
+		"build:app": "CI=false react-scripts build",
 		"test": "react-scripts test --env=jsdom",
 		"eject": "react-scripts eject",
 		"start:lambda": "netlify-lambda serve src/backend",

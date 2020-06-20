@@ -5,7 +5,7 @@ import { Manager } from "./Manager";
 
 const App = () => (
 	<Router>
-		<Container sx={{ p: 2 }}>
+		<Container>
 			<Manager />
 		</Container>
 	</Router>

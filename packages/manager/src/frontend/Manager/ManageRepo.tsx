@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import React, { useEffect } from "react";
-import { jsx } from "theme-ui";
+import { jsx, Styled, Button } from "theme-ui";
+import { useEffect } from "react";
 import { octokit } from ".";
 import { usePromise } from "frontend/common/usePromise";
 import { useParams, Link } from "react-router-dom";
@@ -96,10 +96,12 @@ export const ManageRepo = () => {
 	return (
 		<div>
 			<div>
-				<Link to="/">{"< Home"}</Link>
+				<Link to="/" sx={{ fontSize: 1 }}>
+					{"< Home"}
+				</Link>
 			</div>
-			<h2 sx={{ mt: 4 }}>{repo}</h2>
-			<div>
+			<Styled.h2 sx={{ fontSize: 4, mt: 4 }}>{repo}</Styled.h2>
+			<div sx={{ fontSize: 1 }}>
 				<div>
 					repo url:{" "}
 					{repoRequest.pending
@@ -140,21 +142,24 @@ export const ManageRepo = () => {
 								  ))}
 				</div>
 			</div>
-			<div sx={{ mt: 4 }}>
-				<button
+			<div sx={{ fontSize: 1, mt: 4 }}>
+				<Button
 					type="button"
 					onClick={handleSave}
 					disabled={saveRequest.pending}
+					sx={{ py: 1, px: 3 }}
 				>
 					{saveRequest.pending ? "Saving..." : "Save"}
-				</button>
-				<button
+				</Button>
+				<Button
 					type="button"
+					variant="danger"
 					onClick={handleRevert}
 					disabled={getRequest.pending}
+					sx={{ py: 1, px: 3, ml: 2 }}
 				>
-					Revert local changes
-				</button>
+					Revert changes
+				</Button>
 			</div>
 			<div sx={{ mt: 6 }}>
 				{saveRequest.rejected && <p>There was an issue saving your repo :(</p>}

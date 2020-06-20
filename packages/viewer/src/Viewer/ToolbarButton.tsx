@@ -1,4 +1,5 @@
-import React from "react";
+/** @jsx jsx */
+import { jsx } from "theme-ui";
 
 export type ToolbarButtonProps = {
 	onClick?: (...args: []) => void;
@@ -15,8 +16,9 @@ export const ToolbarButton = ({
 	<button
 		onClick={onClick}
 		title={title}
-		style={{
-			padding: "0.6rem 0.8rem",
+		sx={{
+			py: 2,
+			px: 3,
 			border: "none",
 			background: "none",
 		}}
