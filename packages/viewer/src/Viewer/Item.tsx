@@ -61,7 +61,7 @@ const Item = ({ path }: ItemProps) => {
 					onClick={handleExpandCollpase}
 					sx={{
 						font: "inherit",
-						width: 5,
+						width: theme => `${theme.space[5]}px`,
 						mr: 1,
 						border: "none",
 						background: "none",

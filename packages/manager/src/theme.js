@@ -26,7 +26,9 @@ export default {
 		},
 	},
 	space: [0, 4, 8, 12, 16, 24, 32, 64, 96, 128],
-	sizes: [0, 4, 8, 12, 16, 24, 32, 64, 96, 128],
+	sizes: {
+		container: 850,
+	},
 	fontSizes: [16, 18, 21, 24, 32, 36, 44],
 	lineHeights: {
 		body: 1.7,
@@ -39,7 +41,6 @@ export default {
 	},
 	container: {
 		p: 2,
-		maxWidth: 850,
 	},
 	buttons: {
 		primary: {
