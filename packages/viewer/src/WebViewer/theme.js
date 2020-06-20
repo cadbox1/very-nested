@@ -7,13 +7,11 @@ export default {
 			'"source sans pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial',
 		heading:
 			'"source sans pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial',
-		monospace: `Consolas, Menlo, Monaco, source-code-pro, Courier New, monospace`,
 	},
 	colors: {
 		text: "#000",
 		background: "#fff",
 		primary: "#007bff",
-		danger: "#dc3545",
 		muted: "hsl(0, 0%, 96%)",
 		heading: "text",
 		modes: {
@@ -42,16 +40,6 @@ export default {
 	container: {
 		p: 2,
 	},
-	buttons: {
-		primary: {
-			color: "background",
-			bg: "primary",
-		},
-		danger: {
-			color: "background",
-			bg: "danger",
-		},
-	},
 	styles: {
 		root: {
 			fontFamily: "body",
@@ -66,9 +54,6 @@ export default {
 		},
 		p: {
 			fontSize: 2,
-		},
-		pre: {
-			fontSize: 0,
 		},
 	},
 };

@@ -15,7 +15,9 @@ Link with Netlify
 
 `Yarn start`
 
-To run the backend use:
+Grab the localstorage entry from the production app to authenticate. A lot easier than running the backend.
+
+## Running the Backend
 
 `netlify dev`
 
