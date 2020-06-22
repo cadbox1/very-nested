@@ -11,7 +11,7 @@ import { ThemeProvider, Container, Styled } from "theme-ui";
 import theme from "./theme";
 
 export interface WebViewerProps {
-	url: string;
+	url?: string;
 	showBanner?: boolean;
 }
 
@@ -23,6 +23,9 @@ const WebViewerInside = ({ url, showBanner }: WebViewerProps) => {
 	const dispatch = useDispatch();
 	const request = usePromise({
 		promiseFunction: async () => {
+			if (!url) {
+				return;
+			}
 			const response = await axios.get(url);
 			dispatch(load({ data: response.data }));
 		},
@@ -31,6 +34,21 @@ const WebViewerInside = ({ url, showBanner }: WebViewerProps) => {
 	useEffect(() => {
 		request.call();
 	}, [url]);
+
+	// sneakily load the source sans pro font
+	useEffect(() => {
+		const link = document.createElement("link");
+		link.setAttribute(
+			"href",
+			"https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap"
+		);
+		link.setAttribute("rel", "stylesheet");
+		document.body.appendChild(link);
+
+		return () => {
+			document.body.removeChild(link);
+		};
+	}, []);
 
 	return (
 		<div>
@@ -57,7 +75,10 @@ const WebViewerInside = ({ url, showBanner }: WebViewerProps) => {
 	);
 };
 
-export const WebViewer = ({ url, showBanner = true }: WebViewerProps) => {
+export const WebViewer = ({
+	url = "./very-nested-data.json",
+	showBanner = true,
+}: WebViewerProps) => {
 	return (
 		<Provider store={store}>
 			<ThemeProvider theme={theme}>
