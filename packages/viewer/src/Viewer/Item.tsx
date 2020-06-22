@@ -61,7 +61,7 @@ const Item = ({ path }: ItemProps) => {
 					onClick={handleExpandCollpase}
 					sx={{
 						font: "inherit",
-						width: theme => `${theme.space[5]}px`,
+						width: theme => `${theme.fontSizes[1] + theme.space[2]}px`,
 						mr: 1,
 						border: "none",
 						background: "none",
@@ -106,7 +106,7 @@ const Item = ({ path }: ItemProps) => {
 			{item.children &&
 				expanded &&
 				path.filter(pathId => pathId === id).length < 2 && (
-					<ul style={{ paddingLeft: "1.5rem" }}>
+					<ul sx={{ paddingLeft: 4 }}>
 						{item.children.map((id: string) => (
 							<Item key={id} path={[...path, id]} />
 						))}
