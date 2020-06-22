@@ -34,6 +34,21 @@ cd packages/package-template
 yarn build-watch
 ```
 
+### Template Development
+
+1. Build the Viewer
+1. add this script tag to the template.
+
+   ```
+   <script
+         src="../viewer/dist/index.umd.js"
+         crossorigin
+       ></script>
+   ```
+
+1. Run `serve` in the root.
+1. Go to this url: [http://localhost:5000/packages/template/](http://localhost:5000/packages/template/)
+
 ## Technical Problems Solved
 
 - GitHub OAuth with Netlify Functions

@@ -1,5 +1,3 @@
-import "typeface-source-sans-pro";
-
 export default {
 	// useColorSchemeMediaQuery: true,
 	fonts: {
