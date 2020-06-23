@@ -25,7 +25,7 @@ export default {
 	sizes: {
 		container: 850,
 	},
-	fontSizes: [16, 18, 21, 24, 32, 36, 44],
+	fontSizes: [16, 18, 20, 24, 32, 36, 44],
 	lineHeights: {
 		body: 1.7,
 		heading: 1.2,
@@ -37,6 +37,11 @@ export default {
 	},
 	container: {
 		p: 2,
+	},
+	viewer: {
+		item: {
+			fontSize: 2,
+		},
 	},
 	styles: {
 		root: {
