@@ -56,12 +56,20 @@ const Item = ({ path }: ItemProps) => {
 	};
 	return (
 		<li style={{ listStyleType: "none" }}>
-			<span sx={{ fontSize: 2, lineHeight: 1.6, paddingRight: 4 }}>
+			<span
+				sx={{
+					fontSize: 1,
+					lineHeight: 1.6,
+					paddingRight: 4,
+					variant: "viewer.item",
+				}}
+			>
 				<button
 					onClick={handleExpandCollpase}
 					sx={{
 						font: "inherit",
-						width: theme => `${theme.fontSizes[1] + theme.space[2]}px`,
+						width: "28px",
+						px: 2,
 						mr: 1,
 						border: "none",
 						background: "none",
@@ -106,7 +114,7 @@ const Item = ({ path }: ItemProps) => {
 			{item.children &&
 				expanded &&
 				path.filter(pathId => pathId === id).length < 2 && (
-					<ul sx={{ paddingLeft: 4 }}>
+					<ul sx={{ paddingLeft: 5 }}>
 						{item.children.map((id: string) => (
 							<Item key={id} path={[...path, id]} />
 						))}
