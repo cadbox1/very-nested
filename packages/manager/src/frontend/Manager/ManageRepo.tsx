@@ -84,8 +84,13 @@ export const ManageRepo = () => {
 		},
 	});
 
-	const handleSave = () => {
-		saveRequest.call();
+	const handleSave = async () => {
+		await saveRequest.call();
+
+		// hide the saved prompt after 5 seconds
+		setTimeout(() => {
+			saveRequest.reset();
+		}, 10000);
 	};
 
 	const handleRevert = () => {
@@ -103,7 +108,7 @@ export const ManageRepo = () => {
 			<Styled.h2 sx={{ fontSize: 4, mt: 4 }}>{repo}</Styled.h2>
 			<div sx={{ fontSize: 1 }}>
 				<div>
-					repo url:{" "}
+					repository:{" "}
 					{repoRequest.pending
 						? "loading..."
 						: repoRequest.rejected
@@ -119,7 +124,7 @@ export const ManageRepo = () => {
 						  )}
 				</div>
 				<div>
-					published url:{" "}
+					published at:{" "}
 					{repoRequest.pending
 						? "loading..."
 						: repoRequest.rejected
@@ -142,6 +147,12 @@ export const ManageRepo = () => {
 								  ))}
 				</div>
 			</div>
+			{saveRequest.fulfilled && (
+				<div sx={{ fontSize: 1, mt: 4 }}>
+					Saved! It might take up to 10 minutes before your changes are
+					displayed.
+				</div>
+			)}
 			<div sx={{ fontSize: 1, mt: 4 }}>
 				<Button
 					type="button"
