@@ -17,6 +17,7 @@ export interface PromiseState<T = {}> {
 
 export interface UsePromise<T = {}> extends PromiseState<T> {
 	call: () => Promise<any>;
+	reset: () => void;
 }
 
 export interface UpdateableState<T = {}> {
@@ -61,7 +62,7 @@ export function usePromise<T = {}>({
 	const wrappedPromiseFunction = (...args: []): Promise<any> => {
 		updateRequest({ pending: true });
 		return promiseFunction.apply(null, args).then(
-			(result) => {
+			result => {
 				updateRequest({
 					pending: false,
 					fulfilled: true,
@@ -70,7 +71,7 @@ export function usePromise<T = {}>({
 				});
 				return result;
 			},
-			(error) => {
+			error => {
 				updateRequest({
 					pending: false,
 					fulfilled: false,
@@ -82,5 +83,11 @@ export function usePromise<T = {}>({
 		);
 	};
 
-	return { ...updateableRequest.state, call: wrappedPromiseFunction };
+	return {
+		...updateableRequest.state,
+		call: wrappedPromiseFunction,
+		reset: () => {
+			updateableRequest.setState({ ...initialRequest });
+		},
+	};
 }

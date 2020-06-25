@@ -92,9 +92,7 @@ const Item = ({ path }: ItemProps) => {
 					<span
 						onClick={handleClick}
 						style={{
-							display: "inline-block",
-							padding: "0 5rem 0 0",
-							minHeight: "1rem",
+							paddingRight: "5rem",
 						}}
 					>
 						{isHref(item.content) ? (
@@ -108,6 +106,7 @@ const Item = ({ path }: ItemProps) => {
 						) : (
 							item.content
 						)}
+						&nbsp;
 					</span>
 				)}
 			</span>
