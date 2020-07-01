@@ -9,6 +9,7 @@ import { Viewer } from "../Viewer";
 
 import cookingExample from "./examples/cookingExample.json";
 import youtubeExample from "./examples/youtube.json";
+import { FileWithName } from "./ToolbarUploadButton";
 
 const store = configureStore({
 	reducer,
@@ -56,4 +57,26 @@ export const VeryNestedYoutube = () => {
 	}, []);
 
 	return <Viewer />;
+};
+
+function timeout(delay: number) {
+	return new Promise(resolve => setTimeout(resolve, delay));
+}
+
+export const VeryNestedUploader = () => {
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(load({ data: youtubeExample }));
+	}, []);
+
+	const handleUpload = async ({ name, base64 }: FileWithName) => {
+		console.log("name: " + name);
+		console.log("base64: ");
+		console.log(base64);
+		await timeout(2000);
+		return "./fake-uri";
+	};
+
+	return <Viewer onUpload={handleUpload} baseUrl="https://some-address.com" />;
 };

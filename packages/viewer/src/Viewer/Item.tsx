@@ -11,7 +11,7 @@ import {
 	getPathId,
 } from "./duck";
 import { last } from "./array-util";
-import { isHref } from "./isHref";
+import { isHref, possiblyPrependBaseUrl, isImageSrc } from "./isHref";
 
 export interface ItemProps {
 	path: Array<string>;
@@ -22,6 +22,7 @@ const Item = ({ path }: ItemProps) => {
 
 	const dispatch = useDispatch();
 	const readonly = useSelector((state: State) => state.readonly);
+	const baseUrl = useSelector((state: State) => state.baseUrl);
 	const item = useSelector((state: State) => state.item[id]);
 	const selectedPath = useSelector((state: State) => state.path);
 	const expanded = useSelector((state: State) =>
@@ -45,7 +46,7 @@ const Item = ({ path }: ItemProps) => {
 		}
 	};
 	const handleExpandCollpase = () => {
-		if (!item.children.length) {
+		if (!item.children.length && !isImageSrc(item.content)) {
 			return;
 		}
 		if (expanded) {
@@ -75,7 +76,11 @@ const Item = ({ path }: ItemProps) => {
 						background: "none",
 					}}
 				>
-					{item.children.length ? (expanded ? "-" : "+") : "•"}
+					{item.children.length || isImageSrc(item.content)
+						? expanded
+							? "-"
+							: "+"
+						: "•"}
 				</button>
 				{getPathId(selectedPath) === getPathId(path) ? (
 					<Fragment>
@@ -97,11 +102,11 @@ const Item = ({ path }: ItemProps) => {
 					>
 						{isHref(item.content) ? (
 							<Styled.a
-								href={item.content}
+								href={possiblyPrependBaseUrl(item.content, baseUrl)}
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{item.content}
+								{decodeURI(item.content)}
 							</Styled.a>
 						) : (
 							item.content
@@ -110,6 +115,14 @@ const Item = ({ path }: ItemProps) => {
 					</span>
 				)}
 			</span>
+			{expanded && isImageSrc(item.content) && (
+				<div sx={{ paddingLeft: 6 }}>
+					<img
+						src={possiblyPrependBaseUrl(item.content, baseUrl)}
+						width="400"
+					/>
+				</div>
+			)}
 			{item.children &&
 				expanded &&
 				path.filter(pathId => pathId === id).length < 2 && (
