@@ -1,0 +1,37 @@
+{
+	"vLlFS3csq": {
+		"id": "vLlFS3csq",
+		"content": "file example",
+		"children": ["bEsr1kjQy", "fCjbzSDxQ"]
+	},
+	"bEsr1kjQy": {
+		"id": "bEsr1kjQy",
+		"content": "this has an image in it",
+		"children": ["Zw9Rx253e", "RUZp57w5r"]
+	},
+	"Zw9Rx253e": {
+		"id": "Zw9Rx253e",
+		"content": "./files/Screen Shot 2020-07-11 at 9.42.39 am.png",
+		"children": []
+	},
+	"fCjbzSDxQ": {
+		"id": "fCjbzSDxQ",
+		"content": "this has a file in it",
+		"children": ["RUfMRy58L", "JbZBQ1ZAb"]
+	},
+	"RUZp57w5r": {
+		"id": "RUZp57w5r",
+		"content": "as you can see, the above image is cool",
+		"children": []
+	},
+	"RUfMRy58L": {
+		"id": "RUfMRy58L",
+		"content": "./files/example.md",
+		"children": []
+	},
+	"JbZBQ1ZAb": {
+		"id": "JbZBQ1ZAb",
+		"content": "the above file is also cool",
+		"children": []
+	}
+}

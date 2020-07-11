@@ -46,3 +46,11 @@ Build the package continuously.
 ```
 yarn build-watch
 ```
+
+## Serialise current state
+
+Select the storybook iframe in your console then run this.
+
+```
+console.log(JSON.stringify(window.store.getState().item, null, 1))
+```

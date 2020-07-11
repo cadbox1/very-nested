@@ -3,7 +3,7 @@
 ## Setting Up
 
 Install Netlify dev
-`npm install -g netlify-cli@2.52.0`
+`npm install -g netlify-cli@2.57.0`
 
 Login with Netlify
 `netlify login`
@@ -20,11 +20,5 @@ Grab the localstorage entry from the production app to authenticate. A lot easie
 ## Running the Backend
 
 `netlify dev`
-
-Add the following to the `netlify.toml`.
-
-```
-base = "./"
-```
 
 Change the redirect_uri in github oauth app.

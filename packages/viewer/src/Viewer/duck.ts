@@ -19,6 +19,11 @@ type SetReadOnlyArguments = {
 };
 export const setReadOnly = createAction<SetReadOnlyArguments>("SET_READONLY");
 
+type SetBaseUrlArguments = {
+	baseUrl: string;
+};
+export const setBaseUrl = createAction<SetBaseUrlArguments>("SET_BASE_URL");
+
 type SelectItemArguments = {
 	path: string[];
 };
@@ -109,6 +114,7 @@ export type ItemStore = {
 
 export type State = {
 	readonly: boolean;
+	baseUrl?: string;
 	path: string[];
 	item: ItemStore;
 	expanded: string[];
@@ -125,6 +131,13 @@ export const reducer = createReducer(emptyState, {
 		action: PayloadAction<SetReadOnlyArguments>
 	) => {
 		state.readonly = action.payload.readonly;
+	},
+
+	[setBaseUrl.type]: (
+		state: State,
+		action: PayloadAction<SetBaseUrlArguments>
+	) => {
+		state.baseUrl = action.payload.baseUrl;
 	},
 
 	[selectItem.type]: (
