@@ -10,8 +10,10 @@ import { persistor } from "index";
 
 // @ts-ignore
 import { load, Viewer } from "very-nested-viewer";
+import { FileWithName } from "very-nested-viewer/dist/Viewer/ToolbarUploadButton";
 
 const veryNestedDataFile = "very-nested-data.json";
+const filesFolder = "files/";
 
 export const ManageRepo = () => {
 	const { owner = "", repo = "" } = useParams();
@@ -87,7 +89,7 @@ export const ManageRepo = () => {
 	const handleSave = async () => {
 		await saveRequest.call();
 
-		// hide the saved prompt after 5 seconds
+		// hide the saved prompt after 10 seconds
 		setTimeout(() => {
 			saveRequest.reset();
 		}, 10000);
@@ -96,6 +98,47 @@ export const ManageRepo = () => {
 	const handleRevert = () => {
 		persistor.purge();
 		getRequest.call();
+	};
+
+	const uploadRequest = usePromise<string>({
+		promiseFunction: async ({ name, base64 }: FileWithName) => {
+			let path = filesFolder + name;
+			try {
+				await octokit.repos.createOrUpdateFileContents({
+					owner,
+					repo,
+					path,
+					content: base64,
+					message: "Uploaded a file",
+				});
+			} catch (error) {
+				if (error.status !== 422) {
+					throw error;
+				}
+				// file is a duplicate, append something to it
+				const pathWithoutExtension = path.substr(0, path.lastIndexOf("."));
+				const extensionIncludingDot = path.substr(path.lastIndexOf("."));
+				path =
+					pathWithoutExtension +
+					" - " +
+					new Date().toUTCString() +
+					extensionIncludingDot;
+
+				await octokit.repos.createOrUpdateFileContents({
+					owner,
+					repo,
+					path,
+					content: base64,
+					message: "Uploaded a file",
+				});
+			}
+			return path;
+		},
+	});
+
+	const handleUpload = async (fileWithName: FileWithName) => {
+		const path = await uploadRequest.call(fileWithName);
+		return "./" + path;
 	};
 
 	return (
@@ -181,7 +224,12 @@ export const ManageRepo = () => {
 						repo?
 					</p>
 				)}
-				{getRequest.fulfilled && <Viewer />}
+				{getRequest.fulfilled && (
+					<Viewer
+						baseUrl={getPagesRequest.value?.data?.html_url.replace(/\/$/, "")}
+						onUpload={handleUpload}
+					/>
+				)}
 			</div>
 		</div>
 	);

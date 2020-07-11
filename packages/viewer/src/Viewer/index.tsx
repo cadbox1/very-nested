@@ -12,6 +12,7 @@ import {
 	IoIosArrowUp,
 	IoIosArrowDown,
 	IoIosTrash,
+	IoIosCloudUpload,
 } from "react-icons/io";
 import Item from "./Item";
 import {
@@ -24,16 +25,25 @@ import {
 	moveUp,
 	moveDown,
 	setReadOnly,
+	editItem,
+	setBaseUrl,
 } from "./duck";
 import { ToolbarButton } from "./ToolbarButton";
 import { last, objectMap } from "./array-util";
 import { FixedToolbar } from "./FixedToolbar";
+import { ToolbarUploadButton, FileWithName } from "./ToolbarUploadButton";
 
 export interface ViewerProps {
 	readonly?: boolean;
+	onUpload?: (fileWithName: FileWithName) => Promise<string>;
+	baseUrl?: string;
 }
 
-export const Viewer = ({ readonly = false }: ViewerProps) => {
+export const Viewer = ({
+	readonly = false,
+	baseUrl = "",
+	onUpload,
+}: ViewerProps) => {
 	const dispatch = useDispatch();
 	const selectedPath = useSelector((state: any) => state.path);
 	const id = last(selectedPath);
@@ -42,6 +52,10 @@ export const Viewer = ({ readonly = false }: ViewerProps) => {
 	useEffect(() => {
 		dispatch(setReadOnly({ readonly }));
 	}, [dispatch, readonly]);
+
+	useEffect(() => {
+		dispatch(setBaseUrl({ baseUrl }));
+	}, [dispatch, baseUrl]);
 
 	const actions = {
 		up,
@@ -77,6 +91,10 @@ export const Viewer = ({ readonly = false }: ViewerProps) => {
 				handleRemove();
 			}
 		},
+	};
+
+	const handleUploadComplete = (uri: string) => {
+		dispatch(editItem({ id, content: uri }));
 	};
 
 	return (
@@ -156,6 +174,15 @@ export const Viewer = ({ readonly = false }: ViewerProps) => {
 								<ToolbarButton onClick={handleRemove} title="remove item">
 									<IoIosTrash />
 								</ToolbarButton>
+								{onUpload && (
+									<ToolbarUploadButton
+										onUpload={onUpload}
+										onUploadComplete={handleUploadComplete}
+										title="upload item"
+									>
+										<IoIosCloudUpload />
+									</ToolbarUploadButton>
+								)}
 							</div>
 						</FixedToolbar>
 					)}

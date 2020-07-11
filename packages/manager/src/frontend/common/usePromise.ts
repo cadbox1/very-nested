@@ -16,7 +16,7 @@ export interface PromiseState<T = {}> {
 }
 
 export interface UsePromise<T = {}> extends PromiseState<T> {
-	call: () => Promise<any>;
+	call: (...args: any[]) => Promise<any>;
 	reset: () => void;
 }
 
