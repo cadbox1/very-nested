@@ -102,14 +102,36 @@ export const ManageRepo = () => {
 
 	const uploadRequest = usePromise<string>({
 		promiseFunction: async ({ name, base64 }: FileWithName) => {
-			const path = filesFolder + name;
-			await octokit.repos.createOrUpdateFileContents({
-				owner,
-				repo,
-				path,
-				content: base64,
-				message: "Uploaded a file",
-			});
+			let path = filesFolder + name;
+			try {
+				await octokit.repos.createOrUpdateFileContents({
+					owner,
+					repo,
+					path,
+					content: base64,
+					message: "Uploaded a file",
+				});
+			} catch (error) {
+				if (error.status !== 422) {
+					throw error;
+				}
+				// file is a duplicate, append something to it
+				const pathWithoutExtension = path.substr(0, path.lastIndexOf("."));
+				const extensionIncludingDot = path.substr(path.lastIndexOf("."));
+				path =
+					pathWithoutExtension +
+					" - " +
+					new Date().toUTCString() +
+					extensionIncludingDot;
+
+				await octokit.repos.createOrUpdateFileContents({
+					owner,
+					repo,
+					path,
+					content: base64,
+					message: "Uploaded a file",
+				});
+			}
 			return path;
 		},
 	});

@@ -9,11 +9,15 @@ import { Viewer } from "../Viewer";
 
 import cookingExample from "./examples/cookingExample.json";
 import youtubeExample from "./examples/youtube.json";
+import fileExample from "./examples/file-example.json";
 import { FileWithName } from "./ToolbarUploadButton";
 
 const store = configureStore({
 	reducer,
 });
+
+// @ts-ignore
+window.store = store;
 
 const providerDecorator = (StoryFn: any) => (
 	<Provider store={store}>
@@ -63,11 +67,11 @@ function timeout(delay: number) {
 	return new Promise(resolve => setTimeout(resolve, delay));
 }
 
-export const VeryNestedUploader = () => {
+export const VeryNestedFilesAndUploader = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(load({ data: youtubeExample }));
+		dispatch(load({ data: fileExample }));
 	}, []);
 
 	const handleUpload = async ({ name, base64 }: FileWithName) => {
@@ -75,8 +79,8 @@ export const VeryNestedUploader = () => {
 		console.log("base64: ");
 		console.log(base64);
 		await timeout(2000);
-		return "./fake-uri";
+		return "./files/Screen Shot 2020-07-11 at 9.42.39 am.png";
 	};
 
-	return <Viewer onUpload={handleUpload} baseUrl="https://some-address.com" />;
+	return <Viewer onUpload={handleUpload} baseUrl="/baseFolder" />;
 };

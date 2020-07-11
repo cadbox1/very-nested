@@ -82,6 +82,10 @@ export default ({ data }) => {
 						will update it across all lists. Items can also be expanded and
 						collapsed so you can organise your content in fun and creative ways.
 					</Styled.p>
+					<Styled.h3 sx={{ mt: 6 }}>Photos and Files</Styled.h3>
+					<Styled.p>
+						Add photos and files to your lists, even from your mobile.
+					</Styled.p>
 					<Styled.h3 sx={{ mt: 6 }}>No Lock-In</Styled.h3>
 					<Styled.p>
 						Very Nested is free,{" "}

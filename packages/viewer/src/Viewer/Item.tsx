@@ -119,7 +119,12 @@ const Item = ({ path }: ItemProps) => {
 				<div sx={{ paddingLeft: 6 }}>
 					<img
 						src={possiblyPrependBaseUrl(item.content, baseUrl)}
-						width="400"
+						sx={{
+							width: "400px",
+							maxWidth: "100vw",
+							my: 4,
+							borderRadius: 4,
+						}}
 					/>
 				</div>
 			)}

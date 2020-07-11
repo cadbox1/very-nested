@@ -11,10 +11,11 @@ export function isHref(input: string): boolean {
 
 export function isImageSrc(input: string): boolean {
 	return (
-		isHref(input) ||
-		input.endsWith(".jpg") ||
-		input.endsWith(".png") ||
-		input.endsWith(".gif")
+		isHref(input) &&
+		(input.endsWith(".jpg") ||
+			input.endsWith(".jpeg") ||
+			input.endsWith(".png") ||
+			input.endsWith(".gif"))
 	);
 }
 
