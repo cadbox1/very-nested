@@ -141,6 +141,12 @@ export const ManageRepo = () => {
 		return "./" + path;
 	};
 
+	const getBaseUrl = () => {
+		const domain = "https://raw.githubusercontent.com";
+		const branch = "master";
+		return domain + "/" + owner + "/" + repo + "/" + branch;
+	};
+
 	return (
 		<div>
 			<div>
@@ -225,10 +231,7 @@ export const ManageRepo = () => {
 					</p>
 				)}
 				{getRequest.fulfilled && (
-					<Viewer
-						baseUrl={getPagesRequest.value?.data?.html_url.replace(/\/$/, "")}
-						onUpload={handleUpload}
-					/>
+					<Viewer baseUrl={getBaseUrl()} onUpload={handleUpload} />
 				)}
 			</div>
 		</div>
