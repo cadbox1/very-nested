@@ -16,6 +16,7 @@ import {
 } from "react-icons/io";
 import Item from "./Item";
 import {
+	selectItem,
 	up,
 	down,
 	indentItem,
@@ -113,7 +114,12 @@ export const Viewer = ({
 				}}
 			>
 				<HotKeys tabIndex={undefined} handlers={handlers}>
-					<div style={{ overflow: "auto", whiteSpace: "nowrap" }}>
+					<div
+						style={{ overflow: "auto", whiteSpace: "nowrap" }}
+						onBlur={() => {
+							dispatch(selectItem({ path: [] }));
+						}}
+					>
 						<ul
 							style={{
 								paddingLeft: 0,
