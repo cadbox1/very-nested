@@ -98,8 +98,16 @@ export const Viewer = ({
 		dispatch(editItem({ id, content: uri }));
 	};
 
+	const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+		// make sure we clicked outside our component - https://stackoverflow.com/a/60094794/728602
+		// @ts-ignore
+		if (!event.currentTarget.contains(event.relatedTarget)) {
+			dispatch(selectItem({ path: [] }));
+		}
+	};
+
 	return (
-		<Fragment>
+		<div onBlur={handleBlur}>
 			<HotKeys
 				tabIndex={undefined}
 				keyMap={{
@@ -114,12 +122,7 @@ export const Viewer = ({
 				}}
 			>
 				<HotKeys tabIndex={undefined} handlers={handlers}>
-					<div
-						style={{ overflow: "auto", whiteSpace: "nowrap" }}
-						onBlur={() => {
-							dispatch(selectItem({ path: [] }));
-						}}
-					>
+					<div style={{ overflow: "auto", whiteSpace: "nowrap" }}>
 						<ul
 							style={{
 								paddingLeft: 0,
@@ -194,6 +197,6 @@ export const Viewer = ({
 					)}
 				</HotKeys>
 			</HotKeys>
-		</Fragment>
+		</div>
 	);
 };
