@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Provider, useDispatch } from "react-redux";
-import { ThemeProvider } from "theme-ui";
+import { Button, ThemeProvider } from "theme-ui";
 import { configureStore } from "@reduxjs/toolkit";
 
 import theme from "../WebViewer/theme";
@@ -83,4 +83,23 @@ export const VeryNestedFilesAndUploader = () => {
 	};
 
 	return <Viewer onUpload={handleUpload} baseUrl="/baseFolder" />;
+};
+
+export const VeryNestedRerenderFocusTest = () => {
+	const [counter, setCounter] = useState(0);
+
+	const handleClick = () => {
+		setCounter(counter + 1);
+	};
+
+	const baseUrl = "baseUrl";
+
+	return (
+		<div>
+			<p>Counter: {counter}</p>
+			<button onClick={handleClick}>Increment</button>
+			<p>clicking increment should make the selected item's input lose focus</p>
+			<Viewer baseUrl={baseUrl} />
+		</div>
+	);
 };
