@@ -1,9 +1,5 @@
 # Very Nested Viewer
 
-## 🚀 Demo
-
-(link your storybook docs, probably deployed on Netlify here)
-
 ## 🔧 Tools
 
 - [Typescript](https://www.typescriptlang.org/).
@@ -45,6 +41,10 @@ Build the package continuously.
 
 ```
 yarn build-watch
+```
+Deploy to npm.
+```
+npm publish
 ```
 
 ## Serialise current state
