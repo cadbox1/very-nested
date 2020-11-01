@@ -38,6 +38,7 @@ const Item = ({ path }: ItemProps) => {
 	const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		dispatch(editItem({ id, content: evt.target.value }));
 	};
+
 	const handleClick = () => {
 		if (readonly) {
 			handleExpandCollpase();
@@ -45,6 +46,7 @@ const Item = ({ path }: ItemProps) => {
 			dispatch(selectItem({ path }));
 		}
 	};
+
 	const handleExpandCollpase = () => {
 		if (!item.children.length && !isImageSrc(item.content)) {
 			return;
@@ -55,6 +57,7 @@ const Item = ({ path }: ItemProps) => {
 			dispatch(expand({ path }));
 		}
 	};
+
 	return (
 		<li style={{ listStyleType: "none" }}>
 			<span
@@ -85,11 +88,10 @@ const Item = ({ path }: ItemProps) => {
 				{getPathId(selectedPath) === getPathId(path) ? (
 					<Fragment>
 						<input
-							key={getPathId(path)}
 							value={item.content}
 							onChange={handleChange}
 							sx={{ fontSize: "1rem" }}
-							ref={input => input?.focus()}
+							autoFocus
 						/>
 						<span> {id}</span>
 					</Fragment>
@@ -132,8 +134,8 @@ const Item = ({ path }: ItemProps) => {
 				expanded &&
 				path.filter(pathId => pathId === id).length < 2 && (
 					<ul sx={{ paddingLeft: 5 }}>
-						{item.children.map((id: string) => (
-							<Item key={id} path={[...path, id]} />
+						{item.children.map((id, index) => (
+							<Item key={`${id}-${index}`} path={[...path, id]} />
 						))}
 					</ul>
 				)}

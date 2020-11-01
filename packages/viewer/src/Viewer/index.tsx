@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx } from "theme-ui";
 import { useEffect } from "react";
-import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { HotKeys } from "react-hotkeys";
 import {
@@ -98,16 +97,8 @@ export const Viewer = ({
 		dispatch(editItem({ id, content: uri }));
 	};
 
-	const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-		// make sure we clicked outside our component - https://stackoverflow.com/a/60094794/728602
-		// @ts-ignore
-		if (!event.currentTarget.contains(event.relatedTarget)) {
-			dispatch(selectItem({ path: [] }));
-		}
-	};
-
 	return (
-		<div onBlur={handleBlur}>
+		<div>
 			<HotKeys
 				tabIndex={undefined}
 				keyMap={{
@@ -145,37 +136,49 @@ export const Viewer = ({
 								}}
 							>
 								<ToolbarButton
-									onClick={preparedHandlers.undent}
+									onClick={() => {
+										preparedHandlers.undent();
+									}}
 									title="undent (shift + tab)"
 								>
 									<IoIosArrowRoundBack />
 								</ToolbarButton>
 								<ToolbarButton
-									onClick={preparedHandlers.indent}
+									onClick={() => {
+										preparedHandlers.indent();
+									}}
 									title="indent (tab)"
 								>
 									<IoIosArrowRoundForward />
 								</ToolbarButton>
 								<ToolbarButton
-									onClick={preparedHandlers.moveUp}
+									onClick={() => {
+										preparedHandlers.moveUp();
+									}}
 									title="move up (alt + upkey)"
 								>
 									<IoIosArrowRoundUp />
 								</ToolbarButton>
 								<ToolbarButton
-									onClick={preparedHandlers.moveDown}
+									onClick={() => {
+										preparedHandlers.moveDown();
+									}}
 									title="move down (alt + downkey)"
 								>
 									<IoIosArrowRoundDown />
 								</ToolbarButton>
 								<ToolbarButton
-									onClick={preparedHandlers.up}
+									onClick={() => {
+										preparedHandlers.up();
+									}}
 									title="previous item (upkey)"
 								>
 									<IoIosArrowUp />
 								</ToolbarButton>
 								<ToolbarButton
-									onClick={preparedHandlers.down}
+									onClick={() => {
+										preparedHandlers.down();
+									}}
 									title="next item (downkey)"
 								>
 									<IoIosArrowDown />

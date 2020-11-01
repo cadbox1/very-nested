@@ -2,7 +2,7 @@
 import { jsx } from "theme-ui";
 
 export type ToolbarButtonProps = {
-	onClick?: (...args: []) => void;
+	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	title?: string;
 	children: React.ReactNode;
 };
