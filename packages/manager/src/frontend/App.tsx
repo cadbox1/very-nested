@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { HashRouter as Router } from "react-router-dom";
 import { Container, jsx } from "theme-ui";
-import { Manager } from "./Manager";
+import { List } from "./Repository/List";
 
 const App = () => (
 	<Router>
 		<Container>
-			<Manager />
+			<List />
 		</Container>
 	</Router>
 );

@@ -1,9 +1,13 @@
 /** @jsx jsx */
 import { jsx, Button } from "theme-ui";
 import React, { useState } from "react";
-import { octokit } from "../Manager";
+import { octokit } from "./List";
 import { usePromise } from "frontend/common/usePromise";
 import { Redirect, Link } from "react-router-dom";
+
+function timeout(timeoutInMs: number) {
+	return new Promise(resolve => setTimeout(resolve, timeoutInMs));
+}
 
 export interface AddProps {
 	currentUser: string;
@@ -20,6 +24,8 @@ export const Add = ({ currentUser }: AddProps) => {
 				name,
 			});
 
+			await timeout(1000); // timeout to cater for asynchronous branch creation.
+
 			const owner = currentUser;
 			const repo = name;
 
@@ -28,7 +34,7 @@ export const Add = ({ currentUser }: AddProps) => {
 				repo,
 				source: {
 					branch: "master",
-					path: "",
+					path: "/",
 				},
 			});
 		},

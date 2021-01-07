@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, Styled, Button } from "theme-ui";
 import { useEffect } from "react";
-import { octokit } from ".";
+import { octokit } from "./List";
 import { usePromise } from "frontend/common/usePromise";
 import { useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,7 +15,7 @@ import { FileWithName } from "very-nested-viewer/dist/Viewer/ToolbarUploadButton
 const veryNestedDataFile = "very-nested-data.json";
 const filesFolder = "files/";
 
-export const ManageRepo = () => {
+export const Edit = () => {
 	const { owner = "", repo = "" } = useParams();
 
 	const repoRequest = usePromise<any>({
@@ -161,8 +161,8 @@ export const ManageRepo = () => {
 					{repoRequest.pending
 						? "loading..."
 						: repoRequest.rejected
-						? "error loading url"
-						: repoRequest.value && (
+							? "error loading url"
+							: repoRequest.value && (
 								<a
 									href={repoRequest.value.data.html_url}
 									target="_blank"
@@ -170,30 +170,30 @@ export const ManageRepo = () => {
 								>
 									{repoRequest.value.data.html_url}
 								</a>
-						  )}
+							)}
 				</div>
 				<div>
 					published at:{" "}
 					{repoRequest.pending
 						? "loading..."
 						: repoRequest.rejected
-						? "error loading url"
-						: repoRequest.value &&
-						  (!repoRequest.value.data.has_pages
+							? "error loading url"
+							: repoRequest.value &&
+							(!repoRequest.value.data.has_pages
 								? "no pages url found"
 								: getPagesRequest.pending
-								? "loading..."
-								: getPagesRequest.rejected
-								? "error loading url"
-								: getPagesRequest.value && (
-										<a
-											href={getPagesRequest.value.data.html_url}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{getPagesRequest.value.data.html_url}
-										</a>
-								  ))}
+									? "loading..."
+									: getPagesRequest.rejected
+										? "error loading url"
+										: getPagesRequest.value && (
+											<a
+												href={getPagesRequest.value.data.html_url}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												{getPagesRequest.value.data.html_url}
+											</a>
+										))}
 				</div>
 			</div>
 			{saveRequest.fulfilled && (

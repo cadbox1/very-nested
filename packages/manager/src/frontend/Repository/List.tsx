@@ -8,13 +8,13 @@ import { usePromise } from "frontend/common/usePromise";
 // @ts-ignore
 import { generateAuthorizeUrl } from "very-nested-login";
 import { Add } from "./Add";
-import { ManageRepo } from "./ManageRepo";
+import { Edit } from "./Edit";
 
 export let octokit: Octokit;
 
 const scope = "public_repo";
 
-export const Manager = () => {
+export const List = () => {
 	const [accessToken, setAccessToken] = useState(
 		localStorage.getItem("accessToken")
 	);
@@ -73,15 +73,25 @@ export const Manager = () => {
 						<Add currentUser={currentUser.value?.data?.login} />
 					</Route>
 					<Route path="/repo/:owner/:repo">
-						<ManageRepo />
+						<Edit />
 					</Route>
 					<Route path="/">
 						<Styled.h1 sx={{ fontSize: 4 }}>Very Nested Manager</Styled.h1>
-						<div sx={{ mt: 5 }}>
-							<Link to="/add" sx={{ fontSize: 1 }}>
-								Add
-							</Link>
-							<div sx={{ mt: 5 }}>
+						<div sx={{ mt: 0 }}>
+							<Styled.a
+								href="https://verynested.cadell.dev/"
+								sx={{ fontSize: 1 }}
+							>
+								Back to Homepage
+							</Styled.a>
+						</div>
+						<div>
+							<div sx={{ mt: 6 }}>
+								<Link to="/add" sx={{ fontSize: 1 }}>
+									Add
+								</Link>
+							</div>
+							<div sx={{ mt: 4 }}>
 								{repos.pending && <p sx={{ fontSize: 2 }}>pending</p>}
 								{repos.value?.data?.some((repo: any) =>
 									repo.name.startsWith("very-nested")

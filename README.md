@@ -2,42 +2,65 @@
 
 Infinitely nested lists published on GitHub.
 
-## 💻 Running Locally
+## Packages
+- `manager` - Create, edit and view your Very Nested GitHub repos.
+- `viewer` - Render a Very Nested list from JSON data.
+- `template` - The GitHub template that new Very Nested repos are created from.
+- `website` - The Very Nested public website.
+- `login` - A small package for generating a GitHub login link.
 
-Install dependencies and run the initial build.
+## 💻 Development
+
+Install dependencies.
 
 ```
 yarn
-yarn prepare
 ```
 
-### Manager Development
+### Manager
+
+Create, edit and view your Very Nested GitHub repos.
 
 ```
 cd packages/manager
 yarn start
 ```
+Copy the `accessToken` from production Local Storage to login.
 
-### Viewer Development
+[Read more...](./packages/manager/README.md)
 
-You can use storybook to develop the Viewer in isolation.
+### Viewer
+
+Render a Very Nested list from JSON data.
+
+#### Storybook
+
+You can develop the viewer in isolation using Storybook.
 
 ```
 cd packages/viewer
 yarn storybook
 ```
 
-You can also build it in watch mode, in another terminal, to have it reload in the Manager app.
+#### Watch Build
+
+You can build the viewer in watch mode to have it reload into the Manager app.
+
+Run this in separate terminal.
 
 ```
 cd packages/package-template
 yarn build-watch
 ```
 
-### Template Development
+[Read more...](./packages/viewer/README.md)
 
-1. Build the Viewer
-1. add this script tag to the template.
+### Template
+
+The GitHub template that new Very Nested repos are created from.
+
+1. Build the Viewer.
+1. Add this script tag to the template.
 
    ```
    <script
@@ -47,7 +70,10 @@ yarn build-watch
    ```
 
 1. Run `serve` in the root.
-1. Go to this url: [http://localhost:5000/packages/template/](http://localhost:5000/packages/template/)
+    ```
+    serve
+    ```
+1. Go to this url: [http://localhost:5000/packages/template/](http://localhost:5000/packages/template/).
 
 ## Technical Problems Solved
 

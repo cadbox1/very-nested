@@ -13,7 +13,7 @@ Link with Netlify
 
 ## Running Locally
 
-`Yarn start`
+`yarn start`
 
 Grab the localstorage entry from the production app to authenticate. A lot easier than running the backend.
 

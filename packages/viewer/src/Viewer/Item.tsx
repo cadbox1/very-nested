@@ -2,6 +2,7 @@
 import { jsx, Styled } from "theme-ui";
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { IoIosLink } from "react-icons/io";
 import {
 	editItem,
 	selectItem,
@@ -24,6 +25,12 @@ const Item = ({ path }: ItemProps) => {
 	const readonly = useSelector((state: State) => state.readonly);
 	const baseUrl = useSelector((state: State) => state.baseUrl);
 	const item = useSelector((state: State) => state.item[id]);
+	const itemReferences = useSelector(
+		(state: State) =>
+			Object.values(state.item).filter(item =>
+				item.children.some(childId => childId === id)
+			).length
+	);
 	const selectedPath = useSelector((state: State) => state.path);
 	const expanded = useSelector((state: State) =>
 		state.expanded.includes(getPathId(path))
@@ -112,6 +119,17 @@ const Item = ({ path }: ItemProps) => {
 							</Styled.a>
 						) : (
 							item.content
+						)}
+						&nbsp;
+						{itemReferences > 1 && (
+							<span
+								title={`Used in ${itemReferences - 1} other list${
+									itemReferences > 2 ? "s" : ""
+								}`}
+								sx={{ color: "primary" }}
+							>
+								<IoIosLink size="16" />
+							</span>
 						)}
 						&nbsp;
 					</span>

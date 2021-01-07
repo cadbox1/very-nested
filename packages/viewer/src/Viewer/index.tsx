@@ -15,7 +15,6 @@ import {
 } from "react-icons/io";
 import Item from "./Item";
 import {
-	selectItem,
 	up,
 	down,
 	indentItem,
