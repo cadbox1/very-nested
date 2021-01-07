@@ -15,10 +15,6 @@ import * as serviceWorker from "./serviceWorker";
 
 import "bootstrap/dist/css/bootstrap-reboot.css";
 
-// dirty hack https://github.com/rt2zz/redux-persist/issues/747#issuecomment-425126732
-import { setAutoFreeze } from "immer";
-setAutoFreeze(false);
-
 const persistedReducer = persistReducer(
 	{
 		key: "root",

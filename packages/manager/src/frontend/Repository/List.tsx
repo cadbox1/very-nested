@@ -2,7 +2,7 @@
 import { jsx, Styled } from "theme-ui";
 import { useEffect, useState } from "react";
 import { Octokit } from "@octokit/rest";
-import { Switch, Route, Link, useLocation, useHistory } from "react-router-dom";
+import { Switch, Route, Link, useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { usePromise } from "frontend/common/usePromise";
 // @ts-ignore
@@ -19,14 +19,13 @@ export const List = () => {
 		localStorage.getItem("accessToken")
 	);
 
-	const history = useHistory();
 	const { search } = useLocation();
 	useEffect(() => {
 		const { accessToken: accessTokenFromUrl } = queryString.parse(search);
 		if (accessTokenFromUrl && accessTokenFromUrl != accessToken) {
 			// @ts-ignore
-			setAccessToken(accessTokenFromUrl);
-			history.replace("/");
+			localStorage.setItem("accessToken", accessTokenFromUrl);
+			window.location.href = "/";
 		}
 	}, [search]);
 
@@ -37,6 +36,7 @@ export const List = () => {
 		octokit.hook.error("request", async (error, options) => {
 			if (error.status === 401) {
 				setAccessToken("");
+				localStorage.setItem("accessToken", "");
 			}
 			throw error;
 		});
@@ -51,7 +51,6 @@ export const List = () => {
 	});
 
 	useEffect(() => {
-		localStorage.setItem("accessToken", accessToken || "");
 		setupOktokit(accessToken || "");
 
 		if (accessToken) {
@@ -67,7 +66,7 @@ export const List = () => {
 					Login with GitHub
 				</Styled.a>
 			)}
-			{octokit && (
+			{accessToken && octokit && (
 				<Switch>
 					<Route path="/add">
 						<Add currentUser={currentUser.value?.data?.login} />
