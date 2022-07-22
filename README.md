@@ -3,19 +3,43 @@
 Infinitely nested lists published on GitHub.
 
 ## Packages
+
 - `manager` - Create, edit and view your Very Nested GitHub repos.
 - `viewer` - Render a Very Nested list from JSON data.
 - `template` - The GitHub template that new Very Nested repos are created from.
 - `website` - The Very Nested public website.
 - `login` - A small package for generating a GitHub login link.
 
-## 💻 Development
+## 💻 Running Locally
 
-Install dependencies.
+1. Install dependencies.
 
 ```
 yarn
 ```
+
+If it fails, you may need to run prepare manually afterwards.
+
+```
+yarn prepare
+```
+
+1. Start the manager development server.
+
+```
+cd packages/manager
+yarn start
+```
+
+1. In another browser tab, login to GitHub in production at [https://verynested.cadell.dev/](https://verynested.cadell.dev/).
+1. Open your browser tools, go to Application and copy the accessToken value.
+1. In the tab for your local, open dev tools, go to console and set the access token.
+
+```
+localStorage.setItem("accessToken", "{PASTE_ACCESS_TOKEN_HERE}")
+```
+
+1. Refresh your local.
 
 ### Manager
 
@@ -25,6 +49,7 @@ Create, edit and view your Very Nested GitHub repos.
 cd packages/manager
 yarn start
 ```
+
 Copy the `accessToken` from production Local Storage to login.
 
 [Read more...](./packages/manager/README.md)
@@ -70,9 +95,9 @@ The GitHub template that new Very Nested repos are created from.
    ```
 
 1. Run `serve` in the root.
-    ```
-    serve
-    ```
+   ```
+   serve
+   ```
 1. Go to this url: [http://localhost:5000/packages/template/](http://localhost:5000/packages/template/).
 
 ## Technical Problems Solved
