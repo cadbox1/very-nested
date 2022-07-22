@@ -9,7 +9,6 @@ import {
 	getIndexFromItem,
 	removeItemFromArray,
 } from "./array-util";
-import { stat } from "fs";
 
 // I sure do regret not calling this root from the start but I can't be bothered updating the template right now
 export const ROOT_ID = "vLlFS3csq";
@@ -136,9 +135,11 @@ export const reducer = createReducer(emptyState, {
 			...state.item[ROOT_ID].children.map(childId =>
 				getPathId([ROOT_ID, childId])
 			),
-			...state.item["timeline"].children.map(childId =>
-				getPathId(["timeline", childId])
-			),
+			...(state.item["timeline"]
+				? state.item["timeline"].children.map(childId =>
+						getPathId(["timeline", childId])
+				  )
+				: []),
 		];
 	},
 
