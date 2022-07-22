@@ -5,7 +5,9 @@
 		"vLlFS3csq": {
 			"id": "vLlFS3csq",
 			"content": "Home",
-			"children": ["r2_QCE3iV"]
+			"children": [
+				"r2_QCE3iV"
+			]
 		},
 		"r2_QCE3iV": {
 			"id": "vLlFS3csq",
@@ -13,5 +15,7 @@
 			"children": []
 		}
 	},
-	"expanded": ["vLlFS3csq"]
+	"expanded": [
+		"vLlFS3csq"
+	]
 }

@@ -1,13 +1,18 @@
 import shortid from "shortid";
+import { format } from "date-fns";
+import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
 
 import emptyState from "./emptyState.json";
-import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
 import {
 	getIndex,
 	insertAfter,
 	getIndexFromItem,
 	removeItemFromArray,
 } from "./array-util";
+import { stat } from "fs";
+
+// I sure do regret not calling this root from the start but I can't be bothered updating the template right now
+export const ROOT_ID = "vLlFS3csq";
 
 type LoadArguments = {
 	data: ItemStore;
@@ -124,6 +129,17 @@ export const reducer = createReducer(emptyState, {
 	[load.type]: (state: State, action: PayloadAction<LoadArguments>) => {
 		state.path = [];
 		state.item = action.payload.data;
+
+		// expand the first two levels to start with
+		state.expanded = [
+			ROOT_ID,
+			...state.item[ROOT_ID].children.map(childId =>
+				getPathId([ROOT_ID, childId])
+			),
+			...state.item["timeline"].children.map(childId =>
+				getPathId(["timeline", childId])
+			),
+		];
 	},
 
 	[setReadOnly.type]: (
@@ -158,11 +174,46 @@ export const reducer = createReducer(emptyState, {
 		} else {
 			const item = state.item[id];
 			item.content = content;
+
+			// add to timeline
+			const existingTimelineId = state.item[
+				"timeline"
+			]?.children.find(childId =>
+				state.item[childId].children.includes(id) ? id : null
+			);
+
+			let timelineId = existingTimelineId;
+			if (!timelineId) {
+				timelineId = shortid.generate();
+				state.item[timelineId] = {
+					id: timelineId,
+					content: ``,
+					children: [id],
+				};
+
+				// some older documents don't have a timeline, let's add one. Maybe this should be optional?
+				if (!state.item["timeline"]) {
+					state.item["timeline"] = {
+						id: "timeline",
+						content: "Timeline",
+						children: [],
+					};
+					state.item[ROOT_ID].children.push("timeline");
+				}
+
+				state.item["timeline"].children.unshift(timelineId);
+			}
+			state.item[timelineId].content = `${format(
+				new Date(),
+				"yyyy-MM-dd"
+			)} - added ${content} to ${state.item[getIndex(state.path, -2)].content}`;
 		}
 	},
 
 	[addItem.type]: (state: State, action: PayloadAction<AddItemAction>) => {
 		const { id, afterPath, content, children } = action.payload;
+
+		// @todo: hitting enter on an item that has children expanded should make a new first child
 
 		state.item[id] = {
 			id,

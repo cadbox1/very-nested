@@ -26,6 +26,7 @@ import {
 	setReadOnly,
 	editItem,
 	setBaseUrl,
+	ROOT_ID,
 } from "./duck";
 import { ToolbarButton } from "./ToolbarButton";
 import { last, objectMap } from "./array-util";
@@ -120,7 +121,7 @@ export const Viewer = ({
 								margin: 0,
 							}}
 						>
-							<Item path={["vLlFS3csq"]} />
+							<Item path={[ROOT_ID]} />
 						</ul>
 					</div>
 					{selectedItem && (

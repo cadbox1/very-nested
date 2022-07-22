@@ -8,6 +8,7 @@ import { load, reducer } from "./duck";
 import { Viewer } from "../Viewer";
 
 import cookingExample from "./examples/cookingExample.json";
+import timelineExample from "./examples/timelineExample.json";
 import youtubeExample from "./examples/youtube.json";
 import fileExample from "./examples/file-example.json";
 import { FileWithName } from "./ToolbarUploadButton";
@@ -38,6 +39,16 @@ export const VeryNestedCooking = () => {
 
 	useEffect(() => {
 		dispatch(load({ data: cookingExample }));
+	}, []);
+
+	return <Viewer />;
+};
+
+export const VeryNestedTimeline = () => {
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(load({ data: timelineExample }));
 	}, []);
 
 	return <Viewer />;
