@@ -161,8 +161,8 @@ export const Edit = () => {
 					{repoRequest.pending
 						? "loading..."
 						: repoRequest.rejected
-							? "error loading url"
-							: repoRequest.value && (
+						? "error loading url"
+						: repoRequest.value && (
 								<a
 									href={repoRequest.value.data.html_url}
 									target="_blank"
@@ -170,30 +170,30 @@ export const Edit = () => {
 								>
 									{repoRequest.value.data.html_url}
 								</a>
-							)}
+						  )}
 				</div>
 				<div>
 					published at:{" "}
 					{repoRequest.pending
 						? "loading..."
 						: repoRequest.rejected
-							? "error loading url"
-							: repoRequest.value &&
-							(!repoRequest.value.data.has_pages
+						? "error loading url"
+						: repoRequest.value &&
+						  (!repoRequest.value.data.has_pages
 								? "no pages url found"
 								: getPagesRequest.pending
-									? "loading..."
-									: getPagesRequest.rejected
-										? "error loading url"
-										: getPagesRequest.value && (
-											<a
-												href={getPagesRequest.value.data.html_url}
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												{getPagesRequest.value.data.html_url}
-											</a>
-										))}
+								? "loading..."
+								: getPagesRequest.rejected
+								? "error loading url"
+								: getPagesRequest.value && (
+										<a
+											href={getPagesRequest.value.data.html_url}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{getPagesRequest.value.data.html_url}
+										</a>
+								  ))}
 				</div>
 			</div>
 			{saveRequest.fulfilled && (
@@ -202,7 +202,17 @@ export const Edit = () => {
 					displayed.
 				</div>
 			)}
-			<div sx={{ fontSize: 1, mt: 4 }}>
+			<div
+				sx={{
+					position: "sticky",
+					top: 0,
+					fontSize: 1,
+					mx: -2,
+					padding: 4,
+					borderBottom: "1px solid #ccc",
+					backgroundColor: "white",
+				}}
+			>
 				<Button
 					type="button"
 					onClick={handleSave}
@@ -211,15 +221,15 @@ export const Edit = () => {
 				>
 					{saveRequest.pending ? "Saving..." : "Save"}
 				</Button>
-				<Button
+				{/* <Button
 					type="button"
 					variant="danger"
 					onClick={handleRevert}
 					disabled={getRequest.pending}
 					sx={{ py: 1, px: 3, ml: 2 }}
 				>
-					Revert changes
-				</Button>
+					Revert
+				</Button> */}
 			</div>
 			<div sx={{ mt: 6 }}>
 				{saveRequest.rejected && <p>There was an issue saving your repo :(</p>}
