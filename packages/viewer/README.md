@@ -20,6 +20,18 @@
 - `yarn build-watch` - Build the package continuously.
 - `npm run release` - Publish to NPM.
 
+## Publish to NPM
+
+1. In the project root, bump the version of all packages.
+   ```
+   cd ../..
+   yarn bump
+   ```
+1. Publish the package to NPM.
+   ```
+   npm run release
+   ```
+
 ## Serialise current state
 
 Select the storybook iframe in your console then run this.

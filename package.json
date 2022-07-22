@@ -12,7 +12,8 @@
   },
   "scripts": {
     "prepare": "lerna run prepare",
-    "clean": "lerna run clean"
+    "clean": "lerna run clean",
+    "bump": "lerna version --force-publish"
   },
   "devDependencies": {
     "lerna": "^3.20.2"
