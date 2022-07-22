@@ -27,3 +27,5 @@ Select the storybook iframe in your console then run this.
 ```
 console.log(JSON.stringify(window.store.getState().item, null, 1))
 ```
+
+You can then add this to a storybook example.
