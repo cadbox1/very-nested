@@ -7,6 +7,9 @@
   "main": "dist/index.js",
   "module": "dist/index.module.js",
   "unpkg": "dist/bundle.js",
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -22,7 +25,8 @@
     "storybook": "start-storybook -s ./public -p 6006",
     "build-storybook": "build-storybook",
     "test": "react-scripts test",
-    "clean": "rimraf node_modules dist .rts2*"
+    "clean": "rimraf node_modules dist .rts2*",
+    "release": "np"
   },
   "dependencies": {
     "@cadbox1/use-promise": "1.0.0",

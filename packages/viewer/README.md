@@ -11,41 +11,14 @@
 
 - Try out my own rollup config when they fix this [typescript issue](https://github.com/rollup/plugins/issues/287).
 
-## 💻 Running Locally
+## Commands
 
-Install dependencies first.
-
-```
-yarn
-```
-
-Running Storybook
-
-```
-yarn storybook
-```
-
-Running tests.
-
-```
-yarn test
-```
-
-Build the package.
-
-```
-yarn build
-```
-
-Build the package continuously.
-
-```
-yarn build-watch
-```
-Deploy to npm.
-```
-npm publish
-```
+- `yarn` - Install dependencies.
+- `yarn storybook` - Start the Storybook dev server.
+- `yarn test` - Run tests.
+- `yarn build` - Build the package.
+- `yarn build-watch` - Build the package continuously.
+- `npm run release` - Publish to NPM.
 
 ## Serialise current state
 
