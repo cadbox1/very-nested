@@ -29,6 +29,7 @@
    ```
 1. Publish the package to NPM.
    ```
+   cd packages/viewer
    npm run release
    ```
 
