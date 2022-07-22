@@ -20,8 +20,8 @@
 		"simple-oauth2": "^3.4.0",
 		"theme-ui": "^0.3.1",
 		"typeface-source-sans-pro": "^1.1.5",
-		"very-nested-login": "*",
-		"very-nested-viewer": "*"
+		"very-nested-login": "^1.0.0",
+		"very-nested-viewer": "^1.0.0"
 	},
 	"scripts": {
 		"start": "react-scripts start",
