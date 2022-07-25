@@ -115,12 +115,7 @@ const Item = ({ path }: ItemProps) => {
 							{/* <span> {id}</span> hiding the id for now because it's not used */}
 						</Fragment>
 					) : (
-						<span
-							onClick={handleClick}
-							style={{
-								paddingRight: "5rem",
-							}}
-						>
+						<span onClick={handleClick}>
 							{isHref(item.content) ? (
 								<Styled.a
 									href={possiblyPrependBaseUrl(item.content, baseUrl)}
@@ -143,7 +138,7 @@ const Item = ({ path }: ItemProps) => {
 									<IoIosLink size="16" />
 								</span>
 							)}
-							&nbsp;
+							&nbsp; &nbsp;
 						</span>
 					)}
 				</div>
