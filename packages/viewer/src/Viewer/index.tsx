@@ -113,7 +113,13 @@ export const Viewer = ({
 				}}
 			>
 				<HotKeys tabIndex={undefined} handlers={handlers}>
-					<div style={{ overflow: "auto", whiteSpace: "nowrap" }}>
+					<div
+						style={{
+							width: "100%",
+							maxWidth: "800px",
+							overflow: "auto",
+						}}
+					>
 						<ul
 							style={{
 								paddingLeft: 0,

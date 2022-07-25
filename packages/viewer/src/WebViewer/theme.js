@@ -40,7 +40,7 @@ export default {
 	},
 	viewer: {
 		item: {
-			fontSize: 2,
+			fontSize: 1,
 		},
 	},
 	styles: {

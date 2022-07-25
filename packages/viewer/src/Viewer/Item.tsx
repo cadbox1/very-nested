@@ -67,7 +67,7 @@ const Item = ({ path }: ItemProps) => {
 
 	return (
 		<li style={{ listStyleType: "none" }}>
-			<span
+			<div
 				sx={{
 					fontSize: 1,
 					lineHeight: 1.6,
@@ -81,8 +81,8 @@ const Item = ({ path }: ItemProps) => {
 						font: "inherit",
 						width: "28px",
 						px: 2,
-						mr: 1,
 						border: "none",
+						verticalAlign: "top",
 						background: "none",
 					}}
 				>
@@ -92,49 +92,62 @@ const Item = ({ path }: ItemProps) => {
 							: "+"
 						: "•"}
 				</button>
-				{getPathId(selectedPath) === getPathId(path) ? (
-					<Fragment>
-						<input
-							value={item.content}
-							onChange={handleChange}
-							sx={{ fontSize: "1rem" }}
-							autoFocus
-						/>
-						{/* <span> {id}</span> hiding the id for now because it's not used */}
-					</Fragment>
-				) : (
-					<span
-						onClick={handleClick}
-						style={{
-							paddingRight: "5rem",
-						}}
-					>
-						{isHref(item.content) ? (
-							<Styled.a
-								href={possiblyPrependBaseUrl(item.content, baseUrl)}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								{decodeURI(item.content)}
-							</Styled.a>
-						) : (
-							item.content
-						)}
-						&nbsp;
-						{itemReferences > 1 && (
-							<span
-								title={`Used in ${itemReferences - 1} other list${
-									itemReferences > 2 ? "s" : ""
-								}`}
-								sx={{ color: "primary" }}
-							>
-								<IoIosLink size="16" />
-							</span>
-						)}
-						&nbsp;
-					</span>
-				)}
-			</span>
+				<div
+					sx={{
+						display: "inline-block",
+						width: "calc(100% - 28px)", // adjust for the width of the button
+					}}
+				>
+					{getPathId(selectedPath) === getPathId(path) ? (
+						<Fragment>
+							<input
+								value={item.content}
+								onChange={handleChange}
+								sx={{
+									font: "inherit",
+									padding: 0,
+									border: "none",
+									outline: "none",
+									width: "100%",
+								}}
+								autoFocus
+							/>
+							{/* <span> {id}</span> hiding the id for now because it's not used */}
+						</Fragment>
+					) : (
+						<span
+							onClick={handleClick}
+							style={{
+								paddingRight: "5rem",
+							}}
+						>
+							{isHref(item.content) ? (
+								<Styled.a
+									href={possiblyPrependBaseUrl(item.content, baseUrl)}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{decodeURI(item.content)}
+								</Styled.a>
+							) : (
+								item.content
+							)}
+							&nbsp;
+							{itemReferences > 1 && (
+								<span
+									title={`Used in ${itemReferences - 1} other list${
+										itemReferences > 2 ? "s" : ""
+									}`}
+									sx={{ color: "primary" }}
+								>
+									<IoIosLink size="16" />
+								</span>
+							)}
+							&nbsp;
+						</span>
+					)}
+				</div>
+			</div>
 			{expanded && isImageSrc(item.content) && (
 				<div sx={{ paddingLeft: 6 }}>
 					<img
