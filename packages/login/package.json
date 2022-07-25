@@ -1,6 +1,6 @@
 {
   "name": "very-nested-login",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "",
   "private": true,
   "module": "dist/index.js",
