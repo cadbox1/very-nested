@@ -18,20 +18,17 @@
 - `yarn test` - Run tests.
 - `yarn build` - Build the package.
 - `yarn build-watch` - Build the package continuously.
-- `npm run release` - Publish to NPM.
+- `npm run deploy` - Shortcut to the project root deploy process.
 
-## Publish to NPM
+## Deploy
 
-1. In the project root, bump the version of all packages.
-   ```
-   cd ../..
-   yarn bump
-   ```
-1. Publish the package to NPM.
-   ```
-   cd packages/viewer
-   npm run release
-   ```
+Run the deploy script in this package or the project root.
+
+```
+npm run deploy
+```
+
+This will version all packages using Lerna and publish this package to NPM.
 
 ## Serialise current state
 

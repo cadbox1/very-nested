@@ -26,7 +26,8 @@
     "build-storybook": "build-storybook",
     "test": "react-scripts test",
     "clean": "rimraf node_modules dist .rts2*",
-    "release": "npm run build && npm publish"
+    "prepublish": "npm run build",
+    "deploy": "cd ../.. && npm run deploy"
   },
   "dependencies": {
     "@cadbox1/use-promise": "1.0.0",

@@ -10,6 +10,14 @@ Infinitely nested lists published on GitHub.
 - `website` - The Very Nested public website.
 - `login` - A small package for generating a GitHub login link.
 
+## Commands
+
+- `yarn` - Install dependencies.
+- `npm run deploy` - Version packages with Lerna and publish Viewer to NPM.
+- `yarn bump` - Version all packages with Lerna. Called by `npm run deploy`..
+- `yarn prepare` - Build dependencies like Viewer and Login so they can be used by other packages. Run automatically after `yarn` but sometimes isn't if `yarn` fails.
+- `clean` - Delete previous builds.
+
 ## 💻 Running Locally
 
 1. Install dependencies.
