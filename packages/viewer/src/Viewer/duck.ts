@@ -178,38 +178,42 @@ export const reducer = createReducer(emptyState, {
 			const item = state.item[id];
 			item.content = content;
 
-			// add to timeline
-			const existingTimelineId = state.item[
-				"timeline"
-			]?.children.find(childId =>
-				state.item[childId].children.includes(id) ? id : null
-			);
+			if (!state.path.includes("timeline")) {
+				// add to timeline
+				const existingTimelineId = state.item[
+					"timeline"
+				]?.children.find(childId =>
+					state.item[childId].children.includes(id) ? id : null
+				);
 
-			let timelineId = existingTimelineId;
-			if (!timelineId) {
-				timelineId = shortid.generate();
-				state.item[timelineId] = {
-					id: timelineId,
-					content: ``,
-					children: [id],
-				};
-
-				// some older documents don't have a timeline, let's add one. Maybe this should be optional?
-				if (!state.item["timeline"]) {
-					state.item["timeline"] = {
-						id: "timeline",
-						content: "Timeline",
-						children: [],
+				let timelineId = existingTimelineId;
+				if (!timelineId) {
+					timelineId = shortid.generate();
+					state.item[timelineId] = {
+						id: timelineId,
+						content: ``,
+						children: [id],
 					};
-					state.item[ROOT_ID].children.push("timeline");
-				}
 
-				state.item["timeline"].children.unshift(timelineId);
+					// some older documents don't have a timeline, let's add one. Maybe this should be optional?
+					if (!state.item["timeline"]) {
+						state.item["timeline"] = {
+							id: "timeline",
+							content: "Timeline",
+							children: [],
+						};
+						state.item[ROOT_ID].children.push("timeline");
+					}
+
+					state.item["timeline"].children.unshift(timelineId);
+				}
+				state.item[timelineId].content = `${format(
+					new Date(),
+					"yyyy-MM-dd"
+				)} - added ${content} to ${
+					state.item[getIndex(state.path, -2)].content
+				}`;
 			}
-			state.item[timelineId].content = `${format(
-				new Date(),
-				"yyyy-MM-dd"
-			)} - added ${content} to ${state.item[getIndex(state.path, -2)].content}`;
 		}
 	},
 
