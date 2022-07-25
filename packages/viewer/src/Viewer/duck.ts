@@ -129,18 +129,20 @@ export const reducer = createReducer(emptyState, {
 		state.path = [];
 		state.item = action.payload.data;
 
-		// expand the first two levels to start with
-		state.expanded = [
-			ROOT_ID,
-			...state.item[ROOT_ID].children.map(childId =>
-				getPathId([ROOT_ID, childId])
-			),
-			...(state.item["timeline"]
-				? state.item["timeline"].children.map(childId =>
-						getPathId(["timeline", childId])
-				  )
-				: []),
-		];
+		if (state.expanded.length === 0) {
+			// expand the first two levels to start with
+			state.expanded = [
+				ROOT_ID,
+				...state.item[ROOT_ID].children.map(childId =>
+					getPathId([ROOT_ID, childId])
+				),
+				...(state.item["timeline"]
+					? state.item["timeline"].children.map(childId =>
+							getPathId(["timeline", childId])
+					  )
+					: []),
+			];
+		}
 	},
 
 	[setReadOnly.type]: (
