@@ -26,7 +26,6 @@
     "build-storybook": "build-storybook",
     "test": "react-scripts test",
     "clean": "rimraf node_modules dist .rts2*",
-    "prepublish": "npm run build",
     "deploy": "cd ../.. && npm run deploy"
   },
   "dependencies": {
