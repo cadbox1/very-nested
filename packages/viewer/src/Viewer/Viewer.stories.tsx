@@ -38,7 +38,7 @@ export const VeryNestedCooking = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(load({ data: cookingExample }));
+		dispatch(load({ data: cookingExample, force: true }));
 	}, []);
 
 	return <Viewer />;
@@ -48,7 +48,7 @@ export const VeryNestedTimeline = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(load({ data: timelineExample }));
+		dispatch(load({ data: timelineExample, force: true }));
 	}, []);
 
 	return <Viewer />;
@@ -58,7 +58,7 @@ export const VeryNestedCookingReadonly = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(load({ data: cookingExample }));
+		dispatch(load({ data: cookingExample, force: true }));
 	}, []);
 
 	return <Viewer readonly />;
@@ -68,7 +68,7 @@ export const VeryNestedYoutube = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(load({ data: youtubeExample }));
+		dispatch(load({ data: youtubeExample, force: true }));
 	}, []);
 
 	return <Viewer />;
@@ -82,7 +82,7 @@ export const VeryNestedFilesAndUploader = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(load({ data: fileExample }));
+		dispatch(load({ data: fileExample, force: true }));
 	}, []);
 
 	const handleUpload = async ({ name, base64 }: FileWithName) => {

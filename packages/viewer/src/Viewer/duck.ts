@@ -15,6 +15,7 @@ export const ROOT_ID = "vLlFS3csq";
 
 type LoadArguments = {
 	data: ItemStore;
+	force?: Boolean;
 };
 export const load = createAction<LoadArguments>("LOAD");
 
@@ -126,6 +127,10 @@ export type State = {
 
 export const reducer = createReducer(emptyState, {
 	[load.type]: (state: State, action: PayloadAction<LoadArguments>) => {
+		if (action.payload.force) {
+			state.expanded = emptyState.expanded;
+		}
+
 		state.path = [];
 		state.item = action.payload.data;
 
@@ -136,11 +141,6 @@ export const reducer = createReducer(emptyState, {
 				...state.item[ROOT_ID].children.map(childId =>
 					getPathId([ROOT_ID, childId])
 				),
-				...(state.item["timeline"]
-					? state.item["timeline"].children.map(childId =>
-							getPathId(["timeline", childId])
-					  )
-					: []),
 			];
 		}
 	},

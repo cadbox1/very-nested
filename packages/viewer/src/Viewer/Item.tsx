@@ -100,7 +100,7 @@ const Item = ({ path }: ItemProps) => {
 							sx={{ fontSize: "1rem" }}
 							autoFocus
 						/>
-						<span> {id}</span>
+						{/* <span> {id}</span> hiding the id for now because it's not used */}
 					</Fragment>
 				) : (
 					<span
