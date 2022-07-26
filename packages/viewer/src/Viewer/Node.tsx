@@ -74,8 +74,9 @@ const Node = ({ nodeId }: NodeProps) => {
 			<div
 				sx={{
 					fontSize: 1,
-					lineHeight: 1.84,
+					lineHeight: "24px",
 					paddingRight: 4,
+					paddingBottom: 2,
 					variant: "viewer.item",
 				}}
 			>
@@ -101,51 +102,45 @@ const Node = ({ nodeId }: NodeProps) => {
 					sx={{
 						display: "inline-block",
 						width: "calc(100% - 34px)", // adjust for the width plus the margin of the button
+						position: "relative",
 					}}
 				>
-					{selectedNodeId === nodeId ? (
-						<Fragment>
-							<input
-								value={item.content}
-								onChange={handleChange}
-								sx={{
-									font: "inherit",
-									padding: 0,
-									border: "none",
-									outline: "none",
-									width: "100%",
-								}}
-								autoFocus
-							/>
-							{/* <span> {id}</span> hiding the id for now because it's not used */}
-						</Fragment>
-					) : (
-						<span onClick={handleClick}>
-							{isHref(item.content) ? (
-								<Styled.a
-									href={possiblyPrependBaseUrl(item.content, baseUrl)}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{decodeURI(item.content)}
-								</Styled.a>
-							) : (
-								item.content
-							)}
-							&nbsp;
-							{/* we're not using the link right now */}
-							{/* {itemReferences > 1 && (
-								<span
-									title={`Used in ${itemReferences - 1} other list${
-										itemReferences > 2 ? "s" : ""
-									}`}
-									sx={{ color: "primary" }}
-								>
-									<IoIosLink size="16" />
-								</span>
-							)} */}
-							&nbsp; &nbsp;
-						</span>
+					<span
+						onClick={handleClick}
+						sx={{
+							visibility: selectedNodeId === nodeId ? "hidden" : "visible",
+						}}
+					>
+						{isHref(item.content) ? (
+							<Styled.a
+								href={possiblyPrependBaseUrl(item.content, baseUrl)}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{decodeURI(item.content)}
+							</Styled.a>
+						) : (
+							item.content
+						)}
+						&nbsp;&nbsp; &nbsp;
+					</span>
+
+					{selectedNodeId === nodeId && (
+						<input
+							value={item.content}
+							onChange={handleChange}
+							sx={{
+								font: "inherit",
+								padding: 0,
+								border: "none",
+								outline: "none",
+								width: "100%",
+								position: "absolute",
+								top: 0,
+								left: 0,
+							}}
+							autoFocus
+						/>
 					)}
 				</div>
 			</div>
