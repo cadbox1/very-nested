@@ -161,7 +161,7 @@ export const Viewer = ({
 									onClick={() => {
 										preparedHandlers.moveUp();
 									}}
-									title="move up (alt + upkey)"
+									title="move up (alt + up)"
 								>
 									<IoIosArrowRoundUp />
 								</ToolbarButton>
@@ -169,7 +169,7 @@ export const Viewer = ({
 									onClick={() => {
 										preparedHandlers.moveDown();
 									}}
-									title="move down (alt + downkey)"
+									title="move down (alt + down)"
 								>
 									<IoIosArrowRoundDown />
 								</ToolbarButton>
@@ -177,7 +177,7 @@ export const Viewer = ({
 									onClick={() => {
 										preparedHandlers.up();
 									}}
-									title="previous item (upkey)"
+									title="previous item (up)"
 								>
 									<IoIosArrowUp />
 								</ToolbarButton>
@@ -185,7 +185,7 @@ export const Viewer = ({
 									onClick={() => {
 										preparedHandlers.down();
 									}}
-									title="next item (downkey)"
+									title="next item (down)"
 								>
 									<IoIosArrowDown />
 								</ToolbarButton>
