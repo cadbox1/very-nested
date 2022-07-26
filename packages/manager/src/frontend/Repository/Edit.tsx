@@ -157,23 +157,7 @@ export const Edit = () => {
 			<Styled.h2 sx={{ fontSize: 4, mt: 4 }}>{repo}</Styled.h2>
 			<div sx={{ fontSize: 1 }}>
 				<div>
-					repository:{" "}
-					{repoRequest.pending
-						? "loading..."
-						: repoRequest.rejected
-						? "error loading url"
-						: repoRequest.value && (
-								<a
-									href={repoRequest.value.data.html_url}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{repoRequest.value.data.html_url}
-								</a>
-						  )}
-				</div>
-				<div>
-					published at:{" "}
+					Public Link:{" "}
 					{repoRequest.pending
 						? "loading..."
 						: repoRequest.rejected
@@ -194,6 +178,22 @@ export const Edit = () => {
 											{getPagesRequest.value.data.html_url}
 										</a>
 								  ))}
+				</div>
+				<div>
+					GitHub Repo:{" "}
+					{repoRequest.pending
+						? "loading..."
+						: repoRequest.rejected
+						? "error loading url"
+						: repoRequest.value && (
+								<a
+									href={repoRequest.value.data.html_url}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{repoRequest.value.data.html_url}
+								</a>
+						  )}
 				</div>
 			</div>
 			{saveRequest.fulfilled && (
