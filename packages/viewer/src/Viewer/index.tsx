@@ -13,7 +13,7 @@ import {
 	IoIosTrash,
 	IoIosCloudUpload,
 } from "react-icons/io";
-import Item from "./Item";
+import Node from "./Node";
 import {
 	up,
 	down,
@@ -27,6 +27,8 @@ import {
 	editItem,
 	setBaseUrl,
 	ROOT_ID,
+	State,
+	getPathFromNodeId,
 } from "./duck";
 import { ToolbarButton } from "./ToolbarButton";
 import { last, objectMap } from "./array-util";
@@ -45,9 +47,9 @@ export const Viewer = ({
 	onUpload,
 }: ViewerProps) => {
 	const dispatch = useDispatch();
-	const selectedPath = useSelector((state: any) => state.path);
-	const id = last(selectedPath);
-	const selectedItem = useSelector((state: any) => state.item[id]);
+	const selectedNodeId = useSelector((state: State) => state.nodeId);
+	const id = last(getPathFromNodeId(selectedNodeId));
+	const selectedItem = useSelector((state: State) => state.item[id]);
 
 	useEffect(() => {
 		dispatch(setReadOnly({ readonly }));
@@ -64,7 +66,7 @@ export const Viewer = ({
 		undent: undentItem,
 		moveUp,
 		moveDown,
-		enter: () => addItem({ afterPath: selectedPath }),
+		enter: () => addItem({ afterNodeId: selectedNodeId }),
 	};
 
 	const preparedHandlers = objectMap<(evt?: KeyboardEvent) => void>(
@@ -78,7 +80,7 @@ export const Viewer = ({
 	);
 
 	const handleRemove = () => {
-		dispatch(removeItem({ path: selectedPath }));
+		dispatch(removeItem());
 	};
 
 	const handlers = {
@@ -127,7 +129,7 @@ export const Viewer = ({
 								margin: 0,
 							}}
 						>
-							<Item path={[ROOT_ID]} />
+							<Node nodeId={ROOT_ID} />
 						</ul>
 					</div>
 					{selectedItem && (

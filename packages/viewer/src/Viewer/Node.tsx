@@ -9,48 +9,52 @@ import {
 	State,
 	collapse,
 	expand,
-	getPathId,
+	getPathFromNodeId,
+	getNodeIdFromPath,
 } from "./duck";
 import { last } from "./array-util";
 import { isHref, possiblyPrependBaseUrl, isImageSrc } from "./isHref";
 
-export interface ItemProps {
-	path: Array<string>;
+export interface NodeProps {
+	nodeId: string;
 }
 
-const Item = ({ path }: ItemProps) => {
-	const id = last(path);
+const Node = ({ nodeId }: NodeProps) => {
+	const path = getPathFromNodeId(nodeId);
+	const itemId = last(path);
 
 	const dispatch = useDispatch();
 	const readonly = useSelector((state: State) => state.readonly);
 	const baseUrl = useSelector((state: State) => state.baseUrl);
-	const item = useSelector((state: State) => state.item[id]);
+	const item = useSelector((state: State) => state.item[itemId]);
 	const itemReferences = useSelector(
 		(state: State) =>
 			Object.values(state.item).filter(item =>
-				item.children.some(childId => childId === id)
+				item.children.some(childId => childId === itemId)
 			).length
 	);
-	const selectedPath = useSelector((state: State) => state.path);
+	const selectedNodeId = useSelector((state: State) => state.nodeId);
 	const expanded = useSelector((state: State) =>
-		state.expanded.includes(getPathId(path))
+		state.expanded.includes(nodeId)
 	);
 
 	if (!item) {
 		throw new Error(
-			`No item with id: "${id}" found in state, path: ${JSON.stringify(path)}.`
+			`No item with id: "${itemId}" found in state, path: ${JSON.stringify(
+				path
+			)}.`
 		);
 	}
 
 	const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-		dispatch(editItem({ id, content: evt.target.value }));
+		dispatch(editItem({ id: itemId, content: evt.target.value }));
 	};
 
 	const handleClick = () => {
 		if (readonly) {
 			handleExpandCollpase();
 		} else {
-			dispatch(selectItem({ path }));
+			dispatch(selectItem({ nodeId }));
 		}
 	};
 
@@ -99,7 +103,7 @@ const Item = ({ path }: ItemProps) => {
 						width: "calc(100% - 34px)", // adjust for the width plus the margin of the button
 					}}
 				>
-					{getPathId(selectedPath) === getPathId(path) ? (
+					{selectedNodeId === nodeId ? (
 						<Fragment>
 							<input
 								value={item.content}
@@ -129,6 +133,7 @@ const Item = ({ path }: ItemProps) => {
 								item.content
 							)}
 							&nbsp;
+							{/* we're not using the link right now */}
 							{/* {itemReferences > 1 && (
 								<span
 									title={`Used in ${itemReferences - 1} other list${
@@ -159,10 +164,13 @@ const Item = ({ path }: ItemProps) => {
 			)}
 			{item.children &&
 				expanded &&
-				path.filter(pathId => pathId === id).length < 2 && (
+				path.filter(pathId => pathId === itemId).length < 2 && (
 					<ul sx={{ paddingLeft: 5, mb: 1 }}>
 						{item.children.map((id, index) => (
-							<Item key={`${id}-${index}`} path={[...path, id]} />
+							<Node
+								key={getNodeIdFromPath([...path, id])}
+								nodeId={getNodeIdFromPath([...path, id])}
+							/>
 						))}
 					</ul>
 				)}
@@ -170,4 +178,4 @@ const Item = ({ path }: ItemProps) => {
 	);
 };
 
-export default Item;
+export default Node;
