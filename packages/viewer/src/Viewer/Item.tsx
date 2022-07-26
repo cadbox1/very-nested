@@ -70,7 +70,7 @@ const Item = ({ path }: ItemProps) => {
 			<div
 				sx={{
 					fontSize: 1,
-					lineHeight: 1.6,
+					lineHeight: 1.84,
 					paddingRight: 4,
 					variant: "viewer.item",
 				}}
@@ -79,7 +79,8 @@ const Item = ({ path }: ItemProps) => {
 					onClick={handleExpandCollpase}
 					sx={{
 						font: "inherit",
-						width: "28px",
+						width: "30px",
+						mr: "4px",
 						px: 2,
 						border: "none",
 						verticalAlign: "top",
@@ -95,7 +96,7 @@ const Item = ({ path }: ItemProps) => {
 				<div
 					sx={{
 						display: "inline-block",
-						width: "calc(100% - 28px)", // adjust for the width of the button
+						width: "calc(100% - 34px)", // adjust for the width plus the margin of the button
 					}}
 				>
 					{getPathId(selectedPath) === getPathId(path) ? (
@@ -128,7 +129,7 @@ const Item = ({ path }: ItemProps) => {
 								item.content
 							)}
 							&nbsp;
-							{itemReferences > 1 && (
+							{/* {itemReferences > 1 && (
 								<span
 									title={`Used in ${itemReferences - 1} other list${
 										itemReferences > 2 ? "s" : ""
@@ -137,7 +138,7 @@ const Item = ({ path }: ItemProps) => {
 								>
 									<IoIosLink size="16" />
 								</span>
-							)}
+							)} */}
 							&nbsp; &nbsp;
 						</span>
 					)}
@@ -159,7 +160,7 @@ const Item = ({ path }: ItemProps) => {
 			{item.children &&
 				expanded &&
 				path.filter(pathId => pathId === id).length < 2 && (
-					<ul sx={{ paddingLeft: 5 }}>
+					<ul sx={{ paddingLeft: 5, mb: 1 }}>
 						{item.children.map((id, index) => (
 							<Item key={`${id}-${index}`} path={[...path, id]} />
 						))}

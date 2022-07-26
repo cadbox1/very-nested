@@ -27,7 +27,7 @@ export default {
 	},
 	fontSizes: [16, 18, 20, 24, 32, 36, 44],
 	lineHeights: {
-		body: 1.7,
+		body: 1.84,
 		heading: 1.2,
 	},
 	fontWeights: {
