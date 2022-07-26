@@ -1,8 +1,7 @@
 /** @jsx jsx */
 import { jsx, Styled } from "theme-ui";
-import React, { Fragment } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IoIosLink } from "react-icons/io";
 import {
 	editItem,
 	selectItem,
@@ -78,7 +77,7 @@ const Node = ({ nodeId }: NodeProps) => {
 				<div
 					sx={{
 						fontSize: 1,
-						lineHeight: "24px",
+						lineHeight: "22px",
 						paddingRight: 4,
 						paddingBottom: 2,
 						variant: "viewer.item",
