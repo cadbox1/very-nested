@@ -77,9 +77,8 @@ const Node = ({ nodeId }: NodeProps) => {
 				<div
 					sx={{
 						fontSize: 1,
-						lineHeight: "22px",
+						lineHeight: "28px",
 						paddingRight: 4,
-						paddingBottom: 2,
 						variant: "viewer.item",
 					}}
 				>
