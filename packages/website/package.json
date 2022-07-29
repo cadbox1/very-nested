@@ -1,7 +1,7 @@
 {
   "name": "very-nested-website",
   "private": true,
-  "version": "1.0.32",
+  "version": "1.0.33",
   "scripts": {
     "develop": "gatsby develop",
     "start": "gatsby develop",
@@ -19,7 +19,7 @@
     "react-dom": "^16.12.0",
     "theme-ui": "^0.3.1",
     "typeface-source-sans-pro": "^0.0.75",
-    "very-nested-login": "^1.0.32",
-    "very-nested-viewer": "^1.0.32"
+    "very-nested-login": "^1.0.33",
+    "very-nested-viewer": "^1.0.33"
   }
 }
