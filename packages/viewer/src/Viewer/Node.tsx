@@ -86,6 +86,7 @@ const Node = ({ nodeId }: NodeProps) => {
 						sx={{
 							font: "inherit",
 							width: "30px",
+							padding: 0,
 							border: "none",
 							textAlign: "center",
 							verticalAlign: "top",
