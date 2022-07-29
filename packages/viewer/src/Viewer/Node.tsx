@@ -77,7 +77,6 @@ const Node = ({ nodeId }: NodeProps) => {
 				<div
 					sx={{
 						fontSize: 1,
-						lineHeight: "28px",
 						paddingRight: 4,
 						variant: "viewer.item",
 					}}
@@ -87,9 +86,8 @@ const Node = ({ nodeId }: NodeProps) => {
 						sx={{
 							font: "inherit",
 							width: "30px",
-							mr: "4px",
-							px: 2,
 							border: "none",
+							textAlign: "center",
 							verticalAlign: "top",
 							background: "none",
 						}}
@@ -103,7 +101,7 @@ const Node = ({ nodeId }: NodeProps) => {
 					<div
 						sx={{
 							display: "inline-block",
-							width: "calc(100% - 34px)", // adjust for the width plus the margin of the button
+							width: "calc(100% - 30px)", // adjust for the width of the button
 							position: "relative",
 						}}
 					>
@@ -163,7 +161,7 @@ const Node = ({ nodeId }: NodeProps) => {
 			{item.children &&
 				expanded &&
 				path.filter(pathId => pathId === itemId).length < 2 && (
-					<ul sx={{ paddingLeft: isRoot ? 0 : 5, mb: 1 }}>
+					<ul sx={{ paddingLeft: isRoot ? 0 : 4, mb: 1 }}>
 						{item.children.map((id, index) => (
 							<Node
 								key={getNodeIdFromPath([...path, id])}
