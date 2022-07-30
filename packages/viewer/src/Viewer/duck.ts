@@ -4,8 +4,8 @@ import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
 
 import emptyState from "./emptyState.json";
 import {
-	getIndex,
-	insertAfter,
+	getItemInArrayByIndex,
+	insertItemInArrayAfter,
 	getIndexFromItem,
 	removeItemFromArray,
 } from "./array-util";
@@ -135,7 +135,7 @@ export const collapse = createAction<CollapseArguments>("COLLAPSE");
 
 // Store
 
-export type ItemState = {
+export type Item = {
 	id: string;
 	content: string;
 	error?: string;
@@ -143,7 +143,7 @@ export type ItemState = {
 };
 
 export type ItemStore = {
-	[key: string]: ItemState;
+	[key: string]: Item;
 };
 
 export type State = {
@@ -252,7 +252,8 @@ export const reducer = createReducer(emptyState, {
 					new Date(),
 					"yyyy-MM-dd"
 				)} - added ${content} to ${
-					state.item[getIndex(getPathFromNodeId(state.nodeId), -2)].content
+					state.item[getItemInArrayByIndex(getPathFromNodeId(state.nodeId), -2)]
+						.content
 				}`;
 			}
 		}
@@ -263,26 +264,12 @@ export const reducer = createReducer(emptyState, {
 	[addItem.type]: (state: State, action: PayloadAction<AddItemAction>) => {
 		const { id, afterNodeId, content, children } = action.payload;
 
-		// @todo: hitting enter on an item that has children expanded should make a new first child
+		if (!state.nodeId) {
+			return;
+		}
 
-		state.item[id] = {
-			id,
-			content,
-			children,
-		};
-
-		const { id: afterId, collection } = getItemFromPath(
-			state.item,
-			getPathFromNodeId(afterNodeId)
-		);
-
-		insertAfter(collection, afterId, id);
-
-		// select new item
-		const path = getPathFromNodeId(state.nodeId);
-		path.pop();
-		path.push(id);
-		state.nodeId = getNodeIdFromPath(path);
+		const node = new Node({ nodeId: state.nodeId, state });
+		node.insertAfter({ id, content, children });
 	},
 
 	// Remove Item
@@ -290,8 +277,8 @@ export const reducer = createReducer(emptyState, {
 	[removeItem.type]: (state: State, action: any) => {
 		const path = getPathFromNodeId(state.nodeId);
 
-		const id = getIndex(path, -1);
-		const parentId = getIndex(path, -2);
+		const id = getItemInArrayByIndex(path, -1);
+		const parentId = getItemInArrayByIndex(path, -2);
 		const collection = state.item[parentId].children;
 
 		const aboveItemId = getIndexFromItem(collection, id, -1);
@@ -352,7 +339,7 @@ export const reducer = createReducer(emptyState, {
 		}
 
 		const parentsCollection = getCollection(state.item, parentsParentId);
-		insertAfter(parentsCollection, parentId, id);
+		insertItemInArrayAfter(parentsCollection, parentId, id);
 
 		const path = getPathFromNodeId(state.nodeId);
 		path.splice(-2);
@@ -431,7 +418,7 @@ export const reducer = createReducer(emptyState, {
 			state.expanded.includes(state.nodeId) &&
 			iteration < maxIterations
 		) {
-			const lastChildId = getIndex(item.children, -1);
+			const lastChildId = getItemInArrayByIndex(item.children, -1);
 			path.push(lastChildId);
 			state.nodeId = getNodeIdFromPath(path);
 			item = state.item[lastChildId];
@@ -505,9 +492,9 @@ function getItemFromPath(
 	collection: string[];
 	children: string[];
 } {
-	const id = getIndex(path, -1);
-	const parentId = getIndex(path, -2);
-	const parentsParentId = getIndex(path, -3);
+	const id = getItemInArrayByIndex(path, -1);
+	const parentId = getItemInArrayByIndex(path, -2);
+	const parentsParentId = getItemInArrayByIndex(path, -3);
 
 	const collection = parentId ? getCollection(itemStore, parentId) : [];
 	const index = collection ? collection.indexOf(id) : -1;
@@ -536,7 +523,7 @@ const replaceAllReferencesToId = (
 const getAllItemsWithIdInChildren = (
 	id: string,
 	state: State,
-	callback: (item: ItemState) => void
+	callback: (item: Item) => void
 ) => {
 	Object.keys(state.item).forEach(itemId => {
 		const item = state.item[itemId];
@@ -565,4 +552,53 @@ export function getPathFromNodeId(nodeId?: string): string[] {
 		return [];
 	}
 	return nodeId.split(",");
+}
+
+class Node {
+	nodeId: string;
+	path: string[];
+	item: Item;
+	state: State;
+
+	constructor({ nodeId, state }: { nodeId: string; state: State }) {
+		this.nodeId = nodeId;
+		this.state = state;
+
+		this.path = getPathFromNodeId(nodeId);
+		this.item = this.state.item[getItemInArrayByIndex(this.path, -1)];
+	}
+
+	get parent() {
+		return new Node({
+			nodeId: getNodeIdFromPath(this.path.slice(0, -1)),
+			state: this.state,
+		});
+	}
+
+	get childNodes() {
+		return this.item.children.map(
+			childId =>
+				new Node({
+					nodeId: getNodeIdFromPath([...this.path, childId]),
+					state: this.state,
+				})
+		);
+	}
+
+	insertAfter(newItem: Item) {
+		this.state.item[newItem.id] = newItem;
+
+		// if expanded then add as a new child otherwise add as a new sibling
+		if (this.state.expanded.includes(this.nodeId)) {
+			this.item.children.unshift(newItem.id);
+			this.state.nodeId = getNodeIdFromPath([...this.path, newItem.id]);
+		} else {
+			insertItemInArrayAfter(
+				this.parent.item.children,
+				this.item.id,
+				newItem.id
+			);
+			this.state.nodeId = getNodeIdFromPath([...this.parent.path, newItem.id]);
+		}
+	}
 }
