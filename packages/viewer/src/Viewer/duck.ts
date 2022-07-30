@@ -52,26 +52,19 @@ export const editItem = createAction<EditItemArguments>("EDIT_ITEM");
 
 // Add Item
 
-type AddItemArguments = {
-	afterNodeId?: string;
-};
 type AddItemAction = {
 	afterNodeId: string;
 	id: string;
 	content: string;
 	children: string[];
 };
-export const addItem = createAction(
-	"ADD",
-	({ afterNodeId }: AddItemArguments) => ({
-		payload: {
-			id: shortid.generate(),
-			afterNodeId,
-			content: "",
-			children: [],
-		},
-	})
-);
+export const addItem = createAction("ADD", () => ({
+	payload: {
+		id: shortid.generate(),
+		content: "",
+		children: [],
+	},
+}));
 
 // Remove Item
 
@@ -262,14 +255,14 @@ export const reducer = createReducer(emptyState, {
 	// Add Item
 
 	[addItem.type]: (state: State, action: PayloadAction<AddItemAction>) => {
-		const { id, afterNodeId, content, children } = action.payload;
+		const { id, content, children } = action.payload;
 
 		if (!state.nodeId) {
 			return;
 		}
 
 		const node = new Node({ nodeId: state.nodeId, state });
-		node.insertAfter({ id, content, children });
+		node.insertItemAfterThisNode({ id, content, children });
 	},
 
 	// Remove Item
@@ -388,46 +381,12 @@ export const reducer = createReducer(emptyState, {
 	// Up
 
 	[up.type]: (state: State, action: UpArguments) => {
-		const { id, collection } = getItemFromPath(
-			state.item,
-			getPathFromNodeId(state.nodeId)
-		);
-		let aboveItemId = getIndexFromItem(collection, id, -1);
-
-		const path = getPathFromNodeId(state.nodeId);
-
-		if (!aboveItemId) {
-			// select the parent
-			path.pop();
-			return;
+		if (!state.nodeId) {
+			return state;
 		}
 
-		path.pop();
-		path.push(aboveItemId);
-		state.nodeId = getNodeIdFromPath(path);
-
-		const maxIterations = 100;
-
-		let item = state.item[aboveItemId];
-		let iteration = 1;
-
-		while (
-			item &&
-			item.children.length > 0 &&
-			state.nodeId &&
-			state.expanded.includes(state.nodeId) &&
-			iteration < maxIterations
-		) {
-			const lastChildId = getItemInArrayByIndex(item.children, -1);
-			path.push(lastChildId);
-			state.nodeId = getNodeIdFromPath(path);
-			item = state.item[lastChildId];
-			iteration++;
-		}
-
-		if (iteration === maxIterations) {
-			console.error("maximum iterations reached for 'up'");
-		}
+		const node = new Node({ nodeId: state.nodeId, state });
+		node.selectPreviousNode();
 	},
 
 	// Down
@@ -436,30 +395,9 @@ export const reducer = createReducer(emptyState, {
 		if (!state.nodeId) {
 			return state;
 		}
-		const path = getPathFromNodeId(state.nodeId);
-		let item = getItemFromPath(state.item, getPathFromNodeId(state.nodeId));
 
-		// check children
-		if (item.children.length > 0 && state.expanded.includes(state.nodeId)) {
-			path.push(item.children[0]);
-			state.nodeId = getNodeIdFromPath(path);
-			return;
-		}
-
-		// check siblings
-		let belowItemId = getIndexFromItem(item.collection, item.id, 1);
-
-		// check parents
-		while (!belowItemId && path.length > 1) {
-			path.pop();
-			state.nodeId = getNodeIdFromPath(path);
-			item = getItemFromPath(state.item, path);
-			belowItemId = getIndexFromItem(item.collection, item.id, 1);
-		}
-
-		path.pop();
-		path.push(belowItemId);
-		state.nodeId = getNodeIdFromPath(path);
+		const node = new Node({ nodeId: state.nodeId, state });
+		node.selectNextNode();
 	},
 
 	// Expand
@@ -585,20 +523,70 @@ class Node {
 		);
 	}
 
-	insertAfter(newItem: Item) {
+	get expanded() {
+		return this.state.expanded.includes(this.nodeId);
+	}
+
+	get index() {
+		return this.parent.item.children.indexOf(this.item.id);
+	}
+
+	get previousSibling(): Node | null {
+		if (this.index === 0) {
+			return null;
+		}
+		const siblingId = this.parent.childNodes[this.index - 1].item.id;
+		const newPath = [...this.parent.path, siblingId];
+		return new Node({ nodeId: getNodeIdFromPath(newPath), state: this.state });
+	}
+
+	get nextSibling(): Node | null {
+		if (this.index === this.parent.childNodes.length - 1) {
+			return null;
+		}
+		const siblingId = this.parent.childNodes[this.index + 1].item.id;
+		const newPath = [...this.parent.path, siblingId];
+		return new Node({ nodeId: getNodeIdFromPath(newPath), state: this.state });
+	}
+
+	selectNextNode() {
+		if (this.expanded) {
+			this.state.nodeId = this.childNodes[0].nodeId;
+		} else {
+			let node: Node = this;
+			while (!node.nextSibling) {
+				node = node.parent;
+			}
+			this.state.nodeId = node.nextSibling.nodeId;
+		}
+	}
+
+	selectPreviousNode() {
+		if (!this.previousSibling) {
+			this.state.nodeId = this.parent.nodeId;
+			return;
+		}
+
+		let node = this.previousSibling;
+		while (node.expanded) {
+			node = getItemInArrayByIndex(node.childNodes, -1);
+		}
+		this.state.nodeId = node.nodeId;
+	}
+
+	insertItemAfterThisNode(newItem: Item) {
 		this.state.item[newItem.id] = newItem;
 
 		// if expanded then add as a new child otherwise add as a new sibling
-		if (this.state.expanded.includes(this.nodeId)) {
+		if (this.expanded) {
 			this.item.children.unshift(newItem.id);
-			this.state.nodeId = getNodeIdFromPath([...this.path, newItem.id]);
 		} else {
 			insertItemInArrayAfter(
 				this.parent.item.children,
 				this.item.id,
 				newItem.id
 			);
-			this.state.nodeId = getNodeIdFromPath([...this.parent.path, newItem.id]);
 		}
+		this.selectNextNode();
 	}
 }

@@ -66,7 +66,7 @@ export const Viewer = ({
 		undent: undentItem,
 		moveUp,
 		moveDown,
-		enter: () => addItem({ afterNodeId: selectedNodeId }),
+		enter: () => addItem(),
 	};
 
 	const preparedHandlers = objectMap<(evt?: KeyboardEvent) => void>(
