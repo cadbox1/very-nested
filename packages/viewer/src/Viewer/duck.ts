@@ -506,7 +506,7 @@ class Node {
 		this.item = this.state.item[getItemInArrayByIndex(this.path, -1)];
 	}
 
-	get parent() {
+	get parentNode() {
 		return new Node({
 			nodeId: getNodeIdFromPath(this.path.slice(0, -1)),
 			state: this.state,
@@ -528,42 +528,46 @@ class Node {
 	}
 
 	get index() {
-		return this.parent.item.children.indexOf(this.item.id);
+		return this.parentNode.item.children.indexOf(this.item.id);
 	}
 
 	get previousSibling(): Node | null {
 		if (this.index === 0) {
 			return null;
 		}
-		const siblingId = this.parent.childNodes[this.index - 1].item.id;
-		const newPath = [...this.parent.path, siblingId];
+		const siblingId = this.parentNode.childNodes[this.index - 1].item.id;
+		const newPath = [...this.parentNode.path, siblingId];
 		return new Node({ nodeId: getNodeIdFromPath(newPath), state: this.state });
 	}
 
 	get nextSibling(): Node | null {
-		if (this.index === this.parent.childNodes.length - 1) {
+		if (this.index === this.parentNode.childNodes.length - 1) {
 			return null;
 		}
-		const siblingId = this.parent.childNodes[this.index + 1].item.id;
-		const newPath = [...this.parent.path, siblingId];
+		const siblingId = this.parentNode.childNodes[this.index + 1].item.id;
+		const newPath = [...this.parentNode.path, siblingId];
 		return new Node({ nodeId: getNodeIdFromPath(newPath), state: this.state });
+	}
+
+	select() {
+		this.state.nodeId = this.nodeId;
 	}
 
 	selectNextNode() {
 		if (this.expanded) {
-			this.state.nodeId = this.childNodes[0].nodeId;
+			this.childNodes[0].select();
 		} else {
 			let node: Node = this;
 			while (!node.nextSibling) {
-				node = node.parent;
+				node = node.parentNode;
 			}
-			this.state.nodeId = node.nextSibling.nodeId;
+			node.select();
 		}
 	}
 
 	selectPreviousNode() {
 		if (!this.previousSibling) {
-			this.state.nodeId = this.parent.nodeId;
+			this.parentNode.select();
 			return;
 		}
 
@@ -571,7 +575,7 @@ class Node {
 		while (node.expanded) {
 			node = getItemInArrayByIndex(node.childNodes, -1);
 		}
-		this.state.nodeId = node.nodeId;
+		node.select();
 	}
 
 	insertItemAfterThisNode(newItem: Item) {
@@ -582,7 +586,7 @@ class Node {
 			this.item.children.unshift(newItem.id);
 		} else {
 			insertItemInArrayAfter(
-				this.parent.item.children,
+				this.parentNode.item.children,
 				this.item.id,
 				newItem.id
 			);
