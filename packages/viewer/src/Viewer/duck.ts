@@ -561,7 +561,7 @@ class Node {
 			while (!node.nextSibling) {
 				node = node.parentNode;
 			}
-			node.select();
+			node.nextSibling.select();
 		}
 	}
 
