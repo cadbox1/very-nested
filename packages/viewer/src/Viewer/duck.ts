@@ -1,5 +1,5 @@
 import shortid from "shortid";
-import { format } from "date-fns";
+import { format, parse, isToday } from "date-fns";
 import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
 
 import emptyState from "./emptyState.json";
@@ -12,6 +12,8 @@ import {
 
 // I sure do regret not calling this root from the start but I can't be bothered updating the template right now
 export const ROOT_ID = "vLlFS3csq";
+
+export const DATE_FORMAT = "yyyy-MM-dd";
 
 // Load
 
@@ -203,53 +205,98 @@ export const reducer = createReducer(emptyState, {
 	[editItem.type]: (state: State, action: PayloadAction<EditItemArguments>) => {
 		const { id, content } = action.payload;
 
-		if (Object.keys(state.item).includes(content)) {
-			// content is an id, replace it with a reference to the existing item.
-			const referencedItemId = content;
-			replaceAllReferencesToId(id, referencedItemId, state);
-			deleteItem(id, state);
-		} else {
-			const item = state.item[id];
-			item.content = content;
+		// let's not worry about linking for now
 
-			if (!getPathFromNodeId(state.nodeId).includes("timeline")) {
-				// add to timeline
-				const existingTimelineId = state.item[
-					"timeline"
-				]?.children.find(childId =>
-					state.item[childId].children.includes(id) ? id : null
-				);
+		// if (Object.keys(state.item).includes(content)) {
+		// 	// content is an id, replace it with a reference to the existing item.
+		// 	const referencedItemId = content;
+		// 	replaceAllReferencesToId(id, referencedItemId, state);
+		// 	deleteItem(id, state);
+		// }
 
-				let timelineId = existingTimelineId;
-				if (!timelineId) {
-					timelineId = shortid.generate();
-					state.item[timelineId] = {
-						id: timelineId,
-						content: ``,
-						children: [id],
-					};
-
-					// some older documents don't have a timeline, let's add one. Maybe this should be optional?
-					if (!state.item["timeline"]) {
-						state.item["timeline"] = {
-							id: "timeline",
-							content: "Timeline",
-							children: [],
-						};
-						state.item[ROOT_ID].children.push("timeline");
-					}
-
-					state.item["timeline"].children.unshift(timelineId);
-				}
-				state.item[timelineId].content = `${format(
-					new Date(),
-					"yyyy-MM-dd"
-				)} - added ${content} to ${
-					state.item[getItemInArrayByIndex(getPathFromNodeId(state.nodeId), -2)]
-						.content
-				}`;
-			}
+		if (!state.nodeId) {
+			return;
 		}
+
+		const node = new Node({
+			nodeId: state.nodeId,
+			state,
+		});
+
+		node.item.content = content;
+
+		// now handle the timeline
+
+		// the data structure for the timeline is a flat list of dates of the topmost parent
+		// the view aggregates those dates into chunks
+
+		if (node.path.includes("timeline")) {
+			// don't handle the timeline for timeline edits
+			return;
+		}
+
+		const timelineNode = new Node({
+			nodeId: getNodeIdFromPath([ROOT_ID, "timeline"]),
+			state,
+		});
+
+		let todaysNodes: Node[] = [];
+		let olderNodes: Node[] = [];
+		timelineNode.childNodes.forEach(childNode => {
+			if (
+				isToday(
+					parse(childNode.item.content.split(" - ")[0], DATE_FORMAT, new Date())
+				)
+			) {
+				todaysNodes.push(childNode);
+			} else {
+				olderNodes.push(childNode);
+			}
+		});
+
+		// update the timeline entry string if it exists
+		const existingTimelineNode = todaysNodes.find(
+			todayNode => todayNode.childNodes[0].item.id === id
+		);
+		if (existingTimelineNode) {
+			existingTimelineNode.item.content = getTimelineString(node);
+			return;
+		}
+
+		// if a parent has a timeline entry then there's nothing more to do
+		if (
+			todaysNodes.some(todayNode =>
+				node.parentNode.path.includes(todayNode.childNodes[0].item.id)
+			)
+		) {
+			return;
+		}
+
+		// add to timeline
+		const timelineId = shortid.generate();
+		state.item[timelineId] = {
+			id: timelineId,
+			content: getTimelineString(node),
+			children: [node.item.id, node.parentNode.item.id],
+		};
+
+		// add a timeline if the document doesn't have one already
+		if (!state.item["timeline"]) {
+			state.item["timeline"] = {
+				id: "timeline",
+				content: "Timeline",
+				children: [],
+			};
+			state.item[ROOT_ID].children.push("timeline");
+		}
+
+		state.item["timeline"].children.unshift(timelineId);
+
+		// @todo unlink any previous references and freeze their contents to x number of levels
+
+		const oldReferencedNodes = olderNodes.filter(olderNode =>
+			node.path.includes(olderNode.childNodes[0].item.id)
+		);
 	},
 
 	// Add Item
@@ -593,4 +640,9 @@ class Node {
 		}
 		this.selectNextNode();
 	}
+}
+
+function getTimelineString(node: Node) {
+	const todaysDateString = format(new Date(), DATE_FORMAT);
+	return `${todaysDateString} - added ${node.item.content} to ${node.parentNode.item.content}`;
 }
