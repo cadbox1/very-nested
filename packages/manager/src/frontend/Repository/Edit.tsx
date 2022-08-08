@@ -205,6 +205,7 @@ export const Edit = () => {
 			<div
 				sx={{
 					position: "sticky",
+					zIndex: 1,
 					top: 0,
 					fontSize: 1,
 					mx: -2,
