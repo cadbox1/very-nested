@@ -235,14 +235,14 @@ export const reducer = createReducer(emptyState, {
 			return;
 		}
 
-		const timelineNode = new Node({
+		const timelineNode = Node.getByNodeId({
 			nodeId: getNodeIdFromPath([ROOT_ID, "timeline"]),
 			state,
 		});
 
 		let todaysNodes: Node[] = [];
 		let olderNodes: Node[] = [];
-		timelineNode.childNodes.forEach(childNode => {
+		timelineNode?.childNodes.forEach(childNode => {
 			if (
 				isToday(
 					parse(childNode.item.content.split(" - ")[0], DATE_FORMAT, new Date())
@@ -294,9 +294,9 @@ export const reducer = createReducer(emptyState, {
 
 		// @todo unlink any previous references and freeze their contents to x number of levels
 
-		const oldReferencedNodes = olderNodes.filter(olderNode =>
-			node.path.includes(olderNode.childNodes[0].item.id)
-		);
+		// const oldReferencedNodes = olderNodes.filter(olderNode =>
+		// 	node.path.includes(olderNode.childNodes[0].item.id)
+		// );
 	},
 
 	// Add Item
@@ -544,6 +544,17 @@ class Node {
 	path: string[];
 	item: Item;
 	state: State;
+
+	static getByNodeId({ nodeId, state }: { nodeId: string; state: State }) {
+		const path = getPathFromNodeId(nodeId);
+		const item = state.item[getItemInArrayByIndex(path, -1)];
+
+		if (!item) {
+			return null;
+		}
+
+		return new Node({ nodeId, state });
+	}
 
 	constructor({ nodeId, state }: { nodeId: string; state: State }) {
 		this.nodeId = nodeId;
