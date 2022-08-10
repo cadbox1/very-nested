@@ -12,27 +12,23 @@ import {
 	getNodeIdFromPath,
 	ROOT_ID,
 } from "./duck";
-import { last } from "./array-util";
+import { getLastItemInArray } from "./array-util";
 import { isHref, possiblyPrependBaseUrl, isImageSrc } from "./isHref";
+import { TimelineNode } from "./TimelineNode";
 
 export interface NodeProps {
 	nodeId: string;
+	readonly?: boolean;
 }
 
-const Node = ({ nodeId }: NodeProps) => {
+const Node = ({ nodeId, readonly }: NodeProps) => {
 	const path = getPathFromNodeId(nodeId);
-	const itemId = last(path);
+	const itemId = getLastItemInArray(path);
 
 	const dispatch = useDispatch();
-	const readonly = useSelector((state: State) => state.readonly);
 	const baseUrl = useSelector((state: State) => state.baseUrl);
 	const item = useSelector((state: State) => state.item[itemId]);
-	const itemReferences = useSelector(
-		(state: State) =>
-			Object.values(state.item).filter(item =>
-				item.children.some(childId => childId === itemId)
-			).length
-	);
+
 	const selectedNodeId = useSelector((state: State) => state.nodeId);
 	const expanded = useSelector((state: State) =>
 		state.expanded.includes(nodeId)
@@ -159,9 +155,7 @@ const Node = ({ nodeId }: NodeProps) => {
 					/>
 				</div>
 			)}
-			{item.children &&
-				expanded &&
-				path.filter(pathId => pathId === itemId).length < 2 && (
+			{item.children && expanded && (
 					<ul sx={{ paddingLeft: isRoot ? 0 : 4, mb: 1 }}>
 						{item.children.map((id, index) => (
 							<Node

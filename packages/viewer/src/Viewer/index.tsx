@@ -23,7 +23,6 @@ import {
 	removeItem,
 	moveUp,
 	moveDown,
-	setReadOnly,
 	editItem,
 	setBaseUrl,
 	ROOT_ID,
@@ -31,7 +30,7 @@ import {
 	getPathFromNodeId,
 } from "./duck";
 import { ToolbarButton } from "./ToolbarButton";
-import { last, objectMap } from "./array-util";
+import { getLastItemInArray, objectMap } from "./array-util";
 import { FixedToolbar } from "./FixedToolbar";
 import { ToolbarUploadButton, FileWithName } from "./ToolbarUploadButton";
 
@@ -48,12 +47,8 @@ export const Viewer = ({
 }: ViewerProps) => {
 	const dispatch = useDispatch();
 	const selectedNodeId = useSelector((state: State) => state.nodeId);
-	const id = last(getPathFromNodeId(selectedNodeId));
+	const id = getLastItemInArray(getPathFromNodeId(selectedNodeId));
 	const selectedItem = useSelector((state: State) => state.item[id]);
-
-	useEffect(() => {
-		dispatch(setReadOnly({ readonly }));
-	}, [dispatch, readonly]);
 
 	useEffect(() => {
 		dispatch(setBaseUrl({ baseUrl }));
@@ -129,7 +124,7 @@ export const Viewer = ({
 								margin: 0,
 							}}
 						>
-							<Node nodeId={ROOT_ID} />
+							<Node nodeId={ROOT_ID} readonly={readonly} />
 						</ul>
 					</div>
 					{selectedItem && (

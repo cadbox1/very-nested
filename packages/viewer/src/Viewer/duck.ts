@@ -23,13 +23,6 @@ type LoadArguments = {
 };
 export const load = createAction<LoadArguments>("LOAD");
 
-// Set ReadOnly
-
-type SetReadOnlyArguments = {
-	readonly: boolean;
-};
-export const setReadOnly = createAction<SetReadOnlyArguments>("SET_READONLY");
-
 // Set BaseURL
 
 type SetBaseUrlArguments = {
@@ -142,7 +135,6 @@ export type ItemStore = {
 };
 
 export type State = {
-	readonly: boolean;
 	baseUrl?: string;
 	nodeId?: string;
 	item: ItemStore;
@@ -171,15 +163,6 @@ export const reducer = createReducer(emptyState, {
 				),
 			];
 		}
-	},
-
-	// Set ReadOnly
-
-	[setReadOnly.type]: (
-		state: State,
-		action: PayloadAction<SetReadOnlyArguments>
-	) => {
-		state.readonly = action.payload.readonly;
 	},
 
 	// Set BaseURL
@@ -243,11 +226,12 @@ export const reducer = createReducer(emptyState, {
 		let todaysNodes: Node[] = [];
 		let olderNodes: Node[] = [];
 		timelineNode?.childNodes.forEach(childNode => {
-			if (
-				isToday(
-					parse(childNode.item.content.split(" - ")[0], DATE_FORMAT, new Date())
-				)
-			) {
+			const childNodesDate = parse(
+				childNode.childNodes[2]?.item.content,
+				DATE_FORMAT,
+				new Date()
+			);
+			if (isToday(childNodesDate)) {
 				todaysNodes.push(childNode);
 			} else {
 				olderNodes.push(childNode);
@@ -274,10 +258,20 @@ export const reducer = createReducer(emptyState, {
 
 		// add to timeline
 		const timelineId = shortid.generate();
+
+		const timelineDateId = shortid.generate();
+		const timelineDateString = format(new Date(), DATE_FORMAT);
+
+		state.item[timelineDateId] = {
+			id: timelineDateId,
+			content: timelineDateString,
+			children: [],
+		};
+
 		state.item[timelineId] = {
 			id: timelineId,
 			content: getTimelineString(node),
-			children: [node.item.id, node.parentNode.item.id],
+			children: [node.item.id, node.parentNode.item.id, timelineDateId],
 		};
 
 		// add a timeline if the document doesn't have one already
@@ -539,7 +533,7 @@ export function getPathFromNodeId(nodeId?: string): string[] {
 	return nodeId.split(",");
 }
 
-class Node {
+export class Node {
 	nodeId: string;
 	path: string[];
 	item: Item;
@@ -654,6 +648,5 @@ class Node {
 }
 
 function getTimelineString(node: Node) {
-	const todaysDateString = format(new Date(), DATE_FORMAT);
-	return `${todaysDateString} - added ${node.item.content} to ${node.parentNode.item.content}`;
+	return `added ${node.item.content} to ${node.parentNode.item.content}`;
 }

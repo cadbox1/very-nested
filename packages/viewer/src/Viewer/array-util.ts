@@ -29,7 +29,7 @@ export function insertItemInArrayAfter<T = any>(
 	input.splice(insertIndex, 0, item);
 }
 
-export function last<T = any>(input: T[]): T {
+export function getLastItemInArray<T = any>(input: T[]): T {
 	return getItemInArrayByIndex(input, -1);
 }
 
