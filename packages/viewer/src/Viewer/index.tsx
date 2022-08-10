@@ -13,7 +13,7 @@ import {
 	IoIosTrash,
 	IoIosCloudUpload,
 } from "react-icons/io";
-import Node from "./Node";
+import { ItemNode } from "./ItemNode";
 import {
 	up,
 	down,
@@ -124,7 +124,7 @@ export const Viewer = ({
 								margin: 0,
 							}}
 						>
-							<Node nodeId={ROOT_ID} readonly={readonly} />
+							<ItemNode nodeId={ROOT_ID} readonly={readonly} />
 						</ul>
 					</div>
 					{selectedItem && (

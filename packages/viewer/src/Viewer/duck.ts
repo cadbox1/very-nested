@@ -201,7 +201,7 @@ export const reducer = createReducer(emptyState, {
 			return;
 		}
 
-		const node = new Node({
+		const node = new ItemNode({
 			nodeId: state.nodeId,
 			state,
 		});
@@ -218,13 +218,13 @@ export const reducer = createReducer(emptyState, {
 			return;
 		}
 
-		const timelineNode = Node.getByNodeId({
+		const timelineNode = ItemNode.getByNodeId({
 			nodeId: getNodeIdFromPath([ROOT_ID, "timeline"]),
 			state,
 		});
 
-		let todaysNodes: Node[] = [];
-		let olderNodes: Node[] = [];
+		let todaysNodes: ItemNode[] = [];
+		let olderNodes: ItemNode[] = [];
 		timelineNode?.childNodes.forEach(childNode => {
 			const childNodesDate = parse(
 				childNode.childNodes[2]?.item.content,
@@ -302,7 +302,7 @@ export const reducer = createReducer(emptyState, {
 			return;
 		}
 
-		const node = new Node({ nodeId: state.nodeId, state });
+		const node = new ItemNode({ nodeId: state.nodeId, state });
 		node.insertItemAfterThisNode({ id, content, children });
 	},
 
@@ -426,7 +426,7 @@ export const reducer = createReducer(emptyState, {
 			return state;
 		}
 
-		const node = new Node({ nodeId: state.nodeId, state });
+		const node = new ItemNode({ nodeId: state.nodeId, state });
 		node.selectPreviousNode();
 	},
 
@@ -437,7 +437,7 @@ export const reducer = createReducer(emptyState, {
 			return state;
 		}
 
-		const node = new Node({ nodeId: state.nodeId, state });
+		const node = new ItemNode({ nodeId: state.nodeId, state });
 		node.selectNextNode();
 	},
 
@@ -533,7 +533,7 @@ export function getPathFromNodeId(nodeId?: string): string[] {
 	return nodeId.split(",");
 }
 
-export class Node {
+export class ItemNode {
 	nodeId: string;
 	path: string[];
 	item: Item;
@@ -547,7 +547,7 @@ export class Node {
 			return null;
 		}
 
-		return new Node({ nodeId, state });
+		return new ItemNode({ nodeId, state });
 	}
 
 	constructor({ nodeId, state }: { nodeId: string; state: State }) {
@@ -559,7 +559,7 @@ export class Node {
 	}
 
 	get parentNode() {
-		return new Node({
+		return new ItemNode({
 			nodeId: getNodeIdFromPath(this.path.slice(0, -1)),
 			state: this.state,
 		});
@@ -568,7 +568,7 @@ export class Node {
 	get childNodes() {
 		return this.item.children.map(
 			childId =>
-				new Node({
+				new ItemNode({
 					nodeId: getNodeIdFromPath([...this.path, childId]),
 					state: this.state,
 				})
@@ -583,22 +583,28 @@ export class Node {
 		return this.parentNode.item.children.indexOf(this.item.id);
 	}
 
-	get previousSibling(): Node | null {
+	get previousSibling(): ItemNode | null {
 		if (this.index === 0) {
 			return null;
 		}
 		const siblingId = this.parentNode.childNodes[this.index - 1].item.id;
 		const newPath = [...this.parentNode.path, siblingId];
-		return new Node({ nodeId: getNodeIdFromPath(newPath), state: this.state });
+		return new ItemNode({
+			nodeId: getNodeIdFromPath(newPath),
+			state: this.state,
+		});
 	}
 
-	get nextSibling(): Node | null {
+	get nextSibling(): ItemNode | null {
 		if (this.index === this.parentNode.childNodes.length - 1) {
 			return null;
 		}
 		const siblingId = this.parentNode.childNodes[this.index + 1].item.id;
 		const newPath = [...this.parentNode.path, siblingId];
-		return new Node({ nodeId: getNodeIdFromPath(newPath), state: this.state });
+		return new ItemNode({
+			nodeId: getNodeIdFromPath(newPath),
+			state: this.state,
+		});
 	}
 
 	select() {
@@ -609,7 +615,7 @@ export class Node {
 		if (this.expanded) {
 			this.childNodes[0].select();
 		} else {
-			let node: Node = this;
+			let node: ItemNode = this;
 			while (!node.nextSibling) {
 				node = node.parentNode;
 			}
@@ -647,6 +653,6 @@ export class Node {
 	}
 }
 
-function getTimelineString(node: Node) {
+function getTimelineString(node: ItemNode) {
 	return `added ${node.item.content} to ${node.parentNode.item.content}`;
 }

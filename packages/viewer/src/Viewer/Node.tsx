@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Styled } from "theme-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	editItem,
@@ -15,34 +15,42 @@ import {
 import { getLastItemInArray } from "./array-util";
 import { isHref, possiblyPrependBaseUrl, isImageSrc } from "./isHref";
 import { TimelineNode } from "./TimelineNode";
+import { ItemNode } from "./ItemNode";
 
 export interface NodeProps {
 	nodeId: string;
-	readonly?: boolean;
+	content: string;
+	children: Array<string | NodeProps>;
+	expanded: boolean;
+	readonly: boolean;
 }
 
-const Node = ({ nodeId, readonly }: NodeProps) => {
+export const Node = ({
+	nodeId,
+	content,
+	children,
+	expanded: expandedProp,
+	readonly,
+}: NodeProps) => {
 	const path = getPathFromNodeId(nodeId);
 	const itemId = getLastItemInArray(path);
 
-	const dispatch = useDispatch();
+	const isRoot = itemId === ROOT_ID;
+
 	const baseUrl = useSelector((state: State) => state.baseUrl);
-	const item = useSelector((state: State) => state.item[itemId]);
 
 	const selectedNodeId = useSelector((state: State) => state.nodeId);
 	const expanded = useSelector((state: State) =>
 		state.expanded.includes(nodeId)
 	);
 
-	if (!item) {
-		throw new Error(
-			`No item with id: "${itemId}" found in state, path: ${JSON.stringify(
-				path
-			)}.`
-		);
-	}
+	const dispatch = useDispatch();
 
-	const isRoot = nodeId === ROOT_ID;
+	useEffect(() => {
+		if (expandedProp) {
+			dispatch(expand({ path }));
+		}
+	}, [expandedProp]);
 
 	const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		dispatch(editItem({ id: itemId, content: evt.target.value }));
@@ -57,7 +65,7 @@ const Node = ({ nodeId, readonly }: NodeProps) => {
 	};
 
 	const handleExpandCollpase = () => {
-		if (!item.children.length && !isImageSrc(item.content)) {
+		if (!children.length && !isImageSrc(content)) {
 			return;
 		}
 		if (expanded) {
@@ -68,7 +76,7 @@ const Node = ({ nodeId, readonly }: NodeProps) => {
 	};
 
 	return (
-		<li style={{ listStyleType: "none" }}>
+		<li sx={{ listStyleType: "none" }}>
 			{!isRoot && (
 				<div
 					sx={{
@@ -89,7 +97,7 @@ const Node = ({ nodeId, readonly }: NodeProps) => {
 							background: "none",
 						}}
 					>
-						{item.children.length || isImageSrc(item.content)
+						{children.length || isImageSrc(content)
 							? expanded
 								? "-"
 								: "+"
@@ -108,23 +116,23 @@ const Node = ({ nodeId, readonly }: NodeProps) => {
 								visibility: selectedNodeId === nodeId ? "hidden" : "visible",
 							}}
 						>
-							{isHref(item.content) ? (
+							{isHref(content) ? (
 								<Styled.a
-									href={possiblyPrependBaseUrl(item.content, baseUrl)}
+									href={possiblyPrependBaseUrl(content, baseUrl)}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									{decodeURI(item.content)}
+									{decodeURI(content)}
 								</Styled.a>
 							) : (
-								item.content
+								content
 							)}
 							&nbsp;&nbsp; &nbsp;
 						</span>
 
 						{selectedNodeId === nodeId && (
 							<input
-								value={item.content}
+								value={content}
 								onChange={handleChange}
 								sx={{
 									font: "inherit",
@@ -142,10 +150,10 @@ const Node = ({ nodeId, readonly }: NodeProps) => {
 					</div>
 				</div>
 			)}
-			{expanded && isImageSrc(item.content) && (
+			{expanded && isImageSrc(content) && (
 				<div sx={{ paddingLeft: 6 }}>
 					<img
-						src={possiblyPrependBaseUrl(item.content, baseUrl)}
+						src={possiblyPrependBaseUrl(content, baseUrl)}
 						sx={{
 							width: "400px",
 							maxWidth: "100vw",
@@ -155,18 +163,32 @@ const Node = ({ nodeId, readonly }: NodeProps) => {
 					/>
 				</div>
 			)}
-			{item.children && expanded && (
-					<ul sx={{ paddingLeft: isRoot ? 0 : 4, mb: 1 }}>
-						{item.children.map((id, index) => (
-							<Node
-								key={getNodeIdFromPath([...path, id])}
-								nodeId={getNodeIdFromPath([...path, id])}
+			{children && expanded && (
+				<ul sx={{ paddingLeft: isRoot ? 0 : 4, mb: 1 }}>
+					{children.map(child =>
+						child === "timeline" ? (
+							<TimelineNode
+								key={getNodeIdFromPath([...path, child])}
+								nodeId={getNodeIdFromPath([...path, child])}
 							/>
-						))}
-					</ul>
-				)}
+						) : typeof child === "string" ? (
+							<ItemNode
+								key={getNodeIdFromPath([...path, child])}
+								nodeId={getNodeIdFromPath([...path, child])}
+								readonly={readonly}
+							/>
+						) : (
+							<Node
+								nodeId={getNodeIdFromPath([...path, child.content])}
+								readonly={readonly}
+								content={child.content}
+								children={child.children}
+								expanded={false}
+							/>
+						)
+					)}
+				</ul>
+			)}
 		</li>
 	);
 };
-
-export default Node;
