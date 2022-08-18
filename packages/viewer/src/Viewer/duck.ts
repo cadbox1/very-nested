@@ -40,7 +40,7 @@ export const selectItem = createAction<SelectItemArguments>("SELECT_ITEM");
 // Edit Item
 
 type EditItemArguments = {
-	id: string;
+	nodeId: string;
 	content: string;
 };
 export const editItem = createAction<EditItemArguments>("EDIT_ITEM");
@@ -186,7 +186,7 @@ export const reducer = createReducer(emptyState, {
 	// Edit Item
 
 	[editItem.type]: (state: State, action: PayloadAction<EditItemArguments>) => {
-		const { id, content } = action.payload;
+		const { nodeId, content } = action.payload;
 
 		// let's not worry about linking for now
 
@@ -197,12 +197,12 @@ export const reducer = createReducer(emptyState, {
 		// 	deleteItem(id, state);
 		// }
 
-		if (!state.nodeId) {
+		if (!nodeId) {
 			return;
 		}
 
 		const node = new ItemNode({
-			nodeId: state.nodeId,
+			nodeId,
 			state,
 		});
 
@@ -240,7 +240,7 @@ export const reducer = createReducer(emptyState, {
 
 		// update the timeline entry string if it exists
 		const existingTimelineNode = todaysNodes.find(
-			todayNode => todayNode.childNodes[0].item.id === id
+			todayNode => todayNode.childNodes[0].item.id === node.item.id
 		);
 		if (existingTimelineNode) {
 			existingTimelineNode.item.content = getTimelineString(node);

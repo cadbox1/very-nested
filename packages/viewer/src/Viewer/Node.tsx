@@ -3,7 +3,6 @@ import { jsx, Styled } from "theme-ui";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	editItem,
 	selectItem,
 	State,
 	collapse,
@@ -16,6 +15,7 @@ import { getLastItemInArray } from "./array-util";
 import { isHref, possiblyPrependBaseUrl, isImageSrc } from "./isHref";
 import { TimelineNode } from "./TimelineNode";
 import { ItemNode } from "./ItemNode";
+import { NodeInput } from "./NodeInput";
 
 export interface NodeProps {
 	nodeId: string;
@@ -43,6 +43,7 @@ export const Node = ({
 	const expanded = useSelector((state: State) =>
 		state.expanded.includes(nodeId)
 	);
+	const selected = selectedNodeId === nodeId;
 
 	const dispatch = useDispatch();
 
@@ -51,10 +52,6 @@ export const Node = ({
 			dispatch(expand({ path }));
 		}
 	}, [expandedProp]);
-
-	const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-		dispatch(editItem({ id: itemId, content: evt.target.value }));
-	};
 
 	const handleClick = () => {
 		if (readonly) {
@@ -113,7 +110,7 @@ export const Node = ({
 						<span
 							onClick={handleClick}
 							sx={{
-								visibility: selectedNodeId === nodeId ? "hidden" : "visible",
+								visibility: selected ? "hidden" : "visible",
 							}}
 						>
 							{isHref(content) ? (
@@ -127,26 +124,9 @@ export const Node = ({
 							) : (
 								content
 							)}
-							&nbsp;&nbsp; &nbsp;
+							&nbsp;&nbsp;
 						</span>
-
-						{selectedNodeId === nodeId && (
-							<input
-								value={content}
-								onChange={handleChange}
-								sx={{
-									font: "inherit",
-									padding: 0,
-									border: "none",
-									outline: "none",
-									width: "100%",
-									position: "absolute",
-									top: 0,
-									left: 0,
-								}}
-								autoFocus
-							/>
-						)}
+						{selected && <NodeInput nodeId={nodeId} defaultValue={content} />}
 					</div>
 				</div>
 			)}

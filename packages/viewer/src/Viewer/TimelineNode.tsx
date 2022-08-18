@@ -58,8 +58,10 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 			}
 		);
 
-		return entryMap.set(relativeDate, [
-			...(entryMap.get(relativeDate) || []),
+		const dateString = relativeDate;
+
+		return entryMap.set(dateString, [
+			...(entryMap.get(dateString) || []),
 			childNode,
 		]);
 	}, new Map<string, ItemNode[]>());
@@ -71,9 +73,9 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 			readonly
 			expanded
 			children={Array.from(groupedMap).map(
-				([dateLabel, timelineItemNodes], index) => ({
-					nodeId: getNodeIdFromPath([...path, dateLabel]),
-					content: dateLabel,
+				([dateString, timelineItemNodes], index) => ({
+					nodeId: getNodeIdFromPath([...path, dateString]),
+					content: dateString,
 					children: timelineItemNodes.map(
 						timelineItemNode => timelineItemNode.nodeId
 					),
