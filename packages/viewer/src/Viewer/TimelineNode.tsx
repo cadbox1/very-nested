@@ -1,34 +1,31 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { parse, formatRelative } from "date-fns";
+import React from "react";
+import { useSelector } from "react-redux";
+import { parse, formatDistance } from "date-fns";
 import enGB from "date-fns/locale/en-GB";
 import {
 	DATE_FORMAT,
-	expand,
 	getNodeIdFromPath,
 	getPathFromNodeId,
 	ItemNode,
 	ROOT_ID,
 	State,
 } from "./duck";
-import { getLastItemInArray } from "./array-util";
 import { Node } from "./Node";
 
-const formatRelativeLocale: { [key: string]: string } = {
-	lastWeek: "'Last' eeee",
-	yesterday: "'Yesterday'",
-	today: "'Today'",
-	tomorrow: "'Tomorrow'",
-	nextWeek: "'Next' eeee",
-	other: "dd/MM/yyyy",
-};
-
-const locale = {
+const locale: Locale = {
 	...enGB,
-	formatRelative: (token: string) => formatRelativeLocale[token],
-};
+	formatDistance: (...args) => {
+		const [arg1, ...otherArgs] = args;
 
-// formatRelative(parse(dateKey, DATE_FORMAT, new Date()), new Date(), { locale });
+		const todayKeys = ["lessThanXMinutes", "xMinutes", "aboutXHours"];
+
+		if (todayKeys.includes(arg1)) {
+			return "Today";
+		}
+		// @ts-ignore
+		return enGB.formatDistance(...args);
+	},
+};
 
 export interface TimelineNodeProps {
 	nodeId: string;
@@ -48,8 +45,17 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 			childNode.childNodes[2]?.item.content ||
 			childNode.item.content.split(" - ")[0];
 
-		return entryMap.set(childNodesDateString, [
-			...(entryMap.get(childNodesDateString) || []),
+		const relativeDate = formatDistance(
+			parse(childNodesDateString, DATE_FORMAT, new Date()),
+			new Date(),
+			{
+				addSuffix: true,
+				locale,
+			}
+		);
+
+		return entryMap.set(relativeDate, [
+			...(entryMap.get(relativeDate) || []),
 			childNode,
 		]);
 	}, new Map<string, ItemNode[]>());
@@ -62,9 +68,9 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 			expanded
 			children={
 				groupedMap
-					? Array.from(groupedMap).map(([dateKey, timelineItemNodes]) => ({
-							nodeId: getNodeIdFromPath([...path, dateKey]),
-							content: dateKey,
+					? Array.from(groupedMap).map(([dateLabel, timelineItemNodes]) => ({
+							nodeId: getNodeIdFromPath([...path, dateLabel]),
+							content: dateLabel,
 							children: timelineItemNodes.map(
 								timelineItemNode => timelineItemNode.nodeId
 							),

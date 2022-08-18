@@ -6,6 +6,9 @@
  * @param input input string to check
  */
 export function isHref(input: string): boolean {
+	if (!input) {
+		return false;
+	}
 	return /[a-zA-Z]+\.[a-zA-Z]/.test(input) || input.startsWith("./");
 }
 
