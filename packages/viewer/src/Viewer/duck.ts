@@ -226,31 +226,25 @@ export const reducer = createReducer(emptyState, {
 			state,
 		});
 
-		let todaysNodes: ItemNode[] = [];
-		let olderNodes: ItemNode[] = [];
-		timelineNode?.childNodes.forEach(childNode => {
-			const childNodesDate = parse(
-				childNode.childNodes[2]?.item.content,
-				DATE_FORMAT,
-				new Date()
-			);
-			if (isToday(childNodesDate)) {
-				todaysNodes.push(childNode);
-			} else {
-				olderNodes.push(childNode);
-			}
-		});
+		if (!timelineNode) {
+			return;
+		}
 
 		// update the timeline entry string if it exists
-		const existingTimelineNode = todaysNodes.find(
-			todayNode => todayNode.childNodes[0].item.id === id
-		);
+		const existingTimelineNode = findTodayTimelineEntryForItemId(id, state);
 		if (existingTimelineNode) {
 			existingTimelineNode.item.content = getTimelineString(node);
 			return;
 		}
 
+		// if there's a timeline entry in another day then there's nothing more to do - don't capture edits
+		const olderNodes = getOlderTimelineEntries(state);
+		if (olderNodes.some(olderNode => olderNode.childNodes[0]?.item.id === id)) {
+			return;
+		}
+
 		// if a parent has a timeline entry then there's nothing more to do
+		const todaysNodes = getTodaysTimelineEntries(state);
 		if (
 			todaysNodes.some(todayNode =>
 				node.parentNode.path.includes(todayNode.childNodes[0].item.id)
@@ -311,26 +305,17 @@ export const reducer = createReducer(emptyState, {
 
 	// Remove Item
 
-	[removeItem.type]: (state: State, action: any) => {
-		const path = getPathFromNodeId(state.nodeId);
-
-		const id = getItemInArrayByIndex(path, -1);
-		const parentId = getItemInArrayByIndex(path, -2);
-		const collection = state.item[parentId].children;
-
-		const aboveItemId = getIndexFromItem(collection, id, -1);
-
-		removeAllReferencesToId(id, state);
-		deleteItem(id, state);
-
-		// select new item
-		// this isn't quite right, should use the same logic as UP
-
-		path.pop();
-		if (aboveItemId) {
-			path.push(aboveItemId);
+	[removeItem.type]: (state: State) => {
+		if (!state.nodeId) {
+			return;
 		}
-		state.nodeId = getNodeIdFromPath(path);
+
+		const path = getPathFromNodeId(state.nodeId);
+		const id = getItemInArrayByIndex(path, -1);
+
+		const node = new ItemNode({ nodeId: state.nodeId, state });
+		node.selectPreviousNode();
+		node.delete();
 	},
 
 	// Indent Item
@@ -490,40 +475,19 @@ function getCollection(itemStore: ItemStore, parentId: string): string[] {
 	return itemStore[parentId].children;
 }
 
-const replaceAllReferencesToId = (
-	oldId: string,
-	newId: string,
-	state: State
-) => {
-	getAllItemsWithIdInChildren(oldId, state, item => {
-		item.children = item.children.map(childId =>
-			childId === oldId ? newId : childId
-		);
-	});
-};
+// previously used for linking
 
-const getAllItemsWithIdInChildren = (
-	id: string,
-	state: State,
-	callback: (item: Item) => void
-) => {
-	Object.keys(state.item).forEach(itemId => {
-		const item = state.item[itemId];
-		if (item.children.includes(id)) {
-			callback(item);
-		}
-	});
-};
-
-const removeAllReferencesToId = (id: string, state: State) => {
-	getAllItemsWithIdInChildren(id, state, item => {
-		item.children = item.children.filter(childId => childId !== id);
-	});
-};
-
-const deleteItem = (id: string, state: State) => {
-	delete state.item[id];
-};
+// const replaceAllReferencesToId = (
+// 	oldId: string,
+// 	newId: string,
+// 	state: State
+// ) => {
+// 	getAllItemsWithIdInChildren(oldId, state, item => {
+// 		item.children = item.children.map(childId =>
+// 			childId === oldId ? newId : childId
+// 		);
+// 	});
+// };
 
 export function getNodeIdFromPath(path: string[]): string {
 	return path.join(",");
@@ -654,6 +618,28 @@ export class ItemNode {
 		}
 		this.selectNextNode();
 	}
+
+	delete() {
+		const id = this.item.id;
+
+		const timelineEntry = findTodayTimelineEntryForItemId(id, this.state);
+		if (timelineEntry) {
+			timelineEntry.delete();
+		}
+
+		const allParents = Object.keys(this.state.item)
+			.filter(itemId => {
+				const item = this.state.item[itemId];
+				return item.children.includes(id);
+			})
+			.map(parentId => this.state.item[parentId]);
+
+		allParents.forEach(parent => {
+			parent.children = parent.children.filter(childId => childId !== id);
+		});
+
+		delete this.state.item[id];
+	}
 }
 
 function getTimelineString(node: ItemNode) {
@@ -689,7 +675,7 @@ export function getGroupedTimeline(state: State) {
 		.map(childNode => {
 			const inputDateString =
 				childNode.childNodes[2]?.item.content ||
-				childNode.item.content.split(" - ")[0];
+				childNode.item.content.split(" - ")[0]; // this is the briefly used, legacy date format
 
 			const parsedDate = parse(inputDateString, DATE_FORMAT, new Date());
 
@@ -700,7 +686,8 @@ export function getGroupedTimeline(state: State) {
 				dateString,
 			};
 		})
-		.sort((a, b) => b.dateString.localeCompare(a.dateString));
+		.sort((a, b) => a.dateString.localeCompare(b.dateString))
+		.reverse();
 
 	const groupedMap = sortedTimelineNodes.reduce((entryMap, timelineNode) => {
 		const parsedDate = parse(timelineNode.dateString, DATE_FORMAT, new Date());
@@ -725,6 +712,57 @@ export function getGroupedTimeline(state: State) {
 			timelineItemNode => timelineItemNode.item.id
 		),
 	}));
+}
+
+function getTodaysTimelineEntries(state: State) {
+	const timelineNode = ItemNode.getByNodeId({
+		nodeId: getNodeIdFromPath([ROOT_ID, "timeline"]),
+		state,
+	});
+
+	if (!timelineNode) {
+		return [];
+	}
+
+	return timelineNode.childNodes.filter(childNode => {
+		const childNodesDate = parse(
+			childNode.childNodes[2]?.item.content,
+			DATE_FORMAT,
+			new Date()
+		);
+		return isToday(childNodesDate);
+	});
+}
+
+function getOlderTimelineEntries(state: State) {
+	const timelineNode = ItemNode.getByNodeId({
+		nodeId: getNodeIdFromPath([ROOT_ID, "timeline"]),
+		state,
+	});
+
+	if (!timelineNode) {
+		return [];
+	}
+
+	return timelineNode.childNodes.filter(childNode => {
+		const childNodesDate = parse(
+			childNode.childNodes[2]?.item.content,
+			DATE_FORMAT,
+			new Date()
+		);
+		return !isToday(childNodesDate);
+	});
+}
+
+function findTodayTimelineEntryForItemId(
+	itemId: string,
+	state: State
+): ItemNode | undefined {
+	const todaysNodes = getTodaysTimelineEntries(state);
+
+	return todaysNodes.find(
+		todayNode => todayNode.childNodes[0]?.item.id === itemId
+	);
 }
 
 function potentiallyReselectNode(inputNodeId: string, state: State) {
