@@ -54,23 +54,25 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 		]);
 	}, new Map<string, ItemNode[]>());
 
-	console.log(groupedMap);
-
 	return (
-		<>
-			{groupedMap &&
-				Array.from(groupedMap).map(([dateKey, timelineItemNodes]) => (
-					<Node
-						key={getNodeIdFromPath([...path, dateKey])}
-						nodeId={getNodeIdFromPath([...path, dateKey])}
-						content={dateKey}
-						children={timelineItemNodes.map(
-							timelineItemNode => timelineItemNode.nodeId
-						)}
-						expanded
-						readonly
-					/>
-				))}
-		</>
+		<Node
+			nodeId={getNodeIdFromPath([ROOT_ID, "timeline"])}
+			content="Timeline"
+			readonly
+			expanded
+			children={
+				groupedMap
+					? Array.from(groupedMap).map(([dateKey, timelineItemNodes]) => ({
+							nodeId: getNodeIdFromPath([...path, dateKey]),
+							content: dateKey,
+							children: timelineItemNodes.map(
+								timelineItemNode => timelineItemNode.nodeId
+							),
+							readonly: false,
+							expanded: true,
+					  }))
+					: []
+			}
+		/>
 	);
 };

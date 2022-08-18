@@ -179,11 +179,12 @@ export const Node = ({
 							/>
 						) : (
 							<Node
+								key={getNodeIdFromPath([...path, child.content])}
 								nodeId={getNodeIdFromPath([...path, child.content])}
-								readonly={readonly}
 								content={child.content}
 								children={child.children}
-								expanded={false}
+								readonly={child.readonly}
+								expanded={child.expanded}
 							/>
 						)
 					)}
