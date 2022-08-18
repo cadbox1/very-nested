@@ -1,31 +1,15 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { parse, formatDistance } from "date-fns";
-import enGB from "date-fns/locale/en-GB";
 import {
 	DATE_FORMAT,
+	getGroupedTimeline,
 	getNodeIdFromPath,
 	getPathFromNodeId,
 	ItemNode,
-	ROOT_ID,
 	State,
 } from "./duck";
 import { Node } from "./Node";
-
-const locale: Locale = {
-	...enGB,
-	formatDistance: (...args) => {
-		const [arg1, ...otherArgs] = args;
-
-		const todayKeys = ["lessThanXMinutes", "xMinutes", "aboutXHours"];
-
-		if (todayKeys.includes(arg1)) {
-			return "Today";
-		}
-		// @ts-ignore
-		return enGB.formatDistance(...args);
-	},
-};
 
 export interface TimelineNodeProps {
 	nodeId: string;
@@ -35,52 +19,22 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 	const path = getPathFromNodeId(nodeId);
 
 	const state = useSelector((state: State) => state);
-	const timelineNode = ItemNode.getByNodeId({
-		nodeId: getNodeIdFromPath([ROOT_ID, "timeline"]),
-		state,
-	});
 
-	if (!timelineNode) {
-		return <></>;
-	}
-
-	const groupedMap = timelineNode.childNodes.reduce((entryMap, childNode) => {
-		const childNodesDateString =
-			childNode.childNodes[2]?.item.content ||
-			childNode.item.content.split(" - ")[0];
-
-		const relativeDate = formatDistance(
-			parse(childNodesDateString, DATE_FORMAT, new Date()),
-			new Date(),
-			{
-				addSuffix: true,
-				locale,
-			}
-		);
-
-		return entryMap.set(relativeDate, [
-			...(entryMap.get(relativeDate) || []),
-			childNode,
-		]);
-	}, new Map<string, ItemNode[]>());
+	const groupedTimeline = getGroupedTimeline(state);
 
 	return (
 		<Node
-			nodeId={getNodeIdFromPath([ROOT_ID, "timeline"])}
+			nodeId={nodeId}
 			content="Timeline"
+			children={groupedTimeline.map((timelineGroup, index) => ({
+				nodeId: getNodeIdFromPath([...path, timelineGroup.id]),
+				content: timelineGroup.content,
+				children: timelineGroup.children,
+				readonly: false,
+				expanded: index === 0, // expand the first timeline entry to start with
+			}))}
 			readonly
 			expanded
-			children={Array.from(groupedMap).map(
-				([dateLabel, timelineItemNodes], index) => ({
-					nodeId: getNodeIdFromPath([...path, dateLabel]),
-					content: dateLabel,
-					children: timelineItemNodes.map(
-						timelineItemNode => timelineItemNode.nodeId
-					),
-					readonly: false,
-					expanded: index === 0,
-				})
-			)}
 		/>
 	);
 };

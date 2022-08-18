@@ -3,6 +3,7 @@ import { jsx, Styled } from "theme-ui";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+	editItem,
 	selectItem,
 	State,
 	collapse,
@@ -15,7 +16,6 @@ import { getLastItemInArray } from "./array-util";
 import { isHref, possiblyPrependBaseUrl, isImageSrc } from "./isHref";
 import { TimelineNode } from "./TimelineNode";
 import { ItemNode } from "./ItemNode";
-import { NodeInput } from "./NodeInput";
 
 export interface NodeProps {
 	nodeId: string;
@@ -52,6 +52,10 @@ export const Node = ({
 			dispatch(expand({ path }));
 		}
 	}, [expandedProp]);
+
+	const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+		dispatch(editItem({ id: itemId, content: evt.target.value }));
+	};
 
 	const handleClick = () => {
 		if (readonly) {
@@ -126,7 +130,24 @@ export const Node = ({
 							)}
 							&nbsp;&nbsp;
 						</span>
-						{selected && <NodeInput nodeId={nodeId} defaultValue={content} />}
+
+						{selected && (
+							<input
+								value={content}
+								onChange={handleChange}
+								sx={{
+									font: "inherit",
+									padding: 0,
+									border: "none",
+									outline: "none",
+									width: "100%",
+									position: "absolute",
+									top: 0,
+									left: 0,
+								}}
+								autoFocus
+							/>
+						)}
 					</div>
 				</div>
 			)}
@@ -159,8 +180,8 @@ export const Node = ({
 							/>
 						) : (
 							<Node
-								key={getNodeIdFromPath([...path, child.content])}
-								nodeId={getNodeIdFromPath([...path, child.content])}
+								key={child.nodeId}
+								nodeId={child.nodeId}
 								content={child.content}
 								children={child.children}
 								readonly={child.readonly}

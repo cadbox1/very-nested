@@ -1,6 +1,7 @@
 import shortid from "shortid";
-import { format, parse, isToday } from "date-fns";
+import { format, parse, isToday, formatDistance, isValid } from "date-fns";
 import { createAction, createReducer, PayloadAction } from "@reduxjs/toolkit";
+import enGB from "date-fns/locale/en-GB";
 
 import emptyState from "./emptyState.json";
 import {
@@ -40,7 +41,7 @@ export const selectItem = createAction<SelectItemArguments>("SELECT_ITEM");
 // Edit Item
 
 type EditItemArguments = {
-	nodeId: string;
+	id: string;
 	content: string;
 };
 export const editItem = createAction<EditItemArguments>("EDIT_ITEM");
@@ -186,7 +187,7 @@ export const reducer = createReducer(emptyState, {
 	// Edit Item
 
 	[editItem.type]: (state: State, action: PayloadAction<EditItemArguments>) => {
-		const { nodeId, content } = action.payload;
+		const { id, content } = action.payload;
 
 		// let's not worry about linking for now
 
@@ -197,16 +198,18 @@ export const reducer = createReducer(emptyState, {
 		// 	deleteItem(id, state);
 		// }
 
-		if (!nodeId) {
+		if (!state.nodeId) {
 			return;
 		}
 
 		const node = new ItemNode({
-			nodeId,
+			nodeId: state.nodeId,
 			state,
 		});
 
 		node.item.content = content;
+
+		potentiallyReselectNode(node.nodeId, state);
 
 		// now handle the timeline
 
@@ -240,7 +243,7 @@ export const reducer = createReducer(emptyState, {
 
 		// update the timeline entry string if it exists
 		const existingTimelineNode = todaysNodes.find(
-			todayNode => todayNode.childNodes[0].item.id === node.item.id
+			todayNode => todayNode.childNodes[0].item.id === id
 		);
 		if (existingTimelineNode) {
 			existingTimelineNode.item.content = getTimelineString(node);
@@ -655,4 +658,123 @@ export class ItemNode {
 
 function getTimelineString(node: ItemNode) {
 	return `added ${node.item.content} to ${node.parentNode.item.content}`;
+}
+
+const locale: Locale = {
+	...enGB,
+	formatDistance: (...args) => {
+		const [arg1, ...otherArgs] = args;
+
+		const todayKeys = ["lessThanXMinutes", "xMinutes", "aboutXHours"];
+
+		if (todayKeys.includes(arg1)) {
+			return "Today";
+		}
+		// @ts-ignore
+		return enGB.formatDistance(...args);
+	},
+};
+
+export function getGroupedTimeline(state: State) {
+	const timelineNode = ItemNode.getByNodeId({
+		nodeId: getNodeIdFromPath([ROOT_ID, "timeline"]),
+		state,
+	});
+
+	if (!timelineNode) {
+		return [];
+	}
+
+	const sortedTimelineNodes = timelineNode.childNodes
+		.map(childNode => {
+			const inputDateString =
+				childNode.childNodes[2]?.item.content ||
+				childNode.item.content.split(" - ")[0];
+
+			const parsedDate = parse(inputDateString, DATE_FORMAT, new Date());
+
+			const dateString = isValid(parsedDate) ? inputDateString : "Invalid Date";
+
+			return {
+				childNode,
+				dateString,
+			};
+		})
+		.sort((a, b) => b.dateString.localeCompare(a.dateString));
+
+	const groupedMap = sortedTimelineNodes.reduce((entryMap, timelineNode) => {
+		const parsedDate = parse(timelineNode.dateString, DATE_FORMAT, new Date());
+
+		const dateGroupString = isValid(parsedDate)
+			? formatDistance(parsedDate, new Date(), {
+					addSuffix: true,
+					locale,
+			  })
+			: timelineNode.dateString;
+
+		return entryMap.set(dateGroupString, [
+			...(entryMap.get(dateGroupString) || []),
+			timelineNode.childNode,
+		]);
+	}, new Map<string, ItemNode[]>());
+
+	return Array.from(groupedMap).map(([dateGroupString, timelineItemNodes]) => ({
+		id: dateGroupString,
+		content: dateGroupString,
+		children: timelineItemNodes.map(
+			timelineItemNode => timelineItemNode.item.id
+		),
+	}));
+}
+
+function potentiallyReselectNode(inputNodeId: string, state: State) {
+	const closestNodeId = findClosestNodeId(inputNodeId, state);
+	if (inputNodeId !== closestNodeId) {
+		state.nodeId = closestNodeId;
+
+		const path = getPathFromNodeId(closestNodeId);
+
+		const expandedSet = new Set(state.expanded);
+
+		for (let i = 1; i <= path.length; i++) {
+			expandedSet.add(getNodeIdFromPath(path.slice(0, i)));
+		}
+		state.expanded = Array.from(expandedSet);
+	}
+}
+
+function findClosestNodeId(inputNodeId: string, state: State): string {
+	const inputPath = getPathFromNodeId(inputNodeId);
+	const id = getItemInArrayByIndex(inputPath, -1);
+
+	const inputNode = new ItemNode({ nodeId: inputNodeId, state });
+
+	let node = inputNode;
+	let endPath = [id]; // This isn't quite correct because we might be missing the item we're requesting but let's come back to this later
+
+	while (node.parentNode.item) {
+		node = node.parentNode;
+		endPath.unshift(node.item.id);
+	}
+	const nodeWithoutParentItem = node;
+	const pathBelowMissingParent = endPath;
+
+	// let's look inside our grouped timeline
+	const groupedTimeline = getGroupedTimeline(state);
+	const timelineGroupWithMissingNode = groupedTimeline.find(timelineGroup =>
+		timelineGroup.children.includes(nodeWithoutParentItem.item.id)
+	);
+
+	if (timelineGroupWithMissingNode) {
+		const path = [
+			ROOT_ID,
+			"timeline",
+			timelineGroupWithMissingNode.id,
+			...pathBelowMissingParent,
+		];
+		return getNodeIdFromPath(path);
+	} else {
+		// look through the rest of the document. We can do this later.
+		return inputNodeId;
+	}
 }
