@@ -40,7 +40,11 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 		state,
 	});
 
-	const groupedMap = timelineNode?.childNodes.reduce((entryMap, childNode) => {
+	if (!timelineNode) {
+		return <></>;
+	}
+
+	const groupedMap = timelineNode.childNodes.reduce((entryMap, childNode) => {
 		const childNodesDateString =
 			childNode.childNodes[2]?.item.content ||
 			childNode.item.content.split(" - ")[0];
@@ -66,21 +70,17 @@ export const TimelineNode = ({ nodeId }: TimelineNodeProps) => {
 			content="Timeline"
 			readonly
 			expanded
-			children={
-				groupedMap
-					? Array.from(groupedMap).map(
-							([dateLabel, timelineItemNodes], index) => ({
-								nodeId: getNodeIdFromPath([...path, dateLabel]),
-								content: dateLabel,
-								children: timelineItemNodes.map(
-									timelineItemNode => timelineItemNode.nodeId
-								),
-								readonly: false,
-								expanded: index === 0,
-							})
-					  )
-					: []
-			}
+			children={Array.from(groupedMap).map(
+				([dateLabel, timelineItemNodes], index) => ({
+					nodeId: getNodeIdFromPath([...path, dateLabel]),
+					content: dateLabel,
+					children: timelineItemNodes.map(
+						timelineItemNode => timelineItemNode.nodeId
+					),
+					readonly: false,
+					expanded: index === 0,
+				})
+			)}
 		/>
 	);
 };
