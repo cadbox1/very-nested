@@ -33,6 +33,7 @@ import { ToolbarButton } from "./ToolbarButton";
 import { getLastItemInArray, objectMap } from "./array-util";
 import { FixedToolbar } from "./FixedToolbar";
 import { ToolbarUploadButton, FileWithName } from "./ToolbarUploadButton";
+import "typeface-source-sans-pro";
 
 export interface ViewerProps {
 	readonly?: boolean;
