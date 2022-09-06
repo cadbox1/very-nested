@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import { Fragment } from "react";
 
-export const FixedToolbar = ({ children }: { children: React.ReactNode }) => {
+export const FixedToolbar = ({ children }: { children: ReactNode }) => {
 	const [topOffset, setTopOffset] = useState<number>(0);
 
 	const handleViewport = () => {

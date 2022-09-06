@@ -2,6 +2,7 @@
 import { jsx, Styled } from "theme-ui";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { IoChevronForward, IoChevronDown } from "react-icons/io5";
 import {
 	editItem,
 	selectItem,
@@ -90,24 +91,29 @@ export const Node = ({
 						onClick={handleExpandCollpase}
 						sx={{
 							font: "inherit",
-							width: "30px",
+							width: "26px",
 							padding: 0,
 							border: "none",
 							textAlign: "center",
 							verticalAlign: "top",
 							background: "none",
+							color: "black",
 						}}
 					>
-						{children.length || isImageSrc(content)
-							? expanded
-								? "-"
-								: "+"
-							: "•"}
+						{children.length || isImageSrc(content) ? (
+							expanded ? (
+								<IoChevronDown size={10} />
+							) : (
+								<IoChevronForward size={10} />
+							)
+						) : (
+							"•"
+						)}
 					</button>
 					<div
 						sx={{
 							display: "inline-block",
-							width: "calc(100% - 30px)", // adjust for the width of the button
+							width: "calc(100% - 26px)", // adjust for the width of the button
 							position: "relative",
 						}}
 					>

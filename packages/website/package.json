@@ -2,24 +2,32 @@
   "name": "very-nested-website",
   "private": true,
   "version": "1.0.39",
-  "scripts": {
-    "develop": "gatsby develop",
-    "start": "gatsby develop",
-    "build": "gatsby build",
-    "clean": "gatsby clean"
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "dependencies": {
-    "@theme-ui/color": "^0.3.1",
-    "gatsby": "^2.13.73",
-    "gatsby-plugin-emoji-favicon": "^1.4.1",
-    "gatsby-plugin-theme-ui": "^0.3.0",
-    "gatsby-theme-ui-blog": "^0.3.1",
-    "query-string": "^6.12.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "theme-ui": "^0.3.1",
-    "typeface-source-sans-pro": "^0.0.75",
-    "very-nested-login": "^1.0.39",
-    "very-nested-viewer": "^1.0.39"
+    "@fontsource/source-sans-pro": "^4.5.1",
+    "cadells-vanilla-components": "^0.3.0",
+    "next": "^12.2.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "serve": "11.2.0"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "preexport": "npm run build",
+    "export": "next export",
+    "prestart": "npm run export",
+    "start": "serve out"
+  },
+  "devDependencies": {
+    "@mdx-js/loader": "^1.6.22",
+    "@next/mdx": "^12.0.8",
+    "@vanilla-extract/babel-plugin": "^1.1.4",
+    "@vanilla-extract/css": "^1.6.8",
+    "@vanilla-extract/next-plugin": "^2.0.1",
+    "prettier": "^1.19.1",
+    "typescript": "^4.5.4"
   }
 }

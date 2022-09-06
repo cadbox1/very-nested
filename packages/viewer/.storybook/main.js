@@ -1,5 +1,5 @@
 module.exports = {
-	stories: ["../src/**/*.stories.(js|mdx|tsx)"],
+	stories: ["../src/**/*.stories.@(js|mdx|tsx)"],
 	addons: [
 		"@storybook/preset-create-react-app",
 		{
@@ -12,4 +12,8 @@ module.exports = {
 		"@storybook/addon-links",
 		"@storybook/addon-viewport/register",
 	],
+	framework: "@storybook/react",
+	core: {
+		builder: "webpack5",
+	},
 };

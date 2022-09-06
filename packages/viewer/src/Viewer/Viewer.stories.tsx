@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Provider, useDispatch } from "react-redux";
-import { Button, ThemeProvider } from "theme-ui";
+import { ThemeProvider } from "theme-ui";
 import { configureStore } from "@reduxjs/toolkit";
+import "typeface-source-sans-pro";
 
 import theme from "../WebViewer/theme";
 import { load, reducer } from "./duck";
