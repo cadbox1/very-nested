@@ -28054,7 +28054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"very-nested-login@^1.0.40, very-nested-login@workspace:packages/login":
+"very-nested-login@^1.0.41, very-nested-login@workspace:packages/login":
   version: 0.0.0-use.local
   resolution: "very-nested-login@workspace:packages/login"
   dependencies:
@@ -28093,12 +28093,12 @@ __metadata:
     theme-ui: ^0.3.1
     typeface-source-sans-pro: ^1.1.5
     typescript: ^3.8.3
-    very-nested-login: ^1.0.40
-    very-nested-viewer: ^1.0.40
+    very-nested-login: ^1.0.41
+    very-nested-viewer: ^1.0.41
   languageName: unknown
   linkType: soft
 
-"very-nested-viewer@^1.0.40, very-nested-viewer@workspace:packages/viewer":
+"very-nested-viewer@^1.0.41, very-nested-viewer@workspace:packages/viewer":
   version: 0.0.0-use.local
   resolution: "very-nested-viewer@workspace:packages/viewer"
   dependencies:

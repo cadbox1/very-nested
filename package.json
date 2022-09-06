@@ -2,11 +2,9 @@
   "name": "very-nested",
   "private": true,
   "packageManager": "yarn@3.2.3",
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "prepare": "lerna run prepare",
     "clean": "lerna run clean",
