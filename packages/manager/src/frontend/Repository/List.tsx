@@ -34,6 +34,7 @@ export const List = () => {
 			auth: accessToken,
 		});
 		octokit.hook.error("request", async (error, options) => {
+			// @ts-ignore
 			if (error.status === 401) {
 				setAccessToken("");
 				localStorage.setItem("accessToken", "");
