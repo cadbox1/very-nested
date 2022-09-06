@@ -1,6 +1,6 @@
 {
 	"name": "very-nested-manager",
-	"version": "1.0.39",
+	"version": "1.0.40",
 	"private": true,
 	"dependencies": {
 		"@octokit/rest": "^18.0.0",
@@ -20,8 +20,8 @@
 		"simple-oauth2": "^3.4.0",
 		"theme-ui": "^0.3.1",
 		"typeface-source-sans-pro": "^1.1.5",
-		"very-nested-login": "^1.0.39",
-		"very-nested-viewer": "^1.0.39"
+		"very-nested-login": "^1.0.40",
+		"very-nested-viewer": "^1.0.40"
 	},
 	"scripts": {
 		"start": "react-scripts start",
