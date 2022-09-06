@@ -1,6 +1,6 @@
 {
   "name": "very-nested-viewer",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "license": "GPL-3.0-only",
   "source": "src/index.ts",
   "main": "dist/index.js",
