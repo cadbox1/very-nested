@@ -2,6 +2,9 @@
 	"name": "very-nested-manager",
 	"version": "1.0.41",
 	"private": true,
+	"installConfig": {
+		"hoistingLimits": "workspaces"
+	},
 	"dependencies": {
 		"@octokit/rest": "^18.0.0",
 		"bootstrap": "^4.4.1",
